@@ -3,18 +3,36 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/categories.dart';
 import 'package:portfeuille_numerique/dettes.dart';
+import 'package:portfeuille_numerique/methodes.dart';
+import 'package:portfeuille_numerique/models/compte.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:portfeuille_numerique/operation.dart';
+import 'package:sqflite/sqflite.dart';
+import 'db/sql_helper.dart';
 import 'profileUser.dart';
 
 class homepage extends StatefulWidget {
-  const homepage({Key? key}) : super(key: key);
+  homepage.withNull({Key? key}) : super(key: key);
+  String? email;
+  String? pass;
+
+  homepage(this.email, this.pass);
 
   @override
-  State<homepage> createState() => _homepageState();
+  State<homepage> createState() => _homepageState(this.email, this.pass);
 }
 
 class _homepageState extends State<homepage> {
+  String? email;
+  String? pass;
+  int? k;
+  int? a;
+  static var m;
+
+  TextEditingController f_solde = TextEditingController();
+  _homepageState(this.email, this.pass);
+
   List<charts.Series<Task, String>>? _seriedata;
   _generatedData() {
     var piedata = [
@@ -35,14 +53,6 @@ class _homepageState extends State<homepage> {
     );
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _seriedata = [];
-    _generatedData();
-  }
-
   final List<Tab> mytabs = [
     Tab(
       text: "Comptes",
@@ -51,9 +61,83 @@ class _homepageState extends State<homepage> {
       text: "Budget et objectif",
     )
   ];
-  // var currentpage = DrawerSections.dashboard;
+  // initializea() async {
+  //   utilisateur? user = await helper.getUser(this.email!, this.pass!);
+  //   a = user!.id;
+  // }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _seriedata = [];
+    _generatedData();
+  }
+
+  SQL_Helper helper = new SQL_Helper();
+
+  insertSolde() async {
+    utilisateur? user = await helper.getUser(this.email!, this.pass!);
+    a = user!.id;
+    compte new_cmp = new compte(int.parse(f_solde.text), a);
+    compte? exist_cmp = await helper.getCompteUser(a!);
+    if (exist_cmp != null) {
+      helper.update_compte(new_cmp);
+    } else {
+      await helper.insert_compte(new_cmp);
+    }
+  }
+
+  Future<compte?> getcompteUser(int id_utilisateur) async {
+    Future<compte?> comp = helper.getCompteUser(id_utilisateur);
+    return comp;
+  }
+
+  Future<int?> getsoldeUser(int id_utilisateur) async {
+    int? solde;
+    compte? comp = await helper.getCompteUser(id_utilisateur);
+    if (comp == null) {
+      solde = 0;
+    } else {
+      solde = comp.solde;
+    }
+    return solde;
+  }
+
+  printthing() {
+    print("hello");
+  }
+
+  void updateSolde() async {
+    utilisateur? user = await helper.getUser(this.email!, this.pass!);
+    a = user!.id;
+    final Future<Database>? db = helper.initialiseDataBase();
+    var our_db = db;
+    if (our_db != null) {
+      our_db.then((database) {
+        Future<int?> solde = getsoldeUser(a!);
+        solde.then((reloadsolde) {
+          setState(() {
+            this.k = reloadsolde;
+          });
+        });
+      });
+    }
+    // m = this.k;
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (k == null) {
+      updateSolde();
+    } else {
+      _seriedata = [];
+      _generatedData();
+    }
+    // updateSolde();
+    //updateSolde();
+    //printthing();
+    m = this.k;
     return MaterialApp(
       home: DefaultTabController(
         length: mytabs.length,
@@ -80,13 +164,6 @@ class _homepageState extends State<homepage> {
                                 "Votre Solde est ",
                                 style: TextStyle(fontSize: 25),
                               ),
-                              // Text(
-                              //   "20000",
-                              //   style: TextStyle(
-                              //     fontSize: 40,
-                              //     backgroundColor: Colors.green,
-                              //   ),
-                              // ),
                               Container(
                                 width: 200,
                                 height: 50,
@@ -94,7 +171,7 @@ class _homepageState extends State<homepage> {
                                   enabled: false,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
-                                      hintText: '20000',
+                                      hintText: '$m',
                                       border: OutlineInputBorder()),
                                   style: TextStyle(
                                     fontSize: 30,
@@ -112,7 +189,47 @@ class _homepageState extends State<homepage> {
                               Text(" "),
                               RaisedButton(
                                 onPressed: () {
-                                  onclick(context);
+                                  AlertDialog alertDialog = AlertDialog(
+                                    title: Text("Ajouter un niveaux solde"),
+                                    content: SizedBox(
+                                      width: 200,
+                                      child: TextField(
+                                        controller: f_solde,
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(
+                                            hintText: '0',
+                                            border: OutlineInputBorder()),
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: Text(
+                                          "Annuler",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text("Enregistrer"),
+                                        onPressed: () {
+                                          insertSolde();
+                                          setState(() {
+                                            updateSolde();
+                                          });
+
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return alertDialog;
+                                      });
                                 },
                                 padding: EdgeInsets.all(5),
                                 color: Colors.red,
@@ -234,85 +351,40 @@ class _homepageState extends State<homepage> {
                   ],
                 ),
               ),
-              objectif()
+              //la page budgets et objectifs
+              Column(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              ListTile(
+                                title: Text("Les Budgets"),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                            child: ListView(
+                          children: [
+                            ListTile(
+                              title: Text("Les objectifs "),
+                            ),
+                          ],
+                        ))
+                      ],
+                    ),
+                  )
+                ],
+              )
             ],
           ),
         ),
       ),
     );
   }
-
-  void onclick(BuildContext context) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text("Ajouter un niveaux solde"),
-      content: SizedBox(
-        width: 200,
-        child: TextField(
-          keyboardType: TextInputType.number,
-          decoration:
-              InputDecoration(hintText: '0', border: OutlineInputBorder()),
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-      actions: [
-        TextButton(
-          child: Text(
-            "Annuler",
-            style: TextStyle(color: Colors.red),
-          ),
-          onPressed: () {},
-        ),
-        TextButton(
-          child: Text("Enregistrer"),
-          onPressed: () {},
-        ),
-      ],
-    );
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alertDialog;
-        });
-  }
-
-  // Widget drowerList() {
-  //   return Container(
-  //     padding: EdgeInsets.only(top: 15),
-  //     child: Column(
-  //       children: [
-  //         //menuItem()
-  //         ],
-  //     ),
-  //   );
-  // }
-
-  // Widget menuItem() {
-  //   return Material(
-  //     child: InkWell(
-  //       onTap: () {},
-  //       child: Padding(
-  //         padding: EdgeInsets.all(15),
-  //         child: Row(
-  //           // mainAxisAlignment: MainAxisAlignment.start,
-  //           children: [
-  //             Expanded(
-  //                 child: Icon(
-  //               icon,
-  //               color: Colors.black,
-  //               size: 40,
-  //             )),
-  //             Expanded(
-  //                 flex: 3,
-  //                 child: Text(
-  //                   title,
-  //                   style: TextStyle(color: Colors.black, fontSize: 20),
-  //                 )),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 }
 
 class Task {
@@ -321,123 +393,4 @@ class Task {
   Color? colorval;
 
   Task(this.task, this.taskvalue, this.colorval);
-}
-
-PreferredSize appbarfunction(List<Tab> x, String title) {
-  return PreferredSize(
-    preferredSize: Size.fromHeight(100),
-    child: AppBar(
-      // toolbarHeight: 100,
-      bottom: TabBar(tabs: x),
-      title: Text(title),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: GestureDetector(
-            onTap: () {},
-            child: Icon(Icons.notifications),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: GestureDetector(
-            onTap: () {},
-            child: Icon(Icons.settings),
-          ),
-        )
-      ],
-    ),
-  );
-}
-
-Widget drowerfunction(BuildContext context) {
-  return Drawer(
-    child: ListView(
-      padding: EdgeInsets.only(top: 50),
-      children: [
-        Container(
-          color: Colors.green[500],
-          width: double.infinity,
-          //height: 250,
-          padding: EdgeInsets.only(top: 20),
-          child: DrawerHeader(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                  scale: 1.5,
-                  image: AssetImage(
-                    'assets/images/img_profile.jpg',
-                  )),
-            ),
-            padding: EdgeInsets.only(top: 137, left: 30),
-            child: Text(
-              "medsalem@gmail.com",
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: ListTile(
-            leading: Icon(Icons.dashboard_outlined),
-            title: Text("Accueil", style: TextStyle(fontSize: 20)),
-            onTap: () {},
-          ),
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.home,
-            size: 20,
-          ),
-          title: Text("Transactions", style: TextStyle(fontSize: 20)),
-          onTap: () {
-            // Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.train,
-            size: 20,
-          ),
-          title: Text("Dettes", style: TextStyle(fontSize: 20)),
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => alldettes()));
-          },
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.train,
-            size: 20,
-          ),
-          title: Text("Budgets", style: TextStyle(fontSize: 20)),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.train,
-            size: 20,
-          ),
-          title: Text("Objectifs", style: TextStyle(fontSize: 20)),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.train,
-            size: 20,
-          ),
-          title: Text("Partage en groupe", style: TextStyle(fontSize: 20)),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.settings,
-            size: 20,
-          ),
-          title: Text("Parametres", style: TextStyle(fontSize: 20)),
-          onTap: () {},
-        ),
-      ],
-    ),
-  );
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/operationDettes.dart';
 
 class alldettes extends StatefulWidget {
@@ -24,107 +25,8 @@ class _alldettesState extends State<alldettes> {
         length: mytabs.length,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            toolbarHeight: 100,
-            bottom: TabBar(tabs: mytabs),
-            title: Text("Dettes"),
-            actions: [
-              Padding(
-                padding: EdgeInsets.only(right: 20),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Icon(Icons.search),
-                ),
-              )
-            ],
-          ),
-          drawer: Drawer(
-            child: ListView(
-              padding: EdgeInsets.only(top: 50),
-              children: [
-                Container(
-                  color: Colors.green[500],
-                  width: double.infinity,
-                  //height: 250,
-                  padding: EdgeInsets.only(top: 20),
-                  child: DrawerHeader(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          scale: 1.5,
-                          image: AssetImage(
-                            'assets/images/img_profile.jpg',
-                          )),
-                    ),
-                    padding: EdgeInsets.only(top: 137, left: 30),
-                    child: Text(
-                      "medsalem@gmail.com",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: ListTile(
-                    leading: Icon(Icons.dashboard_outlined),
-                    title: Text("Accueil", style: TextStyle(fontSize: 20)),
-                    onTap: () {},
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.home,
-                    size: 20,
-                  ),
-                  title: Text("Transactions", style: TextStyle(fontSize: 20)),
-                  onTap: () {
-                    // Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.train,
-                    size: 20,
-                  ),
-                  title: Text("Dettes", style: TextStyle(fontSize: 20)),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.train,
-                    size: 20,
-                  ),
-                  title: Text("Budgets", style: TextStyle(fontSize: 20)),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.train,
-                    size: 20,
-                  ),
-                  title: Text("Objectifs", style: TextStyle(fontSize: 20)),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.train,
-                    size: 20,
-                  ),
-                  title:
-                      Text("Partage en groupe", style: TextStyle(fontSize: 20)),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.settings,
-                    size: 20,
-                  ),
-                  title: Text("Parametres", style: TextStyle(fontSize: 20)),
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
+          appBar: appbar2function(mytabs, "Dettes"),
+          drawer: drowerfunction(context),
           body: TabBarView(
             children: [
               Column(

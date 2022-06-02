@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/categories.dart';
 import 'package:portfeuille_numerique/dettes.dart';
-import 'package:portfeuille_numerique/homePage.dart';
+import 'package:portfeuille_numerique/methodes.dart';
 
 class operation extends StatefulWidget {
   const operation({Key? key}) : super(key: key);
@@ -27,7 +27,7 @@ class _operationState extends State<operation> {
       home: DefaultTabController(
         length: mytabs.length,
         child: Scaffold(
-          appBar: appbarfunction(mytabs, "Operations"),
+          appBar: appbar2function(mytabs, "Operations"),
           drawer: drowerfunction(context),
           body: TabBarView(
             children: [

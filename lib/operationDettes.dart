@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:portfeuille_numerique/form_emprunteDatte.dart';
+import 'package:portfeuille_numerique/form_pretteDate.dart';
 
 class operdatte extends StatefulWidget {
   const operdatte({Key? key}) : super(key: key);
@@ -31,7 +33,10 @@ class _operdatteState extends State<operdatte> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 RaisedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => form_prette()));
+                  },
                   child: Text(
                     "Prette dettes",
                     style: TextStyle(),
@@ -39,7 +44,12 @@ class _operdatteState extends State<operdatte> {
                   color: Colors.red,
                 ),
                 RaisedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => formemprunte()));
+                  },
                   child: Text(
                     "Emprunte dettes",
                     style: TextStyle(),

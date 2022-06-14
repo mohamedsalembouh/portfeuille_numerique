@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 
 class statistique extends StatefulWidget {
-  const statistique({Key? key}) : super(key: key);
-
+  //const statistique({Key? key}) : super(key: key);
+  utilisateur? usr;
+  statistique(this.usr);
   @override
-  State<statistique> createState() => _statistiqueState();
+  State<statistique> createState() => _statistiqueState(this.usr);
 }
 
 class _statistiqueState extends State<statistique> {
+  utilisateur? usr;
+  _statistiqueState(this.usr);
   List<charts.Series<Task, String>>? _seriedata;
   List<charts.Series<pollution, String>>? _mesdata;
   List<charts.Series<salles, int>>? _allsalles;
@@ -132,7 +136,7 @@ class _statistiqueState extends State<statistique> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: appbar2function(mytabs, "Statistiques"),
-        drawer: drowerfunction(context),
+        drawer: drowerfunction(context, usr),
         body: TabBarView(
           children: [
             Container(

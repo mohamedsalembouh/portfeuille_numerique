@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/homePage.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:portfeuille_numerique/operation.dart';
 import 'package:portfeuille_numerique/parametres.dart';
 import 'package:portfeuille_numerique/partageGroupe.dart';
+import 'package:portfeuille_numerique/signin.dart';
 import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
 
@@ -13,7 +15,6 @@ PreferredSize appbarfunction(List<Tab> tabs, String title) {
   return PreferredSize(
     preferredSize: Size.fromHeight(100),
     child: AppBar(
-      // toolbarHeight: 100,
       bottom: TabBar(tabs: tabs),
       title: Text(title),
       actions: [
@@ -74,7 +75,7 @@ PreferredSize appbar3function(String title) {
   );
 }
 
-Widget drowerfunction(BuildContext context) {
+Widget drowerfunction(BuildContext context, utilisateur? user) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.only(top: 50),
@@ -93,9 +94,12 @@ Widget drowerfunction(BuildContext context) {
                     'assets/images/img_profile.jpg',
                   )),
             ),
-            padding: EdgeInsets.only(top: 137, left: 30),
+            padding: EdgeInsets.only(
+              top: 137,
+              left: 100,
+            ),
             child: Text(
-              "medsalem@gmail.com",
+              "${user!.nom}",
               style: TextStyle(fontSize: 20),
             ),
           ),
@@ -106,21 +110,13 @@ Widget drowerfunction(BuildContext context) {
             leading: Icon(Icons.dashboard_outlined),
             title: Text("Accueil", style: TextStyle(fontSize: 20)),
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => homepage.withNull()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          homepage(user.email, user.password)));
             },
           ),
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.home,
-            size: 20,
-          ),
-          title: Text("Transactions", style: TextStyle(fontSize: 20)),
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => operation()));
-          },
         ),
         ListTile(
           leading: Icon(
@@ -129,8 +125,8 @@ Widget drowerfunction(BuildContext context) {
           ),
           title: Text("Dettes", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => alldettes()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => alldettes(user)));
           },
         ),
         ListTile(
@@ -141,7 +137,7 @@ Widget drowerfunction(BuildContext context) {
           title: Text("Budgets", style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => budget()));
+                context, MaterialPageRoute(builder: (context) => budget(user)));
           },
         ),
         ListTile(
@@ -151,8 +147,8 @@ Widget drowerfunction(BuildContext context) {
           ),
           title: Text("Objectifs", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => objectif()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => objectif(user)));
           },
         ),
         ListTile(
@@ -163,7 +159,7 @@ Widget drowerfunction(BuildContext context) {
           title: Text("Statistiques", style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => statistique()));
+                MaterialPageRoute(builder: (context) => statistique(user)));
           },
         ),
         ListTile(
@@ -173,8 +169,8 @@ Widget drowerfunction(BuildContext context) {
           ),
           title: Text("Partage en groupe", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => partage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => partage(user)));
           },
         ),
         ListTile(
@@ -196,8 +192,14 @@ Widget drowerfunction(BuildContext context) {
             //   size: 20,
             // ),
             title: Text("Deconnection",
-                style: TextStyle(fontSize: 20, backgroundColor: Colors.pink)),
-            onTap: () {},
+                style: TextStyle(
+                    fontSize: 20,
+                    backgroundColor: Colors.black,
+                    color: Colors.white)),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => signinPage()));
+            },
           ),
         ),
       ],

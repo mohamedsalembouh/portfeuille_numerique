@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
+import 'package:portfeuille_numerique/models/operation_entree.dart';
+import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
@@ -55,15 +57,17 @@ class SQL_Helper {
     await db.execute(
         "CREATE TABLE utilisateur(id INTEGER PRIMARY KEY AUTOINCREMENT,nom TEXT,email TEXT,password TEXT)");
     await db.execute(
-        "create table categorie(id integer primary key autoincrement,nom text not null,type text)");
+        "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nom TEXT,type TEXT)");
     await db.execute(
-        "create table operation(id integer primary key autoincrement,montant integer not null,type text not null,description text not null,id_categorie integer ,foreign key(id_categorie) references categorie(id))");
+        "create table operation_entree(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,id_categorie INTEGER,foreign key(id_categorie) references categorie(id))");
     await db.execute(
-        "create table objectif(id integer primary key autoincrement,nom text not null,montant_cible integer not null,montant_donnee integer not null)");
+        "create table operation_sortir(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,id_categorie INTEGER,foreign key(id_categorie) references categorie(id))");
     await db.execute(
-        "create table dettes(id integer  primary key autoincrement,type text not null,description text not null,date_debut text not null,date_fin text not null)");
+        "create table objectif(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,montant_cible integer not null,montant_donnee integer not null)");
     await db.execute(
-        "create table budget(id integer primary key autoincrement,nom text not null,duree text not null,montant text not null,id_categorie integer ,foreign key(id_categorie) references categorie(id))");
+        "create table dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,type text not null,description text not null,date_debut text not null,date_fin text not null)");
+    await db.execute(
+        "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,duree text not null,montant text not null,id_categorie integer ,foreign key(id_categorie) references categorie(id))");
     await db.execute(
         "create table compte(id INTEGER PRIMARY KEY AUTOINCREMENT,solde int not null ,id_utilisateur integer ,foreign key(id_utilisateur) references utilisateur(id))");
   }
@@ -120,24 +124,68 @@ class SQL_Helper {
     return result;
   }
 
-  readData(String sql) async {
-    Database? db = await database;
-    List<Map> response = await db.rawQuery(sql);
-    return response;
-  }
+  // readData(String sql) async {
+  //   Database? db = await database;
+  //   List<Map> response = await db.rawQuery(sql);
+  //   return response;
+  // }
 
   Future<List<categorie>> getAllcategories() async {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps =
-        await db.rawQuery("SELECT * FROM categorie ");
+        await db.rawQuery("SELECT * FROM categorie");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return categorie(
-        maps[i]['name'],
+        maps[i]['nom'],
         maps[i]['type'],
       );
+    });
+  }
+
+  Future<categorie?> getSpecifyCategorie(String nom) async {
+    Database db = await this.database;
+    var result =
+        await db.rawQuery("SELECT * FROM categorie WHERE nom  ='$nom'");
+    if (result.length > 0) {
+      return new categorie.getmap(result.first);
+    }
+    return null;
+  }
+
+  Future<categorie?> getSpecifyCategorie2(int id) async {
+    Database db = await this.database;
+    var result = await db.rawQuery("SELECT * FROM categorie WHERE id  ='$id'");
+    if (result.length > 0) {
+      return new categorie.getmap(result.first);
+    }
+    return null;
+  }
+
+  Future<int> insertOperationEntree(operation_entree entree) async {
+    Database db = await this.database;
+    var result = db.insert("operation_entree", entree.tomap());
+    return result;
+  }
+
+  Future<int> insertOperationSortir(operation_sortir sortir) async {
+    Database db = await this.database;
+    var result = db.insert("operation_sortir", sortir.tomap());
+    return result;
+  }
+
+  Future<List<operation_sortir>> getAllDepenses() async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps =
+        await db.rawQuery("SELECT * FROM operation_sortir");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return operation_sortir(
+          maps[i]['montant'], maps[i]['description'], maps[i]['id_categorie']);
     });
   }
 }

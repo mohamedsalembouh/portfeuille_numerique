@@ -59,6 +59,7 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
               child: RaisedButton(
                 onPressed: () {
                   insertCategorie(catnom.text, cattype.text);
+                  // print(catnom.text);
                 },
                 child: Text(
                   "Ajouter",

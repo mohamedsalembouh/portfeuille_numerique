@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/methodes.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/operationDettes.dart';
+import 'package:portfeuille_numerique/parametres.dart';
+import 'package:portfeuille_numerique/partageGroupe.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
+
+import 'budget.dart';
+import 'homePage.dart';
+import 'objectifs.dart';
 
 class alldettes extends StatefulWidget {
-  const alldettes({Key? key}) : super(key: key);
-
+  utilisateur? usr;
+  //alldettes({Key? key}) : super(key: key);
+  alldettes(this.usr);
   @override
-  State<alldettes> createState() => _alldettesState();
+  State<alldettes> createState() => _alldettesState(this.usr);
 }
 
 class _alldettesState extends State<alldettes> {
@@ -18,6 +27,8 @@ class _alldettesState extends State<alldettes> {
       text: "Clos",
     )
   ];
+  utilisateur? usr;
+  _alldettesState(this.usr);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +37,7 @@ class _alldettesState extends State<alldettes> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Dettes"),
-          drawer: drowerfunction(context),
+          drawer: drowerfunction(context, usr),
           body: TabBarView(
             children: [
               Column(

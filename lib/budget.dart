@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/formBudget.dart';
 import 'package:portfeuille_numerique/methodes.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 
 class budget extends StatefulWidget {
-  const budget({Key? key}) : super(key: key);
-
+  utilisateur? usr;
+  // budget({Key? key}) : super(key: key);
+  budget(this.usr);
   @override
-  State<budget> createState() => _budgetState();
+  State<budget> createState() => _budgetState(this.usr);
 }
 
 class _budgetState extends State<budget> {
@@ -18,6 +20,8 @@ class _budgetState extends State<budget> {
       text: "deja realises",
     )
   ];
+  utilisateur? usr;
+  _budgetState(this.usr);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +30,7 @@ class _budgetState extends State<budget> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Budgets"),
-          drawer: drowerfunction(context),
+          drawer: drowerfunction(context, this.usr),
           body: TabBarView(
             children: [
               Column(

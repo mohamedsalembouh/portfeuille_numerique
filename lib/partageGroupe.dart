@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/methodes.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 
 class partage extends StatefulWidget {
-  const partage({Key? key}) : super(key: key);
-
+  // const partage({Key? key}) : super(key: key);
+  utilisateur? usr;
+  partage(this.usr);
   @override
-  State<partage> createState() => _partageState();
+  State<partage> createState() => _partageState(this.usr);
 }
 
 class _partageState extends State<partage> {
+  utilisateur? usr;
+  _partageState(this.usr);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Partage en groupe"),
       ),
-      drawer: drowerfunction(context),
+      drawer: drowerfunction(context, usr),
       body: Column(
         children: [
           Expanded(

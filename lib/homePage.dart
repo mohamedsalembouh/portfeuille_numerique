@@ -4,11 +4,17 @@ import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/categories.dart';
 import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/methodes.dart';
+import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
+import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:portfeuille_numerique/operation.dart';
+import 'package:portfeuille_numerique/parametres.dart';
+import 'package:portfeuille_numerique/partageGroupe.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:toast/toast.dart';
 import 'db/sql_helper.dart';
 import 'profileUser.dart';
 
@@ -16,7 +22,6 @@ class homepage extends StatefulWidget {
   homepage.withNull({Key? key}) : super(key: key);
   String? email;
   String? pass;
-
   homepage(this.email, this.pass);
 
   @override
@@ -29,27 +34,64 @@ class _homepageState extends State<homepage> {
   int? k;
   int? a;
   static var m;
-
+  Map? myresult;
+  static var h;
   TextEditingController f_solde = TextEditingController();
   _homepageState(this.email, this.pass);
+  SQL_Helper helper = new SQL_Helper();
+  List<charts.Series<diagram, String>?>? _seriedata;
+  static var allDepenses;
+  var allcat = [];
+  getNomCategorie() async {
+    int x = allDepenses.length;
+    for (int i = 0; i < x; i++) {
+      categorie? cat =
+          await helper.getSpecifyCategorie2(allDepenses[i].id_categorie);
+      allcat.add(cat);
+    }
+  }
 
-  List<charts.Series<Task, String>>? _seriedata;
-  _generatedData() {
-    var piedata = [
-      Task("work", 40000, Colors.red),
-      Task("achats", 200000, Colors.green),
+  generatedData() async {
+    // List<categorie> allDepenses = await helper.getAllcategories();
+    //print(allDepenses[7].description);
+    // int x = allDepenses.length;
+    // List<operation_sortir> allDepenses = [
+    //   operation_sortir(2000, "gggg", 1),
+    //   operation_sortir(3000, "jjjj", 2)
+    // ];
+    // int? id = allDepenses[0].id_categorie;
+    // var mnt = allDepenses[0].montant;
+    //var nom = helper.getSpecifyCategorie2(id!);
+    // var nom = allDepenses[0].description;
+
+    int x = allDepenses.length;
+    // var cat;
+    // print(x);
+    // var coleur;
+    var piedata = <diagram>[];
+    for (int i = 0; i < x; i++) {
+      // cat = await helper.getSpecifyCategorie2(allDepenses[0].id_categorie);
+      piedata.add(diagram(allcat[i].nom, allDepenses[i].montant, Colors.green));
+      // mnt = allDepenses[0].montant,
+      // id = allDepenses[0].id_categorie,
+      // nom = helper.getSpecifyCategorie2(id),
+      //diagram(mnt, nom, Colors.red),
+
+      // Task("work", 40000, Colors.red),
+      // Task("achats", 200000, Colors.green),
       // Task("ventes", 40000, Colors.orange),
       // Task("hhhh", 40000, Colors.yellow),
-    ];
+    }
+
     _seriedata!.add(
       charts.Series(
           data: piedata,
-          domainFn: (Task task, _) => task.task,
-          measureFn: (Task task, _) => task.taskvalue,
-          colorFn: (Task task, _) =>
+          domainFn: (diagram task, _) => task.nomCat,
+          measureFn: (diagram task, _) => task.montant,
+          colorFn: (diagram task, _) =>
               charts.ColorUtil.fromDartColor(task.colorval),
           id: 'Daily task',
-          labelAccessorFn: (Task row, _) => '${row.taskvalue}'),
+          labelAccessorFn: (diagram row, _) => '${row.nomCat}'),
     );
   }
 
@@ -71,10 +113,9 @@ class _homepageState extends State<homepage> {
     // TODO: implement initState
     super.initState();
     _seriedata = [];
-    _generatedData();
+    generatedData();
+    // updateSolde();
   }
-
-  SQL_Helper helper = new SQL_Helper();
 
   insertSolde() async {
     utilisateur? user = await helper.getUser(this.email!, this.pass!);
@@ -86,6 +127,7 @@ class _homepageState extends State<homepage> {
     } else {
       await helper.insert_compte(new_cmp);
     }
+    updateSolde();
   }
 
   Future<compte?> getcompteUser(int id_utilisateur) async {
@@ -104,13 +146,12 @@ class _homepageState extends State<homepage> {
     return solde;
   }
 
-  printthing() {
-    print("hello");
-  }
-
   void updateSolde() async {
+    allDepenses = await helper.getAllDepenses();
+    getNomCategorie();
     utilisateur? user = await helper.getUser(this.email!, this.pass!);
     a = user!.id;
+    h = user.nom;
     final Future<Database>? db = helper.initialiseDataBase();
     var our_db = db;
     if (our_db != null) {
@@ -123,7 +164,39 @@ class _homepageState extends State<homepage> {
         });
       });
     }
-    // m = this.k;
+  }
+
+  modifySolde(int val, int montant) async {
+    utilisateur? user = await helper.getUser(this.email!, this.pass!);
+    a = user!.id;
+    compte? cmp = await helper.getCompteUser(a!);
+    if (val == 0) {
+      if (cmp != null) {
+        int solde = cmp.solde!;
+        int newMontant = solde + montant;
+        //print(newMontant);
+        compte updateComp = compte(newMontant, a);
+        helper.update_compte(updateComp);
+      } else {
+        compte newCompte = compte(montant, a);
+        helper.insert_compte(newCompte);
+      }
+    } else {
+      if (cmp != null) {
+        int solde = cmp.solde!;
+        int newMontant = solde - montant;
+        //print(newMontant);
+        compte updateComp = compte(newMontant, a);
+        helper.update_compte(updateComp);
+      } else {
+        // var snackBar = SnackBar(content: Text("pas d'argent"));
+        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // Toast.show("vous n'avez pas d'argent");
+        compte newCompte = compte(-montant, a);
+        helper.insert_compte(newCompte);
+      }
+    }
+    updateSolde();
   }
 
   @override
@@ -132,19 +205,18 @@ class _homepageState extends State<homepage> {
       updateSolde();
     } else {
       _seriedata = [];
-      _generatedData();
+      generatedData();
     }
-    // updateSolde();
-    //updateSolde();
-    //printthing();
     m = this.k;
+    utilisateur usr = utilisateur(h, this.email, this.pass);
+
     return MaterialApp(
       home: DefaultTabController(
         length: mytabs.length,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbarfunction(mytabs, "Accueil"),
-          drawer: drowerfunction(context),
+          drawer: drowerfunction(context, usr),
           body: TabBarView(
             children: [
               Container(
@@ -216,11 +288,10 @@ class _homepageState extends State<homepage> {
                                         child: Text("Enregistrer"),
                                         onPressed: () {
                                           insertSolde();
-                                          setState(() {
-                                            updateSolde();
-                                          });
+                                          //updateSolde();
 
                                           Navigator.pop(context);
+                                          // updateSolde();
                                         },
                                       ),
                                     ],
@@ -267,22 +338,8 @@ class _homepageState extends State<homepage> {
                             _seriedata,
                             animate: true,
                             animationDuration: Duration(seconds: 5),
-                            // behaviors: [
-                            //   new charts.DatumLegend(
-                            //     outsideJustification:
-                            //         charts.OutsideJustification.endDrawArea,
-                            //     horizontalFirst: false,
-                            //     desiredMaxRows: 2,
-                            //     cellPadding:
-                            //         new EdgeInsets.only(right: 4, bottom: 4),
-                            //     entryTextStyle: charts.TextStyleSpec(
-                            //       color: charts
-                            //           .MaterialPalette.purple.shadeDefault,
-                            //       fontSize: 11,
-                            //     ),
-                            //   )
-                            // ],
                             defaultRenderer: new charts.ArcRendererConfig(
+                                // customRendererId: 'novoId',
                                 arcWidth: 100,
                                 arcRendererDecorators: [
                                   new charts.ArcLabelDecorator(
@@ -295,43 +352,9 @@ class _homepageState extends State<homepage> {
                     ),
                     //fermer column statistiques
                     //add column vue
-
-                    // Column(
-                    //   //crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: [
-                    //     Padding(
-                    //       padding: EdgeInsets.only(top: 40),
-                    //       child: Row(
-                    //         children: [
-                    //           Text(
-                    //             "Vue sur les dernieres transactions ",
-                    //             style: TextStyle(fontSize: 20),
-                    //           )
-                    //         ],
-                    //       ),
-                    //     ),
-                    //     Container(
-                    //       // width: 100,
-                    //       height: 160,
-                    //       color: Colors.grey,
-                    //       child: ListView.builder(
-                    //           padding: EdgeInsets.zero,
-                    //           itemCount: 10,
-                    //           scrollDirection: Axis.vertical,
-                    //           itemBuilder: (context, index) {
-                    //             return ListTile(
-                    //               title: Text("${index + 1}"),
-                    //               // leading: Icon(Icons.home),
-                    //             );
-                    //           }),
-                    //     ),
-                    //   ],
-                    // ),
                     //fermer column vue
 
                     Container(
-                      //  width: MediaQuery.of(context).size.width,
-                      //   height: MediaQuery.of(context).size.height,
                       child: Padding(
                         padding: EdgeInsets.only(left: 350, bottom: 20),
                         child: FloatingActionButton(
@@ -339,11 +362,15 @@ class _homepageState extends State<homepage> {
                             Icons.add,
                             size: 20,
                           ),
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                            myresult = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => operation()));
+                            print(myresult);
+                            if (myresult != null) {
+                              modifySolde(myresult![0], myresult![1]);
+                            }
                           },
                         ),
                       ),
@@ -393,4 +420,15 @@ class Task {
   Color? colorval;
 
   Task(this.task, this.taskvalue, this.colorval);
+}
+
+class diagram {
+  String? nomCat;
+  int? montant;
+  Color? colorval;
+  //diagram(this.montant, this.nomCat);
+  //diagram(this.montant, this.nomCat, this.colorval);
+  //diagram(this.montant, this.colorval);
+  // diagram(this.nomCat, this.colorval);
+  diagram(this.nomCat, this.montant, this.colorval);
 }

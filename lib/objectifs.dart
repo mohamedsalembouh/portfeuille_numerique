@@ -3,11 +3,14 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/newObjectif.dart';
 
-class objectif extends StatefulWidget {
-  const objectif({Key? key}) : super(key: key);
+import 'models/utilisateur.dart';
 
+class objectif extends StatefulWidget {
+  // const objectif({Key? key}) : super(key: key);
+  utilisateur? usr;
+  objectif(this.usr);
   @override
-  State<objectif> createState() => _objectifState();
+  State<objectif> createState() => _objectifState(this.usr);
 }
 
 class _objectifState extends State<objectif> {
@@ -19,6 +22,8 @@ class _objectifState extends State<objectif> {
       text: "Complet",
     )
   ];
+  utilisateur? usr;
+  _objectifState(this.usr);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,7 +32,7 @@ class _objectifState extends State<objectif> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Objectifs"),
-          drawer: drowerfunction(context),
+          drawer: drowerfunction(context, this.usr),
           body: TabBarView(
             children: [
               Column(

@@ -13,8 +13,8 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
   TextEditingController catnom = TextEditingController();
   TextEditingController cattype = TextEditingController();
 
-  insertCategorie(String nom, String type) async {
-    categorie cat = new categorie(nom, type);
+  insertCategorie(String nom, String coleur) async {
+    categorie cat = new categorie(nom, coleur);
     SQL_Helper helper = new SQL_Helper();
     int result = await helper.insert_categorie(cat);
     if (result == 0) {
@@ -59,6 +59,7 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
               child: RaisedButton(
                 onPressed: () {
                   insertCategorie(catnom.text, cattype.text);
+                  // print(catnom.text);
                 },
                 child: Text(
                   "Ajouter",

@@ -51,6 +51,11 @@ class _homepageState extends State<homepage> {
     }
   }
 
+  Color getColeur(String nom) {
+    Color coleur = new Color(int.parse(nom));
+    return coleur;
+  }
+
   generatedData() async {
     // List<categorie> allDepenses = await helper.getAllcategories();
     //print(allDepenses[7].description);
@@ -70,8 +75,10 @@ class _homepageState extends State<homepage> {
     // var coleur;
     var piedata = <diagram>[];
     for (int i = 0; i < x; i++) {
+      //var s = "red";
       // cat = await helper.getSpecifyCategorie2(allDepenses[0].id_categorie);
-      piedata.add(diagram(allcat[i].nom, allDepenses[i].montant, Colors.green));
+      piedata.add(diagram(
+          allcat[i].nom, allDepenses[i].montant, getColeur(allcat[i].coleur)));
       // mnt = allDepenses[0].montant,
       // id = allDepenses[0].id_categorie,
       // nom = helper.getSpecifyCategorie2(id),
@@ -209,7 +216,7 @@ class _homepageState extends State<homepage> {
     }
     m = this.k;
     utilisateur usr = utilisateur(h, this.email, this.pass);
-
+    print(allcat);
     return MaterialApp(
       home: DefaultTabController(
         length: mytabs.length,

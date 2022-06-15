@@ -57,7 +57,7 @@ class SQL_Helper {
     await db.execute(
         "CREATE TABLE utilisateur(id INTEGER PRIMARY KEY AUTOINCREMENT,nom TEXT,email TEXT,password TEXT)");
     await db.execute(
-        "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nom TEXT,type TEXT)");
+        "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nom TEXT,coleur TEXT)");
     await db.execute(
         "create table operation_entree(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,id_categorie INTEGER,foreign key(id_categorie) references categorie(id))");
     await db.execute(
@@ -140,7 +140,7 @@ class SQL_Helper {
     return List.generate(maps.length, (i) {
       return categorie(
         maps[i]['nom'],
-        maps[i]['type'],
+        maps[i]['coleur'],
       );
     });
   }

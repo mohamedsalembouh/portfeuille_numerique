@@ -1,22 +1,24 @@
+import 'package:flutter/cupertino.dart';
+
 class categorie {
   int? id;
   String? nom;
-  String? type;
+  String? coleur;
 
-  categorie(this.nom, this.type);
-  categorie.withId(this.id, this.nom, this.type);
+  categorie(this.nom, this.coleur);
+  categorie.withId(this.id, this.nom, this.coleur);
 
   Map<String, dynamic> tomap() {
     var map = Map<String, dynamic>();
     map['id'] = this.id;
     map['nom'] = this.nom;
-    map['type'] = this.type;
+    map['coleur'] = this.coleur;
     return map;
   }
 
   categorie.getmap(Map<String, dynamic> map) {
     this.id = map['id'];
     this.nom = map['nom'];
-    this.type = map['type'];
+    this.coleur = map['coleur'];
   }
 }

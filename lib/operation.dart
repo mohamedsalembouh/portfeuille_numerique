@@ -7,27 +7,36 @@ import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/operation_entree.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 
+import 'models/compte.dart';
+
 class operation extends StatefulWidget {
-  operation({Key? key}) : super(key: key);
-  String? nomCategorie;
-  int selectedPage = 0;
-  operation.withnom(this.selectedPage, this.nomCategorie);
+  //operation({Key? key}) : super(key: key);
+  //String? nomCategorie;
+  int? numero;
+  utilisateur? usr;
+  operation(this.usr, this.numero);
   @override
-  State<operation> createState() =>
-      _operationState(this.selectedPage, this.nomCategorie);
+  State<operation> createState() => _operationState(this.usr, this.numero);
 }
 
 class _operationState extends State<operation> {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey1 = new GlobalKey<FormState>();
+  final _formKey2 = new GlobalKey<FormState>();
   TextEditingController entreeMontant = TextEditingController();
   TextEditingController entreeDesc = TextEditingController();
   TextEditingController sortirMontant = TextEditingController();
   TextEditingController sortirDesc = TextEditingController();
-  String? nomcategorie;
-  int? selectedPage;
-  _operationState(this.selectedPage, this.nomcategorie);
+  // String? nomcategorie;
+  // int? selectedPage;
+  int? numero;
+  utilisateur? usr;
+  _operationState(this.usr, this.numero);
+  List<operation_sortir>? alldepenses;
+  int? count;
   final List<Tab> mytabs = [
     Tab(
       text: "Entree",
@@ -39,39 +48,82 @@ class _operationState extends State<operation> {
 
   SQL_Helper helper = new SQL_Helper();
   String currentNomCat = "Choisir une categorie";
-  insertRevenus(int montant, String description) async {
+
+  // updatedepenses() async {
+  //   utilisateur? user =
+  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
+  //   int a = user!.id!;
+  //   final Future<Database>? db = helper.initialiseDataBase();
+  //   var our_db = db;
+  //   if (our_db != null) {
+  //     our_db.then((database) {
+  //       Future<List<operation_sortir>> depenses = helper.getAllDepenses(a);
+  //       depenses.then((theList) {
+  //         setState(() {
+  //           this.alldepenses = theList;
+  //           count = theList.length;
+  //         });
+  //       });
+  //     });
+  //   }
+  // }
+
+  insertRevenus(String value, String description) async {
+    final form = _formKey1.currentState!;
     // final form = _formKey.currentState;
     // if (form!.validate()) {
     // if (montant == 0) {
     //   Toast.show("entrer montant");
     // }
-    if (currentNomCat != "Choisir une categorie") {
+    if (form.validate()) {
+      int montant = int.parse(value);
       categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
       int idCat = cat!.id!;
       operation_entree entree =
-          new operation_entree(montant, description, idCat);
+          new operation_entree(montant, description, idCat, this.numero);
       int a = await helper.insertOperationEntree(entree);
       if (a != 0) {
         print("operation inserted");
       } else {
         print("not inserted");
       }
-    } else {
-      print("no categorie");
-      Toast.show("choisis une categorie SVP");
     }
   }
 
-  insertDepense(int montant, String description) async {
-    categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
-    int idCat = cat!.id!;
-    operation_sortir sortir = new operation_sortir(montant, description, idCat);
-    int a = await helper.insertOperationSortir(sortir);
-    if (a != 0) {
-      print("operation sortir inserted");
-    } else {
-      print("not inserted");
+  insertDepense(String value, String description) async {
+    final form = _formKey2.currentState!;
+    if (form.validate()) {
+      int montant = int.parse(value);
+      compte? comp = await helper.getCompteUser(numero!);
+      if (comp != null) {
+        int solde = comp.solde!;
+        if (solde > montant) {
+          categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
+          int idCat = cat!.id!;
+          operation_sortir sortir =
+              new operation_sortir(montant, description, idCat, this.numero);
+          int a = await helper.insertOperationSortir(sortir);
+          if (a != 0) {
+            print("operation sortir inserted");
+          } else {
+            print("not inserted");
+          }
+
+          Map<int, int> myData = new Map();
+          myData[0] = 1;
+          myData[1] = montant;
+          Navigator.of(context).pop(myData);
+        } else {
+          showText(context, "désolé",
+              "vous n'avez pas de solde sufficant pour cette operation");
+        }
+      } else {
+        showText(context, "désolé", "vous n'avez pas de solde");
+      }
     }
+
+    // updatedepenses();
+    // print(this.count);
   }
 
   Future<List<categorie>> achatsCategorie() async {
@@ -79,16 +131,54 @@ class _operationState extends State<operation> {
     return achatCategorieList;
   }
 
-  //categorie? _currentCategorie;
+  // modifySoldemoins(String value) async {
+  //   int montant = int.parse(value);
+  //   utilisateur? user =
+  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
+  //   int a = user!.id!;
+  //   compte? cmp = await helper.getCompteUser(a);
+
+  //   // if (cmp != null) {
+  //   //   int solde = cmp.solde!;
+  //   //   int newMontant = solde + montant;
+  //   //   //print(newMontant);
+  //   //   compte updateComp = compte(newMontant, a);
+  //   //   helper.update_compte(updateComp);
+  //   // } else {
+  //   //   compte newCompte = compte(montant, a);
+  //   //   helper.insert_compte(newCompte);
+  //   // }
+
+  //   if (cmp != null) {
+  //     int solde = cmp.solde!;
+  //     int newMontant = solde - montant;
+  //     //print(newMontant);
+  //     compte updateComp = compte(newMontant, a);
+  //     helper.update_compte(updateComp);
+  //     if (currentNomCat == "Choisir une categorie") {
+  //       Toast.show("choisir une categorie SVP");
+  //     } else {
+  //       insertDepense(sortirMontant.text, sortirDesc.text);
+  //       // Navigator.of(context).pop(montant);
+  //     }
+  //   } else {
+  //     showText(context, "désolé", "vous n'avez pas de solde");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    // updatedepenses();
+    print(this.numero);
     return MaterialApp(
       title: "",
       home: DefaultTabController(
-        initialIndex: selectedPage!,
+        // initialIndex: selectedPage!,
         length: mytabs.length,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
+
+          drawer: drowerfunction(context, usr),
           appBar: AppBar(
               toolbarHeight: 100,
               bottom: TabBar(tabs: mytabs),
@@ -98,282 +188,244 @@ class _operationState extends State<operation> {
             children: [
               Column(
                 children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 30, bottom: 10),
-                        child: FutureBuilder(
-                            future: achatsCategorie(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<List<categorie>> snapshot) {
-                              if (!snapshot.hasData) {
-                                return CircularProgressIndicator();
-                              } else {
-                                return DropdownButton<String>(
-                                  items: snapshot.data!
-                                      .map((cat) => DropdownMenuItem<String>(
-                                            child: Text(cat.nom!),
-                                            value: cat.nom,
-                                          ))
-                                      .toList(),
-                                  onChanged: (String? value) {
-                                    setState(() {
-                                      currentNomCat = value!;
-                                    });
-                                  },
-                                  isExpanded: true,
-                                  //value: currentNomCat,
-                                  hint: Text(
-                                    '$currentNomCat',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      //fontWeight: FontWeight.bold
-                                    ),
-                                  ),
-                                );
-                              }
-                            }),
-                      ),
-                      // SizedBox(height: 20.0),
-                      // _currentCategorie != null
-                      //     ? Text("Name: " + _currentCategorie!.nom!)
-                      //     : Text("No User selected"),
-                      // Padding(
-                      //   padding: EdgeInsets.only(),
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: [
-                      //       Row(
-                      //         children: [
-                      //           RaisedButton(
-                      //             onPressed: () {
-                      //               Navigator.push(
-                      //                   context,
-                      //                   MaterialPageRoute(
-                      //                       builder: (context) =>
-                      //                           listCategories.withNumber(0)));
-                      //             },
-                      //             child: Text(
-                      //               "Choisir une categorie",
-                      //               //style: TextStyle(color: Colors.orange),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  Card(
+                    margin: EdgeInsets.only(top: 40),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width - 50,
+                      color: Colors.white70,
+                      child: Form(
+                        key: _formKey1,
+                        child: Column(
                           children: [
-                            Icon(Icons.add),
-                            Container(
-                              width: 300,
-                              height: 50,
+                            Padding(
+                              padding: EdgeInsets.only(top: 30, left: 10),
+                              child: FutureBuilder(
+                                  future: achatsCategorie(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<categorie>> snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return CircularProgressIndicator();
+                                    } else {
+                                      return DropdownButton<String>(
+                                        items: snapshot.data!
+                                            .map((cat) =>
+                                                DropdownMenuItem<String>(
+                                                  child: Text(cat.nom!),
+                                                  value: cat.nom,
+                                                ))
+                                            .toList(),
+                                        onChanged: (String? value) {
+                                          setState(() {
+                                            currentNomCat = value!;
+                                          });
+                                        },
+                                        isExpanded: true,
+                                        //value: currentNomCat,
+                                        hint: Text(
+                                          '$currentNomCat',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            //fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10, left: 10),
+                              // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                               child: TextFormField(
-                                // initialValue: 1,
                                 controller: entreeMontant,
                                 keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                    hintText: 'Montant',
-                                    border: OutlineInputBorder()),
-                                style: TextStyle(fontSize: 20),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "entree une montant";
+                                  }
+                                  return null;
+                                },
+                                decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: "Montant",
+                                ),
                               ),
                             ),
-                            Text(
-                              "MRU",
-                              style: TextStyle(
-                                  fontSize: 30, backgroundColor: Colors.green),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10, left: 10),
+
+                              //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                              child: TextFormField(
+                                controller: entreeDesc,
+                                decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: "Description",
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 40, left: 100),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 30),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Annuler'),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        if (currentNomCat ==
+                                            "Choisir une categorie") {
+                                          Toast.show(
+                                              "choisir une categorie SVP");
+                                        } else {
+                                          insertRevenus(entreeMontant.text,
+                                              entreeDesc.text);
+                                          int montant =
+                                              int.parse(entreeMontant.text);
+                                          Map<int, int> myData = new Map();
+                                          myData[0] = 0;
+                                          myData[1] = montant;
+                                          Navigator.of(context).pop(myData);
+                                          // Navigator.pop(context, myData);
+                                        }
+                                      },
+                                      child: Text('Enregistrer'),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20, right: 50),
-                        child: Container(
-                          width: 300,
-                          height: 50,
-                          child: TextFormField(
-                            controller: entreeDesc,
-                            decoration: InputDecoration(
-                                hintText: 'description',
-                                border: OutlineInputBorder()),
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 40, right: 100),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            RaisedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "Cancel",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              color: Colors.red,
-                            ),
-                            RaisedButton(
-                              onPressed: () {
-                                if (entreeMontant.text == "") {
-                                  Toast.show("entree montant");
-                                } else if (currentNomCat ==
-                                    "Choisir une categorie") {
-                                  Toast.show("choisir une categorie SVP");
-                                } else {
-                                  insertRevenus(int.parse(entreeMontant.text),
-                                      entreeDesc.text);
-                                  int montant = int.parse(entreeMontant.text);
-                                  Map<int, int> myData = new Map();
-                                  myData[0] = 0;
-                                  myData[1] = montant;
-                                  Navigator.of(context).pop(myData);
-                                  // Navigator.pop(context, myData);
-                                }
-                                //insertRevenus(int.parse(entreeMontant.text),
-                                //entreeDesc.text);
-                                // Navigator.pop(context);
-                                // print(nomcategorie);
-                              },
-                              child: Text(
-                                "Save",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              color: Colors.green,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
               //le deuscieme tab
               Column(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 30, bottom: 10),
-                    child: FutureBuilder(
-                        future: achatsCategorie(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<categorie>> snapshot) {
-                          if (!snapshot.hasData) {
-                            return CircularProgressIndicator();
-                          } else {
-                            return DropdownButton<String>(
-                              items: snapshot.data!
-                                  .map((cat) => DropdownMenuItem<String>(
-                                        child: Text(cat.nom!),
-                                        value: cat.nom,
-                                      ))
-                                  .toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  currentNomCat = value!;
-                                });
-                              },
-                              isExpanded: true,
-                              //value: currentNomCat,
-                              hint: Text(
-                                '$currentNomCat',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  //fontWeight: FontWeight.bold
+                  Card(
+                    margin: EdgeInsets.only(top: 40),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width - 50,
+                      color: Colors.white70,
+                      child: Form(
+                        key: _formKey2,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 30, left: 10),
+                              child: FutureBuilder(
+                                  future: achatsCategorie(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<categorie>> snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return CircularProgressIndicator();
+                                    } else {
+                                      return DropdownButton<String>(
+                                        items: snapshot.data!
+                                            .map((cat) =>
+                                                DropdownMenuItem<String>(
+                                                  child: Text(cat.nom!),
+                                                  value: cat.nom,
+                                                ))
+                                            .toList(),
+                                        onChanged: (String? value) {
+                                          setState(() {
+                                            currentNomCat = value!;
+                                          });
+                                        },
+                                        isExpanded: true,
+                                        //value: currentNomCat,
+                                        hint: Text(
+                                          '$currentNomCat',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            //fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10, left: 10),
+                              // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                              child: TextFormField(
+                                controller: sortirMontant,
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "entree une montant";
+                                  }
+                                  return null;
+                                },
+                                decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: "Montant",
                                 ),
                               ),
-                            );
-                          }
-                        }),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.remove),
-                        Container(
-                          width: 300,
-                          height: 50,
-                          child: TextField(
-                            controller: sortirMontant,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                hintText: 'Montant',
-                                border: OutlineInputBorder()),
-                            style: TextStyle(fontSize: 20),
-                          ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10, left: 10),
+
+                              //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                              child: TextFormField(
+                                controller: sortirDesc,
+                                decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: "Description",
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 40, left: 100),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 30),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Annuler'),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        if (currentNomCat ==
+                                            "Choisir une categorie") {
+                                          Toast.show(
+                                              "choisir une categorie SVP");
+                                        } else {
+                                          insertDepense(sortirMontant.text,
+                                              sortirDesc.text);
+
+                                          // Navigator.pop(context, myData);
+                                        }
+                                      },
+                                      child: Text('Enregistrer'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "MRU",
-                          style: TextStyle(
-                              fontSize: 30, backgroundColor: Colors.green),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 20, right: 50),
-                    child: Container(
-                      width: 300,
-                      height: 50,
-                      child: TextField(
-                        controller: sortirDesc,
-                        decoration: InputDecoration(
-                            hintText: 'description',
-                            border: OutlineInputBorder()),
-                        style: TextStyle(fontSize: 20),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 40, right: 100),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        RaisedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          color: Colors.red,
-                        ),
-                        RaisedButton(
-                          onPressed: () {
-                            if (sortirMontant.text == "") {
-                              Toast.show("entree montant");
-                            } else if (currentNomCat ==
-                                "Choisir une categorie") {
-                              Toast.show("choisir une categorie SVP");
-                            } else {
-                              insertDepense(int.parse(sortirMontant.text),
-                                  sortirDesc.text);
-                              int montant = int.parse(sortirMontant.text);
-                              Map<int, int> myData = new Map();
-                              myData[0] = 1;
-                              myData[1] = montant;
-                              Navigator.of(context).pop(myData);
-                            }
-                          },
-                          child: Text(
-                            "Save",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          color: Colors.green,
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
-              ),
+              )
             ],
           ),
         ),

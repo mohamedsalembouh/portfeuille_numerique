@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/form_emprunteDatte.dart';
 import 'package:portfeuille_numerique/form_pretteDate.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 
 class operdatte extends StatefulWidget {
-  const operdatte({Key? key}) : super(key: key);
-
+  utilisateur? usr;
+  //const operdatte({Key? key}) : super(key: key);
+  operdatte(this.usr);
   @override
-  State<operdatte> createState() => _operdatteState();
+  State<operdatte> createState() => _operdatteState(this.usr);
 }
 
 class _operdatteState extends State<operdatte> {
+  utilisateur? usr;
+  _operdatteState(this.usr);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +38,10 @@ class _operdatteState extends State<operdatte> {
               children: [
                 RaisedButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => form_prette()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => form_prette(this.usr)));
                   },
                   child: Text(
                     "Prette dettes",
@@ -48,7 +54,7 @@ class _operdatteState extends State<operdatte> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => formemprunte()));
+                            builder: (context) => formemprunte(this.usr)));
                   },
                   child: Text(
                     "Emprunte dettes",

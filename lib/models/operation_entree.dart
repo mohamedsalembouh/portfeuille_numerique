@@ -3,7 +3,9 @@ class operation_entree {
   int? montant;
   String? description;
   int? id_categorie;
-  operation_entree(this.montant, this.description, this.id_categorie);
+  int? id_compte;
+  operation_entree(
+      this.montant, this.description, this.id_categorie, this.id_compte);
 
   Map<String, dynamic> tomap() {
     var map = Map<String, dynamic>();
@@ -11,6 +13,7 @@ class operation_entree {
     map['montant'] = this.montant;
     map['description'] = this.description;
     map['id_categorie'] = this.id_categorie;
+    map['id_compte'] = this.id_compte;
     return map;
   }
 
@@ -19,5 +22,6 @@ class operation_entree {
     this.montant = map['montant'];
     this.description = map['description'];
     this.id_categorie = map['id_categorie'];
+    this.id_compte = map['id_compte'];
   }
 }

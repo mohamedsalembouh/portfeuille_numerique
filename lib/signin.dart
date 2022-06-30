@@ -45,7 +45,7 @@ class _signinPageState extends State<signinPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sign in"),
+        title: Text("Nom App"),
       ),
       body: Form(
         key: _formKey,
@@ -59,13 +59,13 @@ class _signinPageState extends State<signinPage> {
                   SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    "Login",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 30),
-                  ),
+                  // Text(
+                  //   "Login",
+                  //   style: TextStyle(
+                  //       fontWeight: FontWeight.bold,
+                  //       color: Colors.black,
+                  //       fontSize: 30),
+                  // ),
                   SizedBox(
                     height: 20,
                   ),

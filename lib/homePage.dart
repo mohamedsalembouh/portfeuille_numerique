@@ -6,6 +6,7 @@ import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
+import 'package:portfeuille_numerique/models/depensesCats.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
@@ -36,70 +37,69 @@ class _homepageState extends State<homepage> {
   static var m;
   Map? myresult;
   static var h;
+  int? total;
   TextEditingController f_solde = TextEditingController();
   _homepageState(this.email, this.pass);
   SQL_Helper helper = new SQL_Helper();
   List<charts.Series<diagram, String>?>? _seriedata;
-  static var allDepenses;
-  var allcat = [];
-  getNomCategorie() async {
-    int x = allDepenses.length;
-    for (int i = 0; i < x; i++) {
-      categorie? cat =
-          await helper.getSpecifyCategorie2(allDepenses[i].id_categorie);
-      allcat.add(cat);
-    }
-  }
-
-  Color getColeur(String nom) {
-    Color coleur = new Color(int.parse(nom));
-    return coleur;
-  }
+  List<depensesCats>? allDepenses;
+  int count = 0;
+  var piedata2 = <diagram>[];
 
   generatedData() async {
-    // List<categorie> allDepenses = await helper.getAllcategories();
-    //print(allDepenses[7].description);
-    // int x = allDepenses.length;
-    // List<operation_sortir> allDepenses = [
-    //   operation_sortir(2000, "gggg", 1),
-    //   operation_sortir(3000, "jjjj", 2)
-    // ];
-    // int? id = allDepenses[0].id_categorie;
-    // var mnt = allDepenses[0].montant;
-    //var nom = helper.getSpecifyCategorie2(id!);
-    // var nom = allDepenses[0].description;
-
-    int x = allDepenses.length;
-    // var cat;
-    // print(x);
-    // var coleur;
+    Color col;
     var piedata = <diagram>[];
-    for (int i = 0; i < x; i++) {
-      //var s = "red";
-      // cat = await helper.getSpecifyCategorie2(allDepenses[0].id_categorie);
-      piedata.add(diagram(
-          allcat[i].nom, allDepenses[i].montant, getColeur(allcat[i].coleur)));
-      // mnt = allDepenses[0].montant,
-      // id = allDepenses[0].id_categorie,
-      // nom = helper.getSpecifyCategorie2(id),
-      //diagram(mnt, nom, Colors.red),
 
-      // Task("work", 40000, Colors.red),
-      // Task("achats", 200000, Colors.green),
-      // Task("ventes", 40000, Colors.orange),
-      // Task("hhhh", 40000, Colors.yellow),
+    if (allDepenses != null) {
+      for (int i = 0; i < count; i++) {
+        if (allDepenses![i].coleur == "Vert") {
+          col = Colors.green;
+        } else if (allDepenses![i].coleur == "Rouge") {
+          col = Colors.red;
+        } else if (allDepenses![i].coleur == "Jaune") {
+          col = Colors.yellow;
+        } else if (allDepenses![i].coleur == "Rose") {
+          col = Colors.pink;
+        } else {
+          col = Colors.black;
+        }
+
+        int tot = 0;
+        for (int j = 0; j < count; j++) {
+          if (allDepenses![j].nom == allDepenses![i].nom && i != j) {
+            tot = tot + allDepenses![j].montant!;
+          }
+        }
+        piedata.add(
+            diagram(allDepenses![i].nom, allDepenses![i].montant! + tot, col));
+        // total = total + allDepenses![i].montant!;
+      }
+      var ids = Set();
+      piedata.retainWhere((element) => ids.add(element.nomCat));
+    } else {
+      piedata.add(diagram("aa", 345, Colors.black));
     }
 
     _seriedata!.add(
       charts.Series(
-          data: piedata,
-          domainFn: (diagram task, _) => task.nomCat,
-          measureFn: (diagram task, _) => task.montant,
-          colorFn: (diagram task, _) =>
-              charts.ColorUtil.fromDartColor(task.colorval),
-          id: 'Daily task',
-          labelAccessorFn: (diagram row, _) => '${row.nomCat}'),
+        data: piedata,
+        domainFn: (diagram task, _) => task.nomCat,
+        measureFn: (diagram task, _) => task.montant,
+        colorFn: (diagram task, _) =>
+            charts.ColorUtil.fromDartColor(task.colorval),
+        id: 'Daily task',
+        //labelAccessorFn: (diagram row, _) => '${row.montant}'
+      ),
     );
+    piedata2 = piedata;
+  }
+
+  getTotal() {
+    int to = 0;
+    for (int i = 0; i < piedata2.length; i++) {
+      to = to + piedata2[i].montant!;
+    }
+    return to;
   }
 
   final List<Tab> mytabs = [
@@ -110,18 +110,14 @@ class _homepageState extends State<homepage> {
       text: "Budget et objectif",
     )
   ];
-  // initializea() async {
-  //   utilisateur? user = await helper.getUser(this.email!, this.pass!);
-  //   a = user!.id;
-  // }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    updateCategories();
     _seriedata = [];
     generatedData();
-    // updateSolde();
   }
 
   insertSolde() async {
@@ -134,6 +130,7 @@ class _homepageState extends State<homepage> {
     } else {
       await helper.insert_compte(new_cmp);
     }
+
     updateSolde();
   }
 
@@ -153,9 +150,29 @@ class _homepageState extends State<homepage> {
     return solde;
   }
 
+  updateCategories() async {
+    utilisateur? user = await helper.getUser(this.email!, this.pass!);
+    a = user!.id;
+    final Future<Database>? db = helper.initialiseDataBase();
+    var ourDb = db;
+    if (ourDb != null) {
+      ourDb.then((database) {
+        Future<List<depensesCats>> depenses = helper.getAllDepensesCats(a!);
+
+        depenses.then((theList) {
+          setState(() {
+            this.allDepenses = theList;
+            if (allDepenses != null) {
+              this.count = theList.length;
+            }
+          });
+        });
+      });
+    }
+  }
+
   void updateSolde() async {
-    allDepenses = await helper.getAllDepenses();
-    getNomCategorie();
+    updateCategories();
     utilisateur? user = await helper.getUser(this.email!, this.pass!);
     a = user!.id;
     h = user.nom;
@@ -196,11 +213,7 @@ class _homepageState extends State<homepage> {
         compte updateComp = compte(newMontant, a);
         helper.update_compte(updateComp);
       } else {
-        // var snackBar = SnackBar(content: Text("pas d'argent"));
-        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        // Toast.show("vous n'avez pas d'argent");
-        compte newCompte = compte(-montant, a);
-        helper.insert_compte(newCompte);
+        //showText(context, "désolé", "vous n'avez pas de solde");
       }
     }
     updateSolde();
@@ -216,7 +229,13 @@ class _homepageState extends State<homepage> {
     }
     m = this.k;
     utilisateur usr = utilisateur(h, this.email, this.pass);
-    print(allcat);
+    if (allDepenses != null) {
+      print(allDepenses!.length);
+      print(allDepenses);
+    } else {
+      print("videeeee depenses");
+    }
+    // print("alldepenses = ${allDepenses!.length}");
     return MaterialApp(
       home: DefaultTabController(
         length: mytabs.length,
@@ -295,10 +314,7 @@ class _homepageState extends State<homepage> {
                                         child: Text("Enregistrer"),
                                         onPressed: () {
                                           insertSolde();
-                                          //updateSolde();
-
                                           Navigator.pop(context);
-                                          // updateSolde();
                                         },
                                       ),
                                     ],
@@ -338,21 +354,41 @@ class _homepageState extends State<homepage> {
                           ),
                         ),
                         //ajouter ici le diagramme circulaire
-                        Container(
-                          width: 400,
-                          height: 400,
-                          child: charts.PieChart(
-                            _seriedata,
-                            animate: true,
-                            animationDuration: Duration(seconds: 5),
-                            defaultRenderer: new charts.ArcRendererConfig(
-                                // customRendererId: 'novoId',
-                                arcWidth: 100,
-                                arcRendererDecorators: [
-                                  new charts.ArcLabelDecorator(
-                                      labelPosition:
-                                          charts.ArcLabelPosition.inside)
-                                ]),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Container(
+                            width: 400,
+                            height: 400,
+                            child: charts.PieChart(
+                              _seriedata,
+                              animate: true,
+                              animationDuration: Duration(seconds: 3),
+                              defaultRenderer: new charts.ArcRendererConfig(
+                                  // customRendererId: 'novoId',
+                                  arcWidth: 100,
+                                  arcRendererDecorators: [
+                                    // new charts.ArcLabelDecorator(
+                                    //     labelPosition:
+                                    //         charts.ArcLabelPosition.inside)
+                                  ]),
+                              behaviors: [
+                                new charts.DatumLegend(
+                                  outsideJustification:
+                                      charts.OutsideJustification.endDrawArea,
+                                  horizontalFirst: false,
+                                  desiredMaxRows: 2,
+                                  cellPadding: EdgeInsets.only(
+                                    right: 4,
+                                    bottom: 4,
+                                  ),
+                                  entryTextStyle: charts.TextStyleSpec(
+                                    color: charts
+                                        .MaterialPalette.purple.shadeDefault,
+                                    fontSize: 11,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -373,9 +409,11 @@ class _homepageState extends State<homepage> {
                             myresult = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => operation()));
-                            print(myresult);
+                                    builder: (context) => operation(usr, a)));
+
                             if (myresult != null) {
+                              // updateSolde();
+                              updateCategories();
                               modifySolde(myresult![0], myresult![1]);
                             }
                           },
@@ -421,21 +459,10 @@ class _homepageState extends State<homepage> {
   }
 }
 
-class Task {
-  String? task;
-  double? taskvalue;
-  Color? colorval;
-
-  Task(this.task, this.taskvalue, this.colorval);
-}
-
 class diagram {
   String? nomCat;
   int? montant;
   Color? colorval;
-  //diagram(this.montant, this.nomCat);
-  //diagram(this.montant, this.nomCat, this.colorval);
-  //diagram(this.montant, this.colorval);
-  // diagram(this.nomCat, this.colorval);
+  diagram.withnull();
   diagram(this.nomCat, this.montant, this.colorval);
 }

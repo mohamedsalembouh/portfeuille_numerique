@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/budget.dart';
+import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/homePage.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
@@ -9,7 +10,10 @@ import 'package:portfeuille_numerique/parametres.dart';
 import 'package:portfeuille_numerique/partageGroupe.dart';
 import 'package:portfeuille_numerique/signin.dart';
 import 'package:portfeuille_numerique/statistiques.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
+
+import 'models/compte.dart';
 
 PreferredSize appbarfunction(List<Tab> tabs, String title) {
   return PreferredSize(
@@ -246,7 +250,45 @@ validateEmail(String email) {
   return mailReg.hasMatch(email);
 }
 
+SQL_Helper helper = SQL_Helper();
+Future<int?> getsoldeUser(int id_utilisateur) async {
+  int? solde;
+  compte? comp = await helper.getCompteUser(id_utilisateur);
+  if (comp == null) {
+    solde = 0;
+  } else {
+    solde = comp.solde;
+  }
+  return solde;
+}
 
+void showText(BuildContext context, String title, String msg) {
+  AlertDialog alterdialogue = AlertDialog(
+    title: Text(title),
+    content: Text(msg),
+  );
+  showDialog(context: context, builder: (_) => alterdialogue);
+}
+
+  // void updateSolde( String email,String pass,int? a,int? k) async {
+  //  // updateCategories();
+  //  // allcat = await getNomCategorie();
+  //   utilisateur? user = await helper.getUser(email, pass);
+  //   a = user!.id;
+  //   //h = user.nom;
+  //   final Future<Database>? db = helper.initialiseDataBase();
+  //   var our_db = db;
+  //   if (our_db != null) {
+  //     our_db.then((database) {
+  //       Future<int?> solde = getsoldeUser(a!);
+  //       solde.then((reloadsolde) {
+  //         setState(() {
+  //           k = reloadsolde;
+  //         });
+  //       });
+  //     });
+  //   }
+  // }
 
 
 

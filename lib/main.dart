@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/homePage.dart';
 import 'package:portfeuille_numerique/signin.dart';
 import 'package:portfeuille_numerique/signup.dart';
-import 'package:portfeuille_numerique/test_signin.dart';
+import 'package:portfeuille_numerique/splash_screen.dart';
 
 void main() {
   runApp(portfeuille());
@@ -15,7 +15,7 @@ class portfeuille extends StatelessWidget {
     return MaterialApp(
       // debugShowCheckModeBanner:false,
       home: Scaffold(
-        body: signinPage(),
+        body: splashScreen(),
       ),
     );
   }

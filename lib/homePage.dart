@@ -66,12 +66,12 @@ class _homepageState extends State<homepage> {
 
         int tot = 0;
         for (int j = 0; j < count; j++) {
-          if (allDepenses![j].nom == allDepenses![i].nom && i != j) {
+          if (allDepenses![j].nomcat == allDepenses![i].nomcat && i != j) {
             tot = tot + allDepenses![j].montant!;
           }
         }
-        piedata.add(
-            diagram(allDepenses![i].nom, allDepenses![i].montant! + tot, col));
+        piedata.add(diagram(
+            allDepenses![i].nomcat, allDepenses![i].montant! + tot, col));
         // total = total + allDepenses![i].montant!;
       }
       var ids = Set();

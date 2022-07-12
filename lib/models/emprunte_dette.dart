@@ -5,10 +5,13 @@ class emprunte_dette {
   int? montant;
   String? date_debut;
   String? date_echeance;
+  int? status;
   int? id_compte;
 
   emprunte_dette(this.nom, this.objectif, this.montant, this.date_debut,
-      this.date_echeance, this.id_compte);
+      this.date_echeance, this.status, this.id_compte);
+  emprunte_dette.withId(this.id, this.nom, this.objectif, this.montant,
+      this.date_debut, this.date_echeance, this.status, this.id_compte);
 
   Map<String, dynamic> tomap() {
     var map = Map<String, dynamic>();
@@ -18,6 +21,7 @@ class emprunte_dette {
     map['montant'] = this.montant;
     map['date_debut'] = this.date_debut;
     map['date_echeance'] = this.date_echeance;
+    map['status'] = this.status;
     map['id_compte'] = this.id_compte;
     return map;
   }
@@ -29,6 +33,7 @@ class emprunte_dette {
     this.montant = map['montant'];
     this.date_debut = map['date_debut'];
     this.date_echeance = map['date_echeance'];
+    this.status = map['status'];
     this.id_compte = map['id_compte'];
   }
 }

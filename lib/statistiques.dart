@@ -44,13 +44,13 @@ class _statistiqueState extends State<statistique> {
 
     if (allDepensesCats != null) {
       for (int i = 0; i < count!; i++) {
-        if (allDepensesCats![i].coleur == "green") {
+        if (allDepensesCats![i].coleur == "Vert") {
           col = Colors.green;
-        } else if (allDepensesCats![i].coleur == "red") {
+        } else if (allDepensesCats![i].coleur == "Rouge") {
           col = Colors.red;
-        } else if (allDepensesCats![i].coleur == "yellow") {
+        } else if (allDepensesCats![i].coleur == "Joune") {
           col = Colors.yellow;
-        } else if (allDepensesCats![i].coleur == "pinck") {
+        } else if (allDepensesCats![i].coleur == "Rose") {
           col = Colors.pink;
         } else {
           col = Colors.black;
@@ -58,12 +58,13 @@ class _statistiqueState extends State<statistique> {
 
         int tot = 0;
         for (int j = 0; j < count!; j++) {
-          if (allDepensesCats![j].nom == allDepensesCats![i].nom && i != j) {
+          if (allDepensesCats![j].nomcat == allDepensesCats![i].nomcat &&
+              i != j) {
             tot = tot + allDepensesCats![j].montant!;
           }
         }
-        piedata.add(diagram(
-            allDepensesCats![i].nom, allDepensesCats![i].montant! + tot, col));
+        piedata.add(diagram(allDepensesCats![i].nomcat,
+            allDepensesCats![i].montant! + tot, col));
       }
       var ids = Set();
       piedata.retainWhere((element) => ids.add(element.nomCat));
@@ -107,7 +108,8 @@ class _statistiqueState extends State<statistique> {
       for (int i = 0; i < count!; i++) {
         int tot = 0;
         for (int j = 0; j < count!; j++) {
-          if (allDepensesCats![j].nom == allDepensesCats![i].nom && i != j) {
+          if (allDepensesCats![j].nomcat == allDepensesCats![i].nomcat &&
+              i != j) {
             tot = tot + allDepensesCats![j].montant!;
           }
         }
@@ -116,12 +118,12 @@ class _statistiqueState extends State<statistique> {
             allDepensesCats![i].montant! + tot,
             allDepensesCats![i].description,
             allDepensesCats![i].id_categorie,
-            allDepensesCats![i].nom,
+            allDepensesCats![i].nomcat,
             allDepensesCats![i].coleur));
       }
     } else {}
     var ids = Set();
-    uniquedepenses.retainWhere((element) => ids.add(element.nom));
+    uniquedepenses.retainWhere((element) => ids.add(element.nomcat));
     return uniquedepenses;
   }
 
@@ -131,7 +133,7 @@ class _statistiqueState extends State<statistique> {
       for (int i = 0; i < count2!; i++) {
         int tot = 0;
         for (int j = 0; j < count2!; j++) {
-          if (allrevenus![j].nom == allrevenus![i].nom && i != j) {
+          if (allrevenus![j].nomcat == allrevenus![i].nomcat && i != j) {
             tot = tot + allrevenus![j].montant!;
           }
         }
@@ -140,12 +142,12 @@ class _statistiqueState extends State<statistique> {
             allrevenus![i].montant! + tot,
             allrevenus![i].description,
             allrevenus![i].id_categorie,
-            allrevenus![i].nom,
+            allrevenus![i].nomcat,
             allrevenus![i].coleur));
       }
     } else {}
     var ids = Set();
-    uniquerevenu.retainWhere((element) => ids.add(element.nom));
+    uniquerevenu.retainWhere((element) => ids.add(element.nomcat));
     return uniquerevenu;
   }
 

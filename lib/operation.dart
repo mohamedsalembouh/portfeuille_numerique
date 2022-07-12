@@ -39,7 +39,7 @@ class _operationState extends State<operation> {
   int? count;
   final List<Tab> mytabs = [
     Tab(
-      text: "Entree",
+      text: "Revenus",
     ),
     Tab(
       text: "Depenses",
@@ -197,6 +197,10 @@ class _operationState extends State<operation> {
                         key: _formKey1,
                         child: Column(
                           children: [
+                            Text(
+                              "Ajoutez un nouveaux Revenu",
+                              style: TextStyle(fontSize: 20),
+                            ),
                             Padding(
                               padding: EdgeInsets.only(top: 30, left: 10),
                               child: FutureBuilder(
@@ -210,8 +214,8 @@ class _operationState extends State<operation> {
                                         items: snapshot.data!
                                             .map((cat) =>
                                                 DropdownMenuItem<String>(
-                                                  child: Text(cat.nom!),
-                                                  value: cat.nom,
+                                                  child: Text(cat.nomcat!),
+                                                  value: cat.nomcat,
                                                 ))
                                             .toList(),
                                         onChanged: (String? value) {
@@ -320,6 +324,10 @@ class _operationState extends State<operation> {
                         key: _formKey2,
                         child: Column(
                           children: [
+                            Text(
+                              "Ajoutez un nouveaux Depense",
+                              style: TextStyle(fontSize: 20),
+                            ),
                             Padding(
                               padding: EdgeInsets.only(top: 30, left: 10),
                               child: FutureBuilder(
@@ -333,8 +341,8 @@ class _operationState extends State<operation> {
                                         items: snapshot.data!
                                             .map((cat) =>
                                                 DropdownMenuItem<String>(
-                                                  child: Text(cat.nom!),
-                                                  value: cat.nom,
+                                                  child: Text(cat.nomcat!),
+                                                  value: cat.nomcat,
                                                 ))
                                             .toList(),
                                         onChanged: (String? value) {

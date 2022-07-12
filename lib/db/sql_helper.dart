@@ -1,8 +1,11 @@
 import 'package:flutter/services.dart';
+import 'package:portfeuille_numerique/models/budgete.dart';
+import 'package:portfeuille_numerique/models/catBudget.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/depensesCats.dart';
 import 'package:portfeuille_numerique/models/emprunte_dette.dart';
+import 'package:portfeuille_numerique/models/objective.dart';
 import 'package:portfeuille_numerique/models/operation_entree.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/prette_dette.dart';
@@ -62,19 +65,19 @@ class SQL_Helper {
     await db.execute(
         "create table compte(id INTEGER PRIMARY KEY AUTOINCREMENT,solde int not null ,id_utilisateur integer ,foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
-        "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nom TEXT,coleur TEXT)");
+        "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nomcat TEXT,coleur TEXT)");
     await db.execute(
         "create table operation_entree(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
         "create table operation_sortir(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table objectif(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,montant_cible integer not null,montant_donnee integer not null)");
+        "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null, id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null, id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
+        "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null, id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null, id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
+        "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nombdg text not null, montant integer not null,date_debut text not null,date_fin text not null,id_categorie integer ,id_compte integer ,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,duree text not null,montant text not null,id_categorie integer ,foreign key(id_categorie) references categorie(id))");
+        "create table objectif(id INTEGER PRIMARY KEY AUTOINCREMENT,nom_objective text not null,montant_cible integer not null,montant_donnee integer not null,id_compte integer not null,foreign key(id_compte) references compte(id))");
   }
 
   Future<int> insert_user(utilisateur user) async {
@@ -144,7 +147,7 @@ class SQL_Helper {
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return categorie(
-        maps[i]['nom'],
+        maps[i]['nomcat'],
         maps[i]['coleur'],
       );
     });
@@ -153,7 +156,7 @@ class SQL_Helper {
   Future<categorie?> getSpecifyCategorie(String nom) async {
     Database db = await this.database;
     var result =
-        await db.rawQuery("SELECT * FROM categorie WHERE nom  ='$nom'");
+        await db.rawQuery("SELECT * FROM categorie WHERE nomcat  ='$nom'");
     if (result.length > 0) {
       return new categorie.getmap(result.first);
     }
@@ -220,7 +223,7 @@ class SQL_Helper {
           maps[i]['montant'],
           maps[i]['description'],
           maps[i]['id_categorie'],
-          maps[i]['nom'],
+          maps[i]['nomcat'],
           maps[i]['coleur']);
     });
   }
@@ -238,7 +241,7 @@ class SQL_Helper {
           maps[i]['montant'],
           maps[i]['description'],
           maps[i]['id_categorie'],
-          maps[i]['nom'],
+          maps[i]['nomcat'],
           maps[i]['coleur']);
     });
   }
@@ -257,12 +260,14 @@ class SQL_Helper {
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
-      return prette_dette(
+      return prette_dette.withId(
+        maps[i]['id'],
         maps[i]['nom'],
         maps[i]['objectif'],
         maps[i]['montant'],
         maps[i]['date_debut'],
         maps[i]['date_echeance'],
+        maps[i]['status'],
         maps[i]['id_compte'],
       );
     });
@@ -282,14 +287,114 @@ class SQL_Helper {
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
-      return emprunte_dette(
+      return emprunte_dette.withId(
+        maps[i]['id'],
         maps[i]['nom'],
         maps[i]['objectif'],
         maps[i]['montant'],
         maps[i]['date_debut'],
         maps[i]['date_echeance'],
+        maps[i]['status'],
         maps[i]['id_compte'],
       );
     });
+  }
+
+  Future<int> insert_Budget(budgete bdg) async {
+    Database db = await this.database;
+    var result = db.insert("budget", bdg.tomap());
+    return result;
+  }
+
+  Future<List<catBudget>> getAllBudgets(int id) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM budget,categorie WHERE budget.id_categorie = categorie.id AND id_compte = $id");
+    return List.generate(maps.length, (i) {
+      return catBudget(
+        maps[i]['nombdg'],
+        maps[i]['montant'],
+        maps[i]['date_debut'],
+        maps[i]['date_fin'],
+        maps[i]['id_categorie'],
+        maps[i]['nomcat'],
+      );
+    });
+  }
+
+  Future<int> insert_objectif(objective obj) async {
+    Database db = await this.database;
+    var result = db.insert("objectif", obj.tomap());
+    return result;
+  }
+
+  Future<List<objective>> getAllObjectivfs(int id) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps =
+        await db.rawQuery("SELECT * FROM objectif WHERE  id_compte = $id");
+    return List.generate(maps.length, (i) {
+      return objective.withId(
+        maps[i]['id'],
+        maps[i]['nom_objective'],
+        maps[i]['montant_cible'],
+        maps[i]['montant_donnee'],
+        maps[i]['id_compte'],
+      );
+    });
+  }
+
+  Future<objective?> getSpecifyObjectif(int idobj, int idCompte) async {
+    Database db = await this.database;
+    var result = await db.rawQuery(
+        "SELECT * FROM objectif WHERE id =$idobj AND id_compte = $idCompte");
+    if (result.length > 0) {
+      return new objective.getmap(result.first);
+    }
+    return null;
+  }
+
+  Future<int> update_objective(objective obj) async {
+    Database db = await this.database;
+    var result = await db.rawUpdate(
+        "UPDATE objectif SET montant_donnee = ? WHERE id = ?",
+        [obj.montant_donnee, obj.id]);
+    return result;
+  }
+
+  Future<int> deleteObjective(int id, int id_cmp) async {
+    Database db = await this.database;
+    var result = await db
+        .rawDelete("DELETE FROM objectif WHERE id=$id AND id_compte = $id_cmp");
+    return result;
+  }
+
+  Future<int> update_pretteDette(int id) async {
+    Database db = await this.database;
+    var result = await db
+        .rawUpdate("UPDATE prette_dettes SET status = ? WHERE id = ?", [1, id]);
+    return result;
+  }
+
+  Future<int> update_EmprunteDette(int id) async {
+    Database db = await this.database;
+    var result = await db.rawUpdate(
+        "UPDATE emprunte_dettes SET status = ? WHERE id = ?", [1, id]);
+    return result;
+  }
+
+  Future<int> deletePreteDette(int id) async {
+    Database db = await this.database;
+    var result =
+        await db.rawDelete("DELETE FROM prette_dettes WHERE id=?", [id]);
+    return result;
+  }
+
+  Future<int> deleteEmprunteDette(int id) async {
+    Database db = await this.database;
+    var result =
+        await db.rawDelete("DELETE FROM emprunte_dettes WHERE id=?", [id]);
+    return result;
   }
 }

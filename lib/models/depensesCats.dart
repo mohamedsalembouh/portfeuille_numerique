@@ -5,9 +5,9 @@ class depensesCats {
   int? id_categorie;
   int? id_compte;
   int? idCat;
-  String? nom;
+  String? nomcat;
   String? coleur;
 
   depensesCats(this.id, this.montant, this.description, this.id_categorie,
-      this.nom, this.coleur);
+      this.nomcat, this.coleur);
 }

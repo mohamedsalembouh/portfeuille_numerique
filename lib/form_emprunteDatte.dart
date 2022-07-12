@@ -39,18 +39,20 @@ class _formemprunteState extends State<formemprunte> {
 
     if (form!.validate()) {
       emprunte_dette emprunteDette = emprunte_dette(
-          nom, objectif, int.parse(montant), dateDebut, dateEcheance, a);
+          nom, objectif, int.parse(montant), dateDebut, dateEcheance, 0, a);
       int x = await helper.insert_EmprunteDatte(emprunteDette);
       if (x > 0) {
         print("inserted ");
+        PlusSolde(int.parse(montant));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => alldettes(usr)));
       } else {
         print("not inserted");
       }
     }
   }
 
-  PlusSolde(String value) async {
-    int mnt = int.parse(value);
+  PlusSolde(int mnt) async {
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
@@ -64,11 +66,6 @@ class _formemprunteState extends State<formemprunte> {
       compte newCompte = compte(mnt, a);
       helper.insert_compte(newCompte);
     }
-    insertEmprunteDette(
-        nom.text, objet.text, montant.text, dateDebut.text, dateEcheance.text);
-
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => alldettes(usr)));
   }
 
   @override
@@ -232,7 +229,12 @@ class _formemprunteState extends State<formemprunte> {
                                     padding: EdgeInsets.only(),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        PlusSolde(montant.text);
+                                        insertEmprunteDette(
+                                            nom.text,
+                                            objet.text,
+                                            montant.text,
+                                            dateDebut.text,
+                                            dateEcheance.text);
                                       },
                                       child: Text('Enregistrer'),
                                     ),

@@ -73,8 +73,8 @@ class _listCategoriesState extends State<listCategories> {
               return DropdownButton<String>(
                 items: snapshot.data!
                     .map((cat) => DropdownMenuItem<String>(
-                          child: Text(cat.nom!),
-                          value: cat.nom,
+                          child: Text(cat.nomcat!),
+                          value: cat.nomcat,
                         ))
                     .toList(),
                 onChanged: (String? value) {

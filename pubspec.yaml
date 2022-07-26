@@ -28,6 +28,9 @@ dependencies:
   path_provider: any 
   toast: ^0.2.9
   intl: ^0.17.0
+  flutter_local_notifications: ^7.0.0
+  timezone: ^0.7.0
+  rxdart: ^0.27.5
   
 
    
@@ -55,9 +58,10 @@ flutter:
   
  # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/img_tesyir.jpg
     - assets/images/img_profile.jpg
-    - assets/images/portfeuille_image.jpg
     - assets/images/image_portfeuille.jpg
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

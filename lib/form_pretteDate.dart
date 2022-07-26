@@ -63,8 +63,8 @@ class _form_pretteState extends State<form_prette> {
         insertPretteDette(nom.text, objet.text, montant.text, dateDebut.text,
             dateEcheance.text);
 
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => alldettes(usr)));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
       } else {
         showText(context, "désolé",
             "Le montant que vous entree est plus grand que votre solde ");

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:portfeuille_numerique/services/local_notification_service.dart';
 
 class partage extends StatefulWidget {
   // const partage({Key? key}) : super(key: key);
@@ -13,6 +15,16 @@ class partage extends StatefulWidget {
 class _partageState extends State<partage> {
   utilisateur? usr;
   _partageState(this.usr);
+  late final LocalNotificationService service;
+  @override
+  void initState() {
+    // TODO: implement initState
+    service = LocalNotificationService();
+    service.initialize();
+    listenToNotification();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +50,16 @@ class _partageState extends State<partage> {
                       ),
                     ],
                   ),
+                ),
+                RaisedButton(
+                  onPressed: () {
+                    service.showNotificationWithPayload(
+                        id: 0,
+                        title: "Hi",
+                        body: "helloo",
+                        payload: 'payload navigation');
+                  },
+                  child: Text("click"),
                 ),
               ],
             ),
@@ -65,5 +87,15 @@ class _partageState extends State<partage> {
         ],
       ),
     );
+  }
+
+  void listenToNotification() =>
+      service.onNotificationClick.stream.listen((onNotificationListener));
+  void onNotificationListener(String? payload) {
+    if (payload != null && payload.isNotEmpty) {
+      print("payload $payload");
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => budget(usr, 2)));
+    }
   }
 }

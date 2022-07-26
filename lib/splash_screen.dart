@@ -37,7 +37,9 @@ class _splashScreenState extends State<splashScreen> {
                   child: Padding(
                     padding: EdgeInsets.all(8),
                     child: Image(
-                      image: AssetImage("assets/images/image_portfeuille.jpg"),
+                      width: 400,
+                      height: 400,
+                      image: AssetImage("assets/images/img_tesyir.jpg"),
                     ),
                   ),
                 ),
@@ -47,11 +49,11 @@ class _splashScreenState extends State<splashScreen> {
               height: 5,
             ),
             Text(
-              "Portfeuille_Numerique",
+              "Rachad",
               style: TextStyle(
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
-                  fontSize: 25),
+                  fontSize: 50),
             ),
             Padding(
               padding: EdgeInsets.only(top: 40),

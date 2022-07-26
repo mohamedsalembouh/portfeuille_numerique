@@ -35,8 +35,14 @@ class _signinPageState extends State<signinPage> {
             duration: Toast.lengthShort, gravity: Toast.center);
         print("user not existe");
       } else {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => homepage(email, pass)));
+        Navigator.push(
+            context,
+            // MaterialPageRoute(builder: (context) => homepage(email, pass))
+            MaterialPageRoute(builder: (context) => homepage(user)));
+        print(user.id);
+        print(user.nom);
+        print(user.email);
+        print(user.password);
       }
     }
   }
@@ -45,7 +51,10 @@ class _signinPageState extends State<signinPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Nom App"),
+        title: Text(
+          "Rachad",
+          style: TextStyle(fontSize: 25),
+        ),
       ),
       body: Form(
         key: _formKey,
@@ -70,7 +79,7 @@ class _signinPageState extends State<signinPage> {
                     height: 20,
                   ),
                   Image.asset(
-                    "assets/images/image_portfeuille.jpg",
+                    "assets/images/img_tesyir.jpg",
                     height: 100,
                     width: 150,
                   ),

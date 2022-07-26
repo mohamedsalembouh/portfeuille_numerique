@@ -117,6 +117,7 @@ class _statistiqueState extends State<statistique> {
             allDepensesCats![i].id,
             allDepensesCats![i].montant! + tot,
             allDepensesCats![i].description,
+            allDepensesCats![i].date,
             allDepensesCats![i].id_categorie,
             allDepensesCats![i].nomcat,
             allDepensesCats![i].coleur));
@@ -141,6 +142,7 @@ class _statistiqueState extends State<statistique> {
             allrevenus![i].id,
             allrevenus![i].montant! + tot,
             allrevenus![i].description,
+            allrevenus![i].date,
             allrevenus![i].id_categorie,
             allrevenus![i].nomcat,
             allrevenus![i].coleur));
@@ -427,7 +429,7 @@ class _statistiqueState extends State<statistique> {
                           color: Colors.white,
                           //elevation: 2.0,
                           child: ListTile(
-                            title: Text("${revenus[pos].nom}"),
+                            title: Text("${revenus[pos].nomcat}"),
                             trailing: Text("${revenus[pos].montant}"),
                           ),
                         );
@@ -444,7 +446,7 @@ class _statistiqueState extends State<statistique> {
                           itemBuilder: (context, pos) {
                             return Card(
                               child: ListTile(
-                                title: Text("${depenses[pos].nom}"),
+                                title: Text("${depenses[pos].nomcat}"),
                                 trailing: Text("${depenses[pos].montant}"),
                               ),
                             );

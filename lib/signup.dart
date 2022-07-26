@@ -17,18 +17,30 @@ class _SignUpPageState extends State<SignUpPage> {
   final f_username = TextEditingController();
   final f_email = TextEditingController();
   final f_pass = TextEditingController();
+  final f_pass2 = TextEditingController();
 
   final _formKey = new GlobalKey<FormState>();
 
-  signup() {
+  signup() async {
     final form = _formKey.currentState;
     if (form!.validate()) {
-      utilisateur user =
-          new utilisateur(f_username.text, f_email.text, f_pass.text);
-      helper.insert_user(user);
-      // print("ok good");
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => signinPage()));
+      if (f_pass.text == f_pass2.text) {
+        utilisateur? existUser = await helper.getUserByEmail(f_email.text);
+        if (existUser == null) {
+          utilisateur user =
+              new utilisateur(f_username.text, f_email.text, f_pass.text);
+          int result = await helper.insert_user(user);
+          if (result > 0) {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => signinPage()));
+            showText(context, "Congratulation", "Vous avez enregistre");
+          }
+        } else {
+          Toast.show("cette email existe deja");
+        }
+      } else {
+        Toast.show("Les deux mot de pass ne sont pas les meme");
+      }
     }
   }
 
@@ -36,7 +48,10 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sign up"),
+        title: Text(
+          "Rachad",
+          style: TextStyle(fontSize: 25),
+        ),
       ),
       body: Form(
         key: _formKey,
@@ -47,21 +62,21 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Sign up",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 30),
-                  ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
+                  // Text(
+                  //   "Sign up",
+                  //   style: TextStyle(
+                  //       fontWeight: FontWeight.bold,
+                  //       color: Colors.black,
+                  //       fontSize: 30),
+                  // ),
                   SizedBox(
                     height: 20,
                   ),
                   Image.asset(
-                    "assets/images/portfeuille_image.jpg",
+                    "assets/images/img_tesyir.jpg",
                     height: 100,
                     width: 150,
                   ),
@@ -149,6 +164,34 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         prefixIcon: Icon(Icons.lock),
                         hintText: 'Mot de passe',
+                        fillColor: Colors.grey[200],
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    margin: EdgeInsets.only(top: 10),
+                    child: TextFormField(
+                      controller: f_pass2,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Confirmee votre mot de passe';
+                        }
+                        return null;
+                      },
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                        prefixIcon: Icon(Icons.lock),
+                        hintText: ' confirmer Mot de passe',
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),

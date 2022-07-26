@@ -6,6 +6,7 @@ import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/operationDettes.dart';
 import 'package:portfeuille_numerique/parametres.dart';
 import 'package:portfeuille_numerique/partageGroupe.dart';
+import 'package:portfeuille_numerique/services/local_notification_service.dart';
 import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,10 +18,12 @@ import 'objectifs.dart';
 
 class alldettes extends StatefulWidget {
   utilisateur? usr;
+  int? selectedPage;
   //alldettes({Key? key}) : super(key: key);
-  alldettes(this.usr);
+  alldettes(this.usr, this.selectedPage);
   @override
-  State<alldettes> createState() => _alldettesState(this.usr);
+  State<alldettes> createState() =>
+      _alldettesState(this.usr, this.selectedPage);
 }
 
 class _alldettesState extends State<alldettes> {
@@ -36,7 +39,8 @@ class _alldettesState extends State<alldettes> {
     )
   ];
   utilisateur? usr;
-  _alldettesState(this.usr);
+  int? selectedPage;
+  _alldettesState(this.usr, this.selectedPage);
   List<prette_dette>? pretedetes;
   int count = 0;
   static var prettes;
@@ -45,9 +49,13 @@ class _alldettesState extends State<alldettes> {
   int? so;
   static var solde;
   static var empruntes;
+  late final LocalNotificationService service;
   @override
   void initState() {
     // TODO: implement initState
+    service = LocalNotificationService();
+    service.initialize();
+    listenToNotification2();
     super.initState();
   }
 
@@ -202,14 +210,13 @@ class _alldettesState extends State<alldettes> {
     prettes = this.pretedetes;
     empruntes = this.empruntedetes;
     solde = this.so;
-    print(solde);
-    print(count);
-    print(count2);
+    //faireNotificationDettes();
 
     //print(prettes);
     return MaterialApp(
       home: DefaultTabController(
         length: mytabs.length,
+        initialIndex: selectedPage!,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Dettes"),
@@ -251,7 +258,7 @@ class _alldettesState extends State<alldettes> {
                                   trailing: Text("date d'echeance : $dateFin"),
                                   onTap: () {
                                     AlertDialog alertDialog = AlertDialog(
-                                      title: Icon(Icons.home),
+                                      // title: Icon(Icons.home),
                                       content: Text("Terminer cette dette"),
                                       actions: [
                                         TextButton(
@@ -325,7 +332,7 @@ class _alldettesState extends State<alldettes> {
                                   trailing: Text("date d'echeance : $dateFin"),
                                   onTap: () {
                                     AlertDialog alertDialog = AlertDialog(
-                                      title: Icon(Icons.home),
+                                      //title: Icon(Icons.home),
                                       content: Text("Terminer cette dette"),
                                       actions: [
                                         TextButton(
@@ -606,6 +613,48 @@ class _alldettesState extends State<alldettes> {
     );
   }
 
+  faireNotificationDettes() async {
+    List<emprunte_dette> empruntes =
+        await helper.getAllEmprunteDettes(this.usr!.id!);
+    empruntes.forEach((emprunte) {
+      if (emprunte.status == 0) {
+        DateTime dateEcheance = DateTime.parse(emprunte.date_echeance!);
+
+        DateTime dateMaintenant =
+            DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+        if (dateEcheance.difference(dateMaintenant).inDays == 3) {
+          service.showNotificationWithPayload(
+              id: emprunte.id!,
+              title: "Attension",
+              body:
+                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 3 jours",
+              payload: "payload navigation");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 2) {
+          service.showNotificationWithPayload(
+              id: emprunte.id!,
+              title: "Attension",
+              body:
+                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 2 jours",
+              payload: "payload navigation");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 1) {
+          service.showNotificationWithPayload(
+              id: emprunte.id!,
+              title: "Attension",
+              body:
+                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 1 jours",
+              payload: "payload navigation");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 0) {
+          service.showNotificationWithPayload(
+              id: emprunte.id!,
+              title: "Attension",
+              body:
+                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} Aujordhui",
+              payload: "payload navigation");
+        }
+      }
+    });
+  }
+
   // allprettes(List<prette_dette> allPretes) {
   //   int k = allPretes.length;
   //   List<prette_dette> y = [];
@@ -618,4 +667,13 @@ class _alldettesState extends State<alldettes> {
   //         allPretes[i].montant, dateDebut, dateFin, allPretes[i].id_compte);
   //   }
   // }
+  void listenToNotification2() =>
+      service.onNotificationClick.stream.listen((onNotificationListener2));
+  void onNotificationListener2(String? payload) {
+    if (payload != null && payload.isNotEmpty) {
+      print("payload $payload");
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => alldettes(usr, 2)));
+    }
+  }
 }

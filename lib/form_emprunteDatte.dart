@@ -44,8 +44,8 @@ class _formemprunteState extends State<formemprunte> {
       if (x > 0) {
         print("inserted ");
         PlusSolde(int.parse(montant));
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => alldettes(usr)));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
       } else {
         print("not inserted");
       }

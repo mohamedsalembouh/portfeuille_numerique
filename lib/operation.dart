@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/categories.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/dettes.dart';
@@ -8,10 +9,14 @@ import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/operation_entree.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:portfeuille_numerique/services/local_notification_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 
+import 'budget.dart';
+import 'models/catBudget.dart';
 import 'models/compte.dart';
+import 'models/depensesCats.dart';
 
 class operation extends StatefulWidget {
   //operation({Key? key}) : super(key: key);
@@ -24,6 +29,12 @@ class operation extends StatefulWidget {
 }
 
 class _operationState extends State<operation> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   final _formKey1 = new GlobalKey<FormState>();
   final _formKey2 = new GlobalKey<FormState>();
   TextEditingController entreeMontant = TextEditingController();
@@ -79,8 +90,10 @@ class _operationState extends State<operation> {
       int montant = int.parse(value);
       categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
       int idCat = cat!.id!;
-      operation_entree entree =
-          new operation_entree(montant, description, idCat, this.numero);
+      DateTime maintenant = DateTime.now();
+      String date_maintenant = DateFormat("dd-MM-yyyy").format(maintenant);
+      operation_entree entree = new operation_entree(
+          montant, description, date_maintenant, idCat, this.numero);
       int a = await helper.insertOperationEntree(entree);
       if (a != 0) {
         print("operation inserted");
@@ -100,8 +113,10 @@ class _operationState extends State<operation> {
         if (solde > montant) {
           categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
           int idCat = cat!.id!;
-          operation_sortir sortir =
-              new operation_sortir(montant, description, idCat, this.numero);
+          DateTime maintenant = DateTime.now();
+          String date_maintenant = DateFormat("dd-MM-yyyy").format(maintenant);
+          operation_sortir sortir = new operation_sortir(
+              montant, description, date_maintenant, idCat, this.numero);
           int a = await helper.insertOperationSortir(sortir);
           if (a != 0) {
             print("operation sortir inserted");
@@ -112,7 +127,7 @@ class _operationState extends State<operation> {
           Map<int, int> myData = new Map();
           myData[0] = 1;
           myData[1] = montant;
-          Navigator.of(context).pop(myData);
+          Navigator.of(context, rootNavigator: true).pop(myData);
         } else {
           showText(context, "désolé",
               "vous n'avez pas de solde sufficant pour cette operation");
@@ -168,8 +183,6 @@ class _operationState extends State<operation> {
 
   @override
   Widget build(BuildContext context) {
-    // updatedepenses();
-    print(this.numero);
     return MaterialApp(
       title: "",
       home: DefaultTabController(
@@ -401,7 +414,9 @@ class _operationState extends State<operation> {
                                     padding: EdgeInsets.only(right: 30),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
                                       },
                                       child: Text('Annuler'),
                                     ),

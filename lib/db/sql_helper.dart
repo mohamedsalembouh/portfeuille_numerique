@@ -67,15 +67,15 @@ class SQL_Helper {
     await db.execute(
         "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nomcat TEXT,coleur TEXT)");
     await db.execute(
-        "create table operation_entree(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
+        "create table operation_entree(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table operation_sortir(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
+        "create table operation_sortir(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
         "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null, id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
     await db.execute(
         "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null, id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nombdg text not null, montant integer not null,date_debut text not null,date_fin text not null,id_categorie integer ,id_compte integer ,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
+        "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nombdg text not null, montant integer not null,date_debut text not null,date_fin text not null,status INTEGER not null,id_categorie integer ,id_compte integer ,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
         "create table objectif(id INTEGER PRIMARY KEY AUTOINCREMENT,nom_objective text not null,montant_cible integer not null,montant_donnee integer not null,id_compte integer not null,foreign key(id_compte) references compte(id))");
   }
@@ -90,6 +90,16 @@ class SQL_Helper {
     Database db = await this.database;
     var result = await db.rawQuery(
         "SELECT * FROM utilisateur WHERE email='$mail' AND password = '$pass'");
+    if (result.length > 0) {
+      return new utilisateur.getmap(result.first);
+    }
+    return null;
+  }
+
+  Future<utilisateur?> getUserByEmail(String mail) async {
+    Database db = await this.database;
+    var result =
+        await db.rawQuery("SELECT * FROM utilisateur WHERE email='$mail' ");
     if (result.length > 0) {
       return new utilisateur.getmap(result.first);
     }
@@ -193,7 +203,7 @@ class SQL_Helper {
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return operation_entree(maps[i]['montant'], maps[i]['description'],
-          maps[i]['id_categorie'], maps[i]['id_compte']);
+          maps[i]['date'], maps[i]['id_categorie'], maps[i]['id_compte']);
     });
   }
 
@@ -206,7 +216,7 @@ class SQL_Helper {
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return operation_sortir(maps[i]['montant'], maps[i]['description'],
-          maps[i]['id_categorie'], maps[i]['id_compte']);
+          maps[i]['date'], maps[i]['id_categorie'], maps[i]['id_compte']);
     });
   }
 
@@ -222,6 +232,7 @@ class SQL_Helper {
           maps[i]['id'],
           maps[i]['montant'],
           maps[i]['description'],
+          maps[i]['date'],
           maps[i]['id_categorie'],
           maps[i]['nomcat'],
           maps[i]['coleur']);
@@ -240,6 +251,27 @@ class SQL_Helper {
           maps[i]['id'],
           maps[i]['montant'],
           maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getSpecifiedDepenses(
+      int idCompte, String nomCat) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND id_compte = $idCompte AND categorie.nomcat='$nomCat'");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
           maps[i]['id_categorie'],
           maps[i]['nomcat'],
           maps[i]['coleur']);
@@ -310,15 +342,35 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM budget,categorie WHERE budget.id_categorie = categorie.id AND id_compte = $id");
+        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.date_debut,budget.date_fin,budget.id_categorie,categorie.nomcat FROM budget,categorie WHERE budget.id_categorie = categorie.id AND id_compte = $id");
     return List.generate(maps.length, (i) {
       return catBudget(
+        maps[i]['id'],
         maps[i]['nombdg'],
         maps[i]['montant'],
+        maps[i]['status'],
         maps[i]['date_debut'],
         maps[i]['date_fin'],
         maps[i]['id_categorie'],
         maps[i]['nomcat'],
+      );
+    });
+  }
+
+  Future<List<catBudget>> getAllSpecifiedBudgets(
+      int idCompte, String nomCat) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.date_debut,budget.date_fin FROM budget,categorie WHERE budget.id_categorie = categorie.id AND id_compte = $idCompte AND categorie.nomcat='$nomCat'");
+    return List.generate(maps.length, (i) {
+      return catBudget.second(
+        maps[i]['id'],
+        maps[i]['nombdg'],
+        maps[i]['montant'],
+        maps[i]['status'],
+        maps[i]['date_debut'],
+        maps[i]['date_fin'],
       );
     });
   }
@@ -396,5 +448,38 @@ class SQL_Helper {
     var result =
         await db.rawDelete("DELETE FROM emprunte_dettes WHERE id=?", [id]);
     return result;
+  }
+
+  Future<int> update_budget(int id) async {
+    Database db = await this.database;
+    var result = await db
+        .rawUpdate("UPDATE budget SET status = ? WHERE id = ?", [1, id]);
+    return result;
+  }
+
+  Future<int> deleteBudget(int id) async {
+    Database db = await this.database;
+    var result = await db.rawDelete("DELETE FROM budget WHERE id=?", [id]);
+    return result;
+  }
+
+  Future<List<depensesCats>> getAllSpecifyDepense(
+      String nomCat, int idCompte) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND categorie.nomcat='$nomCat' AND id_compte = '$idCompte'");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
   }
 }

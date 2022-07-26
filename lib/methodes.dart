@@ -15,7 +15,8 @@ import 'package:toast/toast.dart';
 
 import 'models/compte.dart';
 
-PreferredSize appbarfunction(List<Tab> tabs, String title) {
+PreferredSize appbarfunction(
+    BuildContext context, List<Tab> tabs, String title, utilisateur usr) {
   return PreferredSize(
     preferredSize: Size.fromHeight(100),
     child: AppBar(
@@ -32,10 +33,13 @@ PreferredSize appbarfunction(List<Tab> tabs, String title) {
         Padding(
           padding: EdgeInsets.only(right: 20),
           child: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => parametrage(usr)));
+            },
             child: Icon(Icons.settings),
           ),
-        )
+        ),
       ],
     ),
   );
@@ -111,42 +115,39 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
         Padding(
           padding: EdgeInsets.only(top: 20),
           child: ListTile(
-            leading: Icon(Icons.dashboard_outlined),
+            leading: Icon(Icons.home),
             title: Text("Accueil", style: TextStyle(fontSize: 20)),
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          homepage(user.email, user.password)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => homepage(user)));
             },
           ),
         ),
         ListTile(
           leading: Icon(
-            Icons.train,
+            Icons.calendar_today_outlined,
             size: 20,
           ),
           title: Text("Dettes", style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => alldettes(user)));
+                MaterialPageRoute(builder: (context) => alldettes(user, 0)));
           },
         ),
         ListTile(
           leading: Icon(
-            Icons.train,
+            Icons.category,
             size: 20,
           ),
           title: Text("Budgets", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => budget(user)));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => budget(user, 0)));
           },
         ),
         ListTile(
           leading: Icon(
-            Icons.train,
+            Icons.emoji_objects,
             size: 20,
           ),
           title: Text("Objectifs", style: TextStyle(fontSize: 20)),
@@ -157,7 +158,7 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
         ),
         ListTile(
           leading: Icon(
-            Icons.train,
+            Icons.bar_chart_sharp,
             size: 20,
           ),
           title: Text("Statistiques", style: TextStyle(fontSize: 20)),
@@ -168,7 +169,7 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
         ),
         ListTile(
           leading: Icon(
-            Icons.train,
+            Icons.group,
             size: 20,
           ),
           title: Text("Partage en groupe", style: TextStyle(fontSize: 20)),
@@ -185,16 +186,26 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
           title: Text("Parametres", style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => parametrage()));
+                MaterialPageRoute(builder: (context) => parametrage(user)));
           },
         ),
+        ListTile(
+          leading: Icon(
+            Icons.help,
+            size: 20,
+          ),
+          title: Text("Aide", style: TextStyle(fontSize: 20)),
+          onTap: () {},
+        ),
         Padding(
-          padding: EdgeInsets.only(top: 20, left: 120),
+          padding: EdgeInsets.only(
+            top: 20,
+          ),
           child: ListTile(
-            // leading: Icon(
-            //   Icons.settings,
-            //   size: 20,
-            // ),
+            leading: Icon(
+              Icons.logout,
+              size: 20,
+            ),
             title: Text("Deconnection",
                 style: TextStyle(
                     fontSize: 20,
@@ -270,6 +281,18 @@ void showText(BuildContext context, String title, String msg) {
   showDialog(context: context, builder: (_) => alterdialogue);
 }
 
+Widget myBottomNavBar() {
+  return BottomNavigationBar(
+    items: [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        title: Text("Acceuil"),
+      ),
+      BottomNavigationBarItem(icon: Icon(Icons.help), title: Text("Aide")),
+    ],
+    //backgroundColor: Colors.purpleAccent,
+  );
+}
   // void updateSolde( String email,String pass,int? a,int? k) async {
   //  // updateCategories();
   //  // allcat = await getNomCategorie();

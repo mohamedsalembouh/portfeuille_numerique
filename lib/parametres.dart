@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/nouveauCategorie.dart';
 
 class parametrage extends StatefulWidget {
-  const parametrage({Key? key}) : super(key: key);
+  //const parametrage({Key? key}) : super(key: key);
+  utilisateur? usr;
+  parametrage(this.usr);
 
   @override
-  State<parametrage> createState() => _parametrageState();
+  State<parametrage> createState() => _parametrageState(this.usr);
 }
 
 class _parametrageState extends State<parametrage> {
+  utilisateur? usr;
+  _parametrageState(this.usr);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

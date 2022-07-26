@@ -18,6 +18,6 @@ class utilisateur {
     this.id = map['id'];
     this.nom = map['nom'];
     this.email = map['email'];
-    this.password = map['pass'];
+    this.password = map['password'];
   }
 }

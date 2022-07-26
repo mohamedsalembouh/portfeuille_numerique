@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/categories.dart';
 import 'package:portfeuille_numerique/dettes.dart';
@@ -13,36 +14,46 @@ import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:portfeuille_numerique/operation.dart';
 import 'package:portfeuille_numerique/parametres.dart';
 import 'package:portfeuille_numerique/partageGroupe.dart';
+import 'package:portfeuille_numerique/services/local_notification_service.dart';
 import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 import 'db/sql_helper.dart';
+import 'models/catBudget.dart';
+import 'models/emprunte_dette.dart';
 import 'profileUser.dart';
 
 class homepage extends StatefulWidget {
   homepage.withNull({Key? key}) : super(key: key);
   String? email;
   String? pass;
-  homepage(this.email, this.pass);
+  utilisateur? user;
+  // homepage(this.email, this.pass);
+  homepage(this.user);
 
   @override
-  State<homepage> createState() => _homepageState(this.email, this.pass);
+  // State<homepage> createState() => _homepageState(this.email, this.pass);
+  State<homepage> createState() => _homepageState(this.user);
 }
 
 class _homepageState extends State<homepage> {
-  String? email;
-  String? pass;
+  // String? email;
+  // String? pass;
+  utilisateur? user;
   int? k;
-  int? a;
+  // int? a;
   static var m;
   Map? myresult;
-  static var h;
+  // static var h;
   int? total;
   TextEditingController f_solde = TextEditingController();
-  _homepageState(this.email, this.pass);
+  // _homepageState(this.email, this.pass);
+  _homepageState(this.user);
+
   SQL_Helper helper = new SQL_Helper();
   List<charts.Series<diagram, String>?>? _seriedata;
   List<depensesCats>? allDepenses;
+  static var depenses;
   int count = 0;
   var piedata2 = <diagram>[];
 
@@ -107,10 +118,10 @@ class _homepageState extends State<homepage> {
       text: "Comptes",
     ),
     Tab(
-      text: "Budget et objectif",
+      text: "Depenses",
     )
   ];
-
+  late final LocalNotificationService service;
   @override
   void initState() {
     // TODO: implement initState
@@ -118,13 +129,17 @@ class _homepageState extends State<homepage> {
     updateCategories();
     _seriedata = [];
     generatedData();
+    service = LocalNotificationService();
+    service.initialize();
+    listenToNotification();
   }
 
   insertSolde() async {
-    utilisateur? user = await helper.getUser(this.email!, this.pass!);
-    a = user!.id;
-    compte new_cmp = new compte(int.parse(f_solde.text), a);
-    compte? exist_cmp = await helper.getCompteUser(a!);
+    // utilisateur? user =
+    //     await helper.getUser(this.user!.email!, this.user!.password!);
+    // a = user!.id;
+    compte new_cmp = new compte(int.parse(f_solde.text), this.user!.id!);
+    compte? exist_cmp = await helper.getCompteUser(this.user!.id!);
     if (exist_cmp != null) {
       helper.update_compte(new_cmp);
     } else {
@@ -151,13 +166,15 @@ class _homepageState extends State<homepage> {
   }
 
   updateCategories() async {
-    utilisateur? user = await helper.getUser(this.email!, this.pass!);
-    a = user!.id;
+    // utilisateur? user =
+    //     await helper.getUser(this.user!.email!, this.user!.password!);
+    // a = user!.id;
     final Future<Database>? db = helper.initialiseDataBase();
     var ourDb = db;
     if (ourDb != null) {
       ourDb.then((database) {
-        Future<List<depensesCats>> depenses = helper.getAllDepensesCats(a!);
+        Future<List<depensesCats>> depenses =
+            helper.getAllDepensesCats(this.user!.id!);
 
         depenses.then((theList) {
           setState(() {
@@ -173,14 +190,15 @@ class _homepageState extends State<homepage> {
 
   void updateSolde() async {
     updateCategories();
-    utilisateur? user = await helper.getUser(this.email!, this.pass!);
-    a = user!.id;
-    h = user.nom;
+    // utilisateur? user =
+    //     await helper.getUser(this.user!.email!, this.user!.password!);
+    // a = user!.id;
+    // h = user.nom;
     final Future<Database>? db = helper.initialiseDataBase();
     var our_db = db;
     if (our_db != null) {
       our_db.then((database) {
-        Future<int?> solde = getsoldeUser(a!);
+        Future<int?> solde = getsoldeUser(this.user!.id!);
         solde.then((reloadsolde) {
           setState(() {
             this.k = reloadsolde;
@@ -191,18 +209,19 @@ class _homepageState extends State<homepage> {
   }
 
   modifySolde(int val, int montant) async {
-    utilisateur? user = await helper.getUser(this.email!, this.pass!);
-    a = user!.id;
-    compte? cmp = await helper.getCompteUser(a!);
+    // utilisateur? user =
+    //     await helper.getUser(this.user!.email!, this.user!.password!);
+    // a = user!.id;
+    compte? cmp = await helper.getCompteUser(this.user!.id!);
     if (val == 0) {
       if (cmp != null) {
         int solde = cmp.solde!;
         int newMontant = solde + montant;
         //print(newMontant);
-        compte updateComp = compte(newMontant, a);
+        compte updateComp = compte(newMontant, this.user!.id!);
         helper.update_compte(updateComp);
       } else {
-        compte newCompte = compte(montant, a);
+        compte newCompte = compte(montant, this.user!.id!);
         helper.insert_compte(newCompte);
       }
     } else {
@@ -210,7 +229,7 @@ class _homepageState extends State<homepage> {
         int solde = cmp.solde!;
         int newMontant = solde - montant;
         //print(newMontant);
-        compte updateComp = compte(newMontant, a);
+        compte updateComp = compte(newMontant, this.user!.id!);
         helper.update_compte(updateComp);
       } else {
         //showText(context, "désolé", "vous n'avez pas de solde");
@@ -218,6 +237,8 @@ class _homepageState extends State<homepage> {
     }
     updateSolde();
   }
+
+  TextEditingController dateDebut = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -228,24 +249,28 @@ class _homepageState extends State<homepage> {
       generatedData();
     }
     m = this.k;
-    utilisateur usr = utilisateur(h, this.email, this.pass);
+    depenses = this.allDepenses;
+    // utilisateur usr = utilisateur(h, this.user!.email!, this.user!.password!);
     if (allDepenses != null) {
       print(allDepenses!.length);
-      print(allDepenses);
     } else {
       print("videeeee depenses");
     }
+    faireNotifications();
+    faireNotificationDettes();
+    //print(allDepenses![0].date);
     // print("alldepenses = ${allDepenses!.length}");
     return MaterialApp(
       home: DefaultTabController(
         length: mytabs.length,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          appBar: appbarfunction(mytabs, "Accueil"),
-          drawer: drowerfunction(context, usr),
+          appBar: appbarfunction(context, mytabs, "Accueil", this.user!),
+          drawer: drowerfunction(context, this.user),
           body: TabBarView(
             children: [
               Container(
+                //height: MediaQuery.of(context).size.height ,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -288,7 +313,7 @@ class _homepageState extends State<homepage> {
                               RaisedButton(
                                 onPressed: () {
                                   AlertDialog alertDialog = AlertDialog(
-                                    title: Text("Ajouter un niveaux solde"),
+                                    title: Text("Ajouter un nouveaux solde"),
                                     content: SizedBox(
                                       width: 200,
                                       child: TextField(
@@ -343,7 +368,7 @@ class _homepageState extends State<homepage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(top: 40),
+                          padding: EdgeInsets.only(top: 20),
                           child: Row(
                             children: [
                               Text(
@@ -355,7 +380,7 @@ class _homepageState extends State<homepage> {
                         ),
                         //ajouter ici le diagramme circulaire
                         Padding(
-                          padding: EdgeInsets.only(top: 10),
+                          padding: EdgeInsets.only(top: 5),
                           child: Container(
                             width: 400,
                             height: 400,
@@ -399,7 +424,9 @@ class _homepageState extends State<homepage> {
 
                     Container(
                       child: Padding(
-                        padding: EdgeInsets.only(left: 350, bottom: 20),
+                        padding: EdgeInsets.only(
+                          left: 350,
+                        ),
                         child: FloatingActionButton(
                           child: Icon(
                             Icons.add,
@@ -409,7 +436,8 @@ class _homepageState extends State<homepage> {
                             myresult = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => operation(usr, a)));
+                                    builder: (context) =>
+                                        operation(this.user, this.user!.id!)));
 
                             if (myresult != null) {
                               // updateSolde();
@@ -429,23 +457,58 @@ class _homepageState extends State<homepage> {
                   Expanded(
                     child: Column(
                       children: [
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        //   children: [
+                        //     Padding(
+                        //       padding: EdgeInsets.only(bottom: 10),
+                        //       //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                        //       child: TextFormField(
+                        //         controller: dateDebut,
+                        //         validator: (value) {
+                        //           if (value == null || value.isEmpty) {
+                        //             return "entrer la date de debut";
+                        //           }
+                        //           return null;
+                        //         },
+                        //         //keyboardType: TextInputType.datetime,
+                        //         decoration: InputDecoration(
+                        //           border: UnderlineInputBorder(),
+                        //           labelText: "Date debut ",
+                        //           icon: Icon(Icons.calendar_today_outlined),
+                        //         ),
+                        //         onTap: () async {
+                        //           DateTime? pickeddate = await showDatePicker(
+                        //               context: context,
+                        //               initialDate: DateTime.now(),
+                        //               firstDate: DateTime(2000),
+                        //               lastDate: DateTime(2050));
+
+                        //           if (pickeddate == null) {
+                        //             pickeddate = DateTime.now();
+                        //           }
+                        //           setState(() {
+                        //             dateDebut.text = DateFormat("yyyy-MM-dd")
+                        //                 .format(pickeddate!);
+                        //           });
+                        //         },
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                         Expanded(
-                          child: ListView(
-                            children: [
-                              ListTile(
-                                title: Text("Les Budgets"),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                            child: ListView(
-                          children: [
-                            ListTile(
-                              title: Text("Les objectifs "),
-                            ),
-                          ],
-                        ))
+                            child: ListView.builder(
+                                itemCount: count,
+                                itemBuilder: (context, pos) {
+                                  return Card(
+                                    child: ListTile(
+                                      title: Text("${depenses[pos].nomcat}"),
+                                      subtitle:
+                                          Text("${depenses[pos].montant}"),
+                                      trailing: Text("${depenses[pos].date}"),
+                                    ),
+                                  );
+                                })),
                       ],
                     ),
                   )
@@ -453,10 +516,110 @@ class _homepageState extends State<homepage> {
               )
             ],
           ),
+          //bottomNavigationBar: myBottomNavBar(),
         ),
       ),
     );
   }
+
+  faireNotifications() async {
+    SQL_Helper helper = SQL_Helper();
+    List<categorie> allcategories = await helper.getAllcategories();
+    allcategories.forEach((cat) async {
+      List<depensesCats> depenses =
+          await helper.getSpecifiedDepenses(this.user!.id!, cat.nomcat!);
+      List<catBudget> budgets =
+          await helper.getAllSpecifiedBudgets(this.user!.id!, cat.nomcat!);
+      int allmnt = 0;
+      for (depensesCats a in depenses) {
+        allmnt = allmnt + a.montant!;
+      }
+      for (catBudget bdg in budgets) {
+        if (bdg.status == 0) {
+          DateTime debut = DateTime.parse(bdg.date_debut!);
+          DateTime fin = DateTime.parse(bdg.date_fin!);
+          DateTime now =
+              DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+          if (bdg.montant! < allmnt &&
+              now.compareTo(debut) > 0 &&
+              now.compareTo(fin) < 0) {
+            service.showNotificationWithPayload(
+                id: bdg.id!,
+                title: "Attension",
+                body: "vous avez depassé le budget ${bdg.nombdg}",
+                payload: 'payload budget');
+          }
+        }
+      }
+    });
+  }
+
+  faireNotificationDettes() async {
+    List<emprunte_dette> empruntes =
+        await helper.getAllEmprunteDettes(this.user!.id!);
+    empruntes.forEach((emprunte) {
+      if (emprunte.status == 0) {
+        DateTime dateEcheance = DateTime.parse(emprunte.date_echeance!);
+
+        DateTime dateMaintenant =
+            DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+        if (dateEcheance.difference(dateMaintenant).inDays == 3) {
+          service.showNotificationWithPayload(
+              id: emprunte.id!,
+              title: "Attension",
+              body:
+                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 3 jours",
+              payload: "payload dette");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 2) {
+          service.showNotificationWithPayload(
+              id: emprunte.id!,
+              title: "Attension",
+              body:
+                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 2 jours",
+              payload: "payload dette");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 1) {
+          service.showNotificationWithPayload(
+              id: emprunte.id!,
+              title: "Attension",
+              body:
+                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 1 jours",
+              payload: "payload dette");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 0) {
+          service.showNotificationWithPayload(
+              id: emprunte.id!,
+              title: "Attension",
+              body:
+                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} Aujordhui",
+              payload: "payload dette");
+        }
+      }
+    });
+  }
+
+  void listenToNotification() =>
+      service.onNotificationClick.stream.listen((onNotificationListener));
+  void onNotificationListener(String? payload) {
+    if (payload != null && payload.isNotEmpty) {
+      print("payload $payload");
+      if (payload == "payload budget") {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => budget(user, 2)));
+      } else if (payload == "payload dette") {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => alldettes(user, 2)));
+      }
+    }
+  }
+
+  // void listenToNotification2() =>
+  //     service.onNotificationClick.stream.listen((onNotificationListener2));
+  // void onNotificationListener2(String? payload) {
+  //   if (payload != null && payload.isNotEmpty) {
+  //     print("payload $payload");
+  //     Navigator.push(
+  //         context, MaterialPageRoute(builder: (context) => alldettes(user, 2)));
+  //   }
+  // }
 }
 
 class diagram {

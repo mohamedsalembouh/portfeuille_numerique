@@ -33,34 +33,71 @@ class _operdatteState extends State<operdatte> {
           ),
           Padding(
             padding: EdgeInsets.only(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.,
               children: [
-                RaisedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => form_prette(this.usr)));
-                  },
-                  child: Text(
-                    "Prette dettes",
-                    style: TextStyle(),
-                  ),
-                  color: Colors.red,
+                // RaisedButton(
+                //   onPressed: () {
+                //     Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //             builder: (context) => form_prette(this.usr)));
+                //   },
+                //   child: Text(
+                //     "Prette dettes",
+                //     style: TextStyle(),
+                //   ),
+                //   color: Colors.red,
+                // ),
+                Row(
+                  children: [
+                    Container(
+                      // margin: EdgeInsets.all(30),
+                      width: MediaQuery.of(context).size.width,
+                      child: FlatButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => form_prette(this.usr)));
+                        },
+                        child: Text(
+                          "Prette Dette",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ],
                 ),
-                RaisedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => formemprunte(this.usr)));
-                  },
-                  child: Text(
-                    "Emprunte dettes",
-                    style: TextStyle(),
-                  ),
-                  color: Colors.green,
+
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 30),
+                      width: MediaQuery.of(context).size.width,
+                      child: FlatButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      formemprunte(this.usr)));
+                        },
+                        child: Text(
+                          "Emprunte dette",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/prette_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:intl/intl.dart';
+import 'package:toast/toast.dart';
 
 import 'models/compte.dart';
 
@@ -37,8 +38,8 @@ class _form_pretteState extends State<form_prette> {
     // String dateDebut = now.toString();
 
     if (form!.validate()) {
-      prette_dette pretteDette = prette_dette(
-          nom, objectif, int.parse(montant), dateDebut, dateEcheance, 0, a);
+      prette_dette pretteDette = prette_dette(nom, objectif, int.parse(montant),
+          dateDebut, dateEcheance, 0, typeCmp, a);
       int x = await helper.insert_pretteDatte(pretteDette);
       if (x > 0) {
         print("inserted ");
@@ -48,29 +49,37 @@ class _form_pretteState extends State<form_prette> {
     }
   }
 
-  minsSolde(String value) async {
-    int mnt = int.parse(value);
-    utilisateur? user =
-        await helper.getUser(this.usr!.email!, this.usr!.password!);
-    int a = user!.id!;
-    compte? cmp = await helper.getCompteUser(a);
-    if (cmp != null) {
-      int solde = cmp.solde!;
-      if (solde > mnt) {
-        int newSolde = solde - mnt;
-        compte updateCompte = compte(newSolde, a);
-        helper.update_compte(updateCompte);
-        insertPretteDette(nom.text, objet.text, montant.text, dateDebut.text,
-            dateEcheance.text);
+  String typeCmp = "Choisissez le type de solde";
+  minsSolde(String value, String typecomp) async {
+    final form = _formKey.currentState;
+    if (form!.validate()) {
+      if (typeCmp != "Choisissez le type de solde") {
+        int mnt = int.parse(value);
+        utilisateur? user =
+            await helper.getUser(this.usr!.email!, this.usr!.password!);
+        int a = user!.id!;
+        compte? cmp = await helper.getCompteUser(a, typeCmp);
+        if (cmp != null) {
+          int solde = cmp.solde!;
+          if (solde > mnt) {
+            int newSolde = solde - mnt;
+            compte updateCompte = compte(newSolde, typeCmp, a);
+            helper.update_compte(updateCompte);
+            insertPretteDette(nom.text, objet.text, montant.text,
+                dateDebut.text, dateEcheance.text);
 
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
+          } else {
+            showText(context, "désolé",
+                "Le montant que vous entree est plus grand que votre solde dans $typeCmp");
+          }
+        } else {
+          showText(context, "désolé", "Vous n'avez pas de solde dans $typeCmp");
+        }
       } else {
-        showText(context, "désolé",
-            "Le montant que vous entree est plus grand que votre solde ");
+        Toast.show("Choisissez le type de solde");
       }
-    } else {
-      showText(context, "désolé", "Vous n'avez pas de solde");
     }
   }
 
@@ -185,7 +194,7 @@ class _form_pretteState extends State<form_prette> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(left: 10),
+                              padding: EdgeInsets.only(left: 10, bottom: 10),
                               //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                               child: TextFormField(
                                 controller: dateEcheance,
@@ -219,6 +228,30 @@ class _form_pretteState extends State<form_prette> {
                               ),
                             ),
                             Padding(
+                              padding: EdgeInsets.only(left: 10, top: 10),
+                              child: DropdownButton<String>(
+                                items: <String>[
+                                  'Compte',
+                                  'Bankily',
+                                  'Bank'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    typeCmp = value!;
+                                  });
+                                },
+                                isExpanded: true,
+                                //value: currentNomCat,
+                                hint: Text('$typeCmp'),
+                                //style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),
                               child: Row(
                                 children: [
@@ -235,7 +268,7 @@ class _form_pretteState extends State<form_prette> {
                                     padding: EdgeInsets.only(),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        minsSolde(montant.text);
+                                        minsSolde(montant.text, typeCmp);
                                       },
                                       child: Text('Enregistrer'),
                                     ),

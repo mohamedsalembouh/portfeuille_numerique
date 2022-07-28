@@ -5,6 +5,7 @@ import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/objective.dart';
 import 'package:portfeuille_numerique/newObjectif.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:toast/toast.dart';
 
 import 'models/utilisateur.dart';
 
@@ -32,7 +33,7 @@ class _objectifState extends State<objectif> {
   List<objective>? allobjectif;
   int count = 0;
   static var allobjectives;
-
+  String TypeCompte = "Choisissez le type de solde";
   Icon? monIcon;
   getAllObjectif() async {
     utilisateur? user =
@@ -54,39 +55,45 @@ class _objectifState extends State<objectif> {
   }
 
   augmeterMontant(int idobj, int mnt) async {
-    utilisateur? user =
-        await helper.getUser(this.usr!.email!, this.usr!.password!);
-    int a = user!.id!;
-    compte? cmp = await helper.getCompteUser(a);
-    if (cmp != null) {
-      int solde = cmp.solde!;
-      if (mnt < solde) {
-        objective? obj = await helper.getSpecifyObjectif(idobj, a);
-        if (obj != null) {
-          int old_mnt = obj.montant_donnee!;
-          int new_mnt = old_mnt + mnt;
-          if (new_mnt <= obj.montant_cible!) {
-            objective update_obj = objective.withId(obj.id, obj.nom_objective,
-                obj.montant_cible, new_mnt, obj.id_compte);
-            int? x = await helper.update_objective(update_obj);
-            int newSolde = solde - mnt;
-            compte updateCompte = compte(newSolde, a);
-            int y = await helper.update_compte(updateCompte);
-            if (x != 0 && y != 0) {
-              print("updated");
-              getAllObjectif();
+    if (TypeCompte != "Choisissez le type de solde") {
+      utilisateur? user =
+          await helper.getUser(this.usr!.email!, this.usr!.password!);
+      int a = user!.id!;
+      compte? cmp = await helper.getCompteUser(a, TypeCompte);
+      if (cmp != null) {
+        int solde = cmp.solde!;
+        if (mnt < solde) {
+          objective? obj = await helper.getSpecifyObjectif(idobj, a);
+          if (obj != null) {
+            int old_mnt = obj.montant_donnee!;
+            int new_mnt = old_mnt + mnt;
+            if (new_mnt <= obj.montant_cible!) {
+              objective update_obj = objective.withId(obj.id, obj.nom_objective,
+                  obj.montant_cible, new_mnt, obj.id_compte);
+              int? x = await helper.update_objective(update_obj);
+              int newSolde = solde - mnt;
+              compte updateCompte = compte(newSolde, TypeCompte, a);
+              int y = await helper.update_compte(updateCompte);
+              if (x != 0 && y != 0) {
+                print("updated");
+                getAllObjectif();
+                Navigator.of(context, rootNavigator: true).pop();
+                mnt_donnee.clear();
+              } else {
+                print("not updated");
+              }
             } else {
-              print("not updated");
+              showText(context, "SVP",
+                  "cette valeur est plus grand que le montant cible");
             }
-          } else {
-            showText(context, "SVP",
-                "cette valeur est plus grand que le montant cible");
           }
+        } else {
+          showText(context, "Desole",
+              "Le montant que vous voulez entre est plus grand que votre solde dans $TypeCompte");
         }
-      } else {
-        showText(context, "Desole",
-            "Le montant que vous voulez entre est plus grand que votre solde");
       }
+    } else {
+      Toast.show("Choisissez le type de solde");
     }
   }
 
@@ -139,6 +146,7 @@ class _objectifState extends State<objectif> {
                             if (allobjectives[pos].montant_donnee !=
                                 allobjectives[pos].montant_cible) {
                               return Card(
+                                margin: EdgeInsets.only(top: 5),
                                 color: Colors.white,
                                 child: ListTile(
                                   // leading:
@@ -155,46 +163,104 @@ class _objectifState extends State<objectif> {
                                   ),
                                   onTap: () {
                                     AlertDialog alertDialog = AlertDialog(
-                                      title:
-                                          Text("Augmentez le montant donnee"),
-                                      content: SizedBox(
-                                        width: 200,
-                                        child: TextField(
-                                          controller: mnt_donnee,
-                                          keyboardType: TextInputType.number,
-                                          decoration: InputDecoration(
-                                              // hintText: '0',
-                                              border: OutlineInputBorder()),
-                                          style: TextStyle(fontSize: 20),
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          child: Text(
-                                            "Annuler",
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: Text("Enregistrer"),
-                                          onPressed: () {
-                                            augmeterMontant(
-                                                allobjectives[pos].id,
-                                                int.parse(mnt_donnee.text));
-
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .pop();
-                                            mnt_donnee.clear();
-                                          },
-                                        ),
-                                      ],
-                                    );
+                                        title:
+                                            Text("Augmentez le montant donnee"),
+                                        content: StatefulBuilder(builder:
+                                            (BuildContext context,
+                                                StateSetter setState) {
+                                          return Container(
+                                            height: 300,
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10),
+                                                  child: SizedBox(
+                                                    //width: 200,
+                                                    child: TextField(
+                                                      controller: mnt_donnee,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      decoration: InputDecoration(
+                                                          hintText: '0',
+                                                          border:
+                                                              OutlineInputBorder()),
+                                                      style: TextStyle(
+                                                          fontSize: 20),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 20, top: 40),
+                                                  child: DropdownButton<String>(
+                                                    items: <String>[
+                                                      'Compte',
+                                                      'Bankily',
+                                                      'Bank'
+                                                    ].map<
+                                                            DropdownMenuItem<
+                                                                String>>(
+                                                        (String value) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: value,
+                                                        child: Text(value),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged: (String? value) {
+                                                      print(TypeCompte);
+                                                      setState(() {
+                                                        TypeCompte = value!;
+                                                      });
+                                                    },
+                                                    isExpanded: true,
+                                                    //value: currentNomCat,
+                                                    hint: Text('$TypeCompte'),
+                                                    //style: TextStyle(fontSize: 18),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 10),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceAround,
+                                                    children: [
+                                                      ElevatedButton(
+                                                        child: Text(
+                                                          "Annuler",
+                                                          // style: TextStyle(
+                                                          //     color: Colors.red),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context,
+                                                                  rootNavigator:
+                                                                      true)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                      ElevatedButton(
+                                                        child:
+                                                            Text("Enregistrer"),
+                                                        onPressed: () {
+                                                          augmeterMontant(
+                                                            allobjectives[pos]
+                                                                .id,
+                                                            int.parse(mnt_donnee
+                                                                .text),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }));
                                     showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
@@ -245,7 +311,7 @@ class _objectifState extends State<objectif> {
                             }
                           })),
                   Padding(
-                    padding: EdgeInsets.only(left: 350),
+                    padding: EdgeInsets.only(left: 350, bottom: 20),
                     child: FloatingActionButton(
                       onPressed: () {
                         Navigator.push(

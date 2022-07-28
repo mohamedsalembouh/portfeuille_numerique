@@ -40,16 +40,22 @@ class _homepageState extends State<homepage> {
   // String? email;
   // String? pass;
   utilisateur? user;
-  int? k;
+  int? k1;
+  int? k2;
+  int? k3;
+  int? allSolde;
   // int? a;
-  static var m;
+  static var m1;
+  static var m2;
+  static var m3;
+  static var m_total;
   Map? myresult;
   // static var h;
   int? total;
   TextEditingController f_solde = TextEditingController();
   // _homepageState(this.email, this.pass);
   _homepageState(this.user);
-
+  String TypeCompte = "Choisissez le type de solde";
   SQL_Helper helper = new SQL_Helper();
   List<charts.Series<diagram, String>?>? _seriedata;
   List<depensesCats>? allDepenses;
@@ -134,35 +140,53 @@ class _homepageState extends State<homepage> {
     listenToNotification();
   }
 
-  insertSolde() async {
+  insertSolde(String typeCmp) async {
     // utilisateur? user =
     //     await helper.getUser(this.user!.email!, this.user!.password!);
     // a = user!.id;
-    compte new_cmp = new compte(int.parse(f_solde.text), this.user!.id!);
-    compte? exist_cmp = await helper.getCompteUser(this.user!.id!);
-    if (exist_cmp != null) {
-      helper.update_compte(new_cmp);
+    if (TypeCompte != "Choisissez le type de solde") {
+      compte new_cmp =
+          new compte(int.parse(f_solde.text), typeCmp, this.user!.id!);
+      compte? exist_cmp = await helper.getCompteUser(this.user!.id!, typeCmp);
+      if (exist_cmp != null) {
+        helper.update_compte(new_cmp);
+      } else {
+        await helper.insert_compte(new_cmp);
+      }
+
+      updateSoldeBankily();
+      updateSoldeBank();
+      updateSoldeCompte();
+      updateSoldeGlobale();
+      Navigator.pop(context);
     } else {
-      await helper.insert_compte(new_cmp);
+      Toast.show("Choisissez le type de solde");
     }
-
-    updateSolde();
   }
 
-  Future<compte?> getcompteUser(int id_utilisateur) async {
-    Future<compte?> comp = helper.getCompteUser(id_utilisateur);
-    return comp;
-  }
+  // Future<compte?> getcompteUser(int id_utilisateur) async {
+  //   Future<compte?> comp = helper.getCompteUser(id_utilisateur);
+  //   return comp;
+  // }
 
-  Future<int?> getsoldeUser(int id_utilisateur) async {
+  Future<int?> getsoldeUser(int id_utilisateur, String typeCmp) async {
     int? solde;
-    compte? comp = await helper.getCompteUser(id_utilisateur);
+    compte? comp = await helper.getCompteUser(id_utilisateur, typeCmp);
     if (comp == null) {
       solde = 0;
     } else {
       solde = comp.solde;
     }
     return solde;
+  }
+
+  Future<int?> getAllsoldeUser(int id_utilisateur) async {
+    int soldes = 0;
+    List<compte> comptes = await helper.getAllComptesUser(id_utilisateur);
+    comptes.forEach((compte) {
+      soldes = soldes + compte.solde!;
+    });
+    return soldes;
   }
 
   updateCategories() async {
@@ -188,7 +212,7 @@ class _homepageState extends State<homepage> {
     }
   }
 
-  void updateSolde() async {
+  void updateSoldeBankily() async {
     updateCategories();
     // utilisateur? user =
     //     await helper.getUser(this.user!.email!, this.user!.password!);
@@ -198,30 +222,98 @@ class _homepageState extends State<homepage> {
     var our_db = db;
     if (our_db != null) {
       our_db.then((database) {
-        Future<int?> solde = getsoldeUser(this.user!.id!);
+        Future<int?> solde = getsoldeUser(this.user!.id!, "Bankily");
         solde.then((reloadsolde) {
           setState(() {
-            this.k = reloadsolde;
+            this.k1 = reloadsolde;
           });
         });
       });
     }
   }
 
-  modifySolde(int val, int montant) async {
+  void updateSoldeBank() async {
+    updateCategories();
     // utilisateur? user =
     //     await helper.getUser(this.user!.email!, this.user!.password!);
     // a = user!.id;
-    compte? cmp = await helper.getCompteUser(this.user!.id!);
+    // h = user.nom;
+    final Future<Database>? db = helper.initialiseDataBase();
+    var our_db = db;
+    if (our_db != null) {
+      our_db.then((database) {
+        Future<int?> solde = getsoldeUser(this.user!.id!, "Bank");
+        solde.then((reloadsolde) {
+          setState(() {
+            this.k2 = reloadsolde;
+          });
+        });
+      });
+    }
+  }
+
+  void updateSoldeCompte() async {
+    updateCategories();
+    // utilisateur? user =
+    //     await helper.getUser(this.user!.email!, this.user!.password!);
+    // a = user!.id;
+    // h = user.nom;
+    final Future<Database>? db = helper.initialiseDataBase();
+    var our_db = db;
+    if (our_db != null) {
+      our_db.then((database) {
+        Future<int?> solde = getsoldeUser(this.user!.id!, "Compte");
+        solde.then((reloadsolde) {
+          setState(() {
+            this.k3 = reloadsolde;
+          });
+        });
+      });
+    }
+  }
+
+  void updateSoldeGlobale() async {
+    updateCategories();
+    // utilisateur? user =
+    //     await helper.getUser(this.user!.email!, this.user!.password!);
+    // a = user!.id;
+    // h = user.nom;
+    final Future<Database>? db = helper.initialiseDataBase();
+    var our_db = db;
+    if (our_db != null) {
+      our_db.then((database) {
+        Future<int?> soldes = getAllsoldeUser(this.user!.id!);
+        soldes.then((reloadsolde) {
+          setState(() {
+            this.allSolde = reloadsolde;
+          });
+        });
+      });
+    }
+  }
+
+  modifySolde(int val, int montant, int valTypeCmp) async {
+    // utilisateur? user =
+    //     await helper.getUser(this.user!.email!, this.user!.password!);
+    // a = user!.id;
+    String? typeCmp;
+    if (valTypeCmp == 0) {
+      typeCmp = "Compte";
+    } else if (valTypeCmp == 1) {
+      typeCmp = "Bankily";
+    } else {
+      typeCmp = "Bank";
+    }
+    compte? cmp = await helper.getCompteUser(this.user!.id!, typeCmp);
     if (val == 0) {
       if (cmp != null) {
         int solde = cmp.solde!;
         int newMontant = solde + montant;
         //print(newMontant);
-        compte updateComp = compte(newMontant, this.user!.id!);
+        compte updateComp = compte(newMontant, typeCmp, this.user!.id!);
         helper.update_compte(updateComp);
       } else {
-        compte newCompte = compte(montant, this.user!.id!);
+        compte newCompte = compte(montant, typeCmp, this.user!.id!);
         helper.insert_compte(newCompte);
       }
     } else {
@@ -229,26 +321,35 @@ class _homepageState extends State<homepage> {
         int solde = cmp.solde!;
         int newMontant = solde - montant;
         //print(newMontant);
-        compte updateComp = compte(newMontant, this.user!.id!);
+        compte updateComp = compte(newMontant, typeCmp, this.user!.id!);
         helper.update_compte(updateComp);
       } else {
         //showText(context, "désolé", "vous n'avez pas de solde");
       }
     }
-    updateSolde();
+    updateSoldeBankily();
+    updateSoldeBank();
+    updateSoldeCompte();
+    updateSoldeGlobale();
   }
 
   TextEditingController dateDebut = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    if (k == null) {
-      updateSolde();
+    if (k1 == null || k2 == null || k3 == null || allSolde == null) {
+      updateSoldeBankily();
+      updateSoldeBank();
+      updateSoldeCompte();
+      updateSoldeGlobale();
     } else {
       _seriedata = [];
       generatedData();
     }
-    m = this.k;
+    m1 = this.k1;
+    m2 = this.k2;
+    m3 = this.k3;
+    m_total = this.allSolde;
     depenses = this.allDepenses;
     // utilisateur usr = utilisateur(h, this.user!.email!, this.user!.password!);
     if (allDepenses != null) {
@@ -256,6 +357,7 @@ class _homepageState extends State<homepage> {
     } else {
       print("videeeee depenses");
     }
+    // print(allSolde);
     faireNotifications();
     faireNotificationDettes();
     //print(allDepenses![0].date);
@@ -294,56 +396,209 @@ class _homepageState extends State<homepage> {
                                   enabled: false,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
-                                      hintText: '$m',
+                                      hintText: '$allSolde',
                                       border: OutlineInputBorder()),
                                   style: TextStyle(
                                     fontSize: 30,
                                   ),
                                 ),
+
+                                // width: 200,
+                                // height: 50,
+                                // child: Padding(
+                                //   padding: EdgeInsets.only(),
+                                //   child: ListTile(
+                                //     title: Card(
+                                //       //margin: EdgeInsets.only(left: 20),
+                                //       child: Center(
+                                //         child: Text(
+                                //           "$allSolde",
+                                //           style: TextStyle(fontSize: 30),
+                                //         ),
+                                //       ),
+                                //     ),
+                                //     onTap: () {
+                                //       print(allSolde);
+                                //       print(m1);
+                                //       print(m2);
+                                //       print(m3);
+                                //       AlertDialog alertDialog = AlertDialog(
+                                //         title: Text(""),
+                                //         content: Container(
+                                //           height: 200,
+                                //           child: Column(
+                                //             children: [
+                                //               Card(
+                                //                   child:
+                                //                       Text("Bankily :  $m1")),
+                                //               Text("$m2"),
+                                //               Text("$m3"),
+                                //             ],
+                                //           ),
+                                //         ),
+                                //       );
+                                //       showDialog(
+                                //           context: context,
+                                //           builder: (BuildContext context) {
+                                //             return alertDialog;
+                                //           });
+                                //     },
+                                //   ),
+                                // ),
                               ),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 20),
+                            padding: EdgeInsets.only(top: 10),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  // Text(" "),
+                                  RaisedButton(
+                                    onPressed: () {
+                                      print(allSolde);
+                                      print(m1);
+                                      print(m2);
+                                      print(m3);
+                                      AlertDialog alertDialog = AlertDialog(
+                                        title: Text(""),
+                                        content: Container(
+                                          height: 200,
+                                          child: Column(
+                                            children: [
+                                              Card(
+                                                child: ListTile(
+                                                  title: Text("Compte"),
+                                                  trailing: Text("$m3"),
+                                                ),
+                                              ),
+                                              Card(
+                                                child: ListTile(
+                                                  title: Text("Bank"),
+                                                  trailing: Text("$m2"),
+                                                ),
+                                              ),
+                                              Card(
+                                                child: ListTile(
+                                                  title: Text("Bankily"),
+                                                  trailing: Text("$m1"),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return alertDialog;
+                                          });
+                                    },
+                                    padding: EdgeInsets.all(5),
+                                    // color: Colors.red,
+                                    //textColor: Colors.white,
+                                    child:
+                                        Text("Afficher Les Details de solde"),
+                                  )
+                                ])),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text(" "),
+                              // Text(" "),
                               RaisedButton(
                                 onPressed: () {
                                   AlertDialog alertDialog = AlertDialog(
-                                    title: Text("Ajouter un nouveaux solde"),
-                                    content: SizedBox(
-                                      width: 200,
-                                      child: TextField(
-                                        controller: f_solde,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                            hintText: '0',
-                                            border: OutlineInputBorder()),
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(
-                                          "Annuler",
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text("Enregistrer"),
-                                        onPressed: () {
-                                          insertSolde();
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  );
+                                      title: Text("Ajouter un nouveaux solde"),
+                                      content: StatefulBuilder(builder:
+                                          (BuildContext context,
+                                              StateSetter setState) {
+                                        return Container(
+                                          height: 300,
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10),
+                                                child: SizedBox(
+                                                  //width: 200,
+                                                  child: TextField(
+                                                    controller: f_solde,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    decoration: InputDecoration(
+                                                        hintText: '0',
+                                                        border:
+                                                            OutlineInputBorder()),
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom: 20, top: 40),
+                                                child: DropdownButton<String>(
+                                                  items: <String>[
+                                                    'Compte',
+                                                    'Bankily',
+                                                    'Bank'
+                                                  ].map<
+                                                          DropdownMenuItem<
+                                                              String>>(
+                                                      (String value) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (String? value) {
+                                                    print(TypeCompte);
+                                                    setState(() {
+                                                      TypeCompte = value!;
+                                                    });
+                                                  },
+                                                  isExpanded: true,
+                                                  //value: currentNomCat,
+                                                  hint: Text('$TypeCompte'),
+                                                  //style: TextStyle(fontSize: 18),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 10),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    ElevatedButton(
+                                                      child: Text(
+                                                        "Annuler",
+                                                        // style: TextStyle(
+                                                        //     color: Colors.red),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    ElevatedButton(
+                                                      child:
+                                                          Text("Enregistrer"),
+                                                      onPressed: () {
+                                                        insertSolde(TypeCompte);
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }));
                                   showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
@@ -442,7 +697,8 @@ class _homepageState extends State<homepage> {
                             if (myresult != null) {
                               // updateSolde();
                               updateCategories();
-                              modifySolde(myresult![0], myresult![1]);
+                              modifySolde(
+                                  myresult![0], myresult![1], myresult![2]);
                             }
                           },
                         ),
@@ -502,11 +758,17 @@ class _homepageState extends State<homepage> {
                                 itemBuilder: (context, pos) {
                                   return Card(
                                     child: ListTile(
-                                      title: Text("${depenses[pos].nomcat}"),
-                                      subtitle:
-                                          Text("${depenses[pos].montant}"),
-                                      trailing: Text("${depenses[pos].date}"),
-                                    ),
+                                        isThreeLine: true,
+                                        title: Text("${depenses[pos].nomcat}"),
+                                        subtitle:
+                                            Text("${depenses[pos].montant}"),
+                                        trailing: Column(
+                                          children: [
+                                            Text("${depenses[pos].date}"),
+                                            Text(
+                                                "${depenses[pos].type_compte}"),
+                                          ],
+                                        )),
                                   );
                                 })),
                       ],

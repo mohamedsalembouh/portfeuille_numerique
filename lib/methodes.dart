@@ -262,16 +262,16 @@ validateEmail(String email) {
 }
 
 SQL_Helper helper = SQL_Helper();
-Future<int?> getsoldeUser(int id_utilisateur) async {
-  int? solde;
-  compte? comp = await helper.getCompteUser(id_utilisateur);
-  if (comp == null) {
-    solde = 0;
-  } else {
-    solde = comp.solde;
-  }
-  return solde;
-}
+// Future<int?> getsoldeUser(int id_utilisateur) async {
+//   int? solde;
+//   compte? comp = await helper.getCompteUser(id_utilisateur);
+//   if (comp == null) {
+//     solde = 0;
+//   } else {
+//     solde = comp.solde;
+//   }
+//   return solde;
+// }
 
 void showText(BuildContext context, String title, String msg) {
   AlertDialog alterdialogue = AlertDialog(

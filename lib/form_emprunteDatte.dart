@@ -4,6 +4,7 @@ import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/models/emprunte_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:toast/toast.dart';
 
 import 'models/compte.dart';
 
@@ -38,32 +39,37 @@ class _formemprunteState extends State<formemprunte> {
     // String dateDebut = now.toString();
 
     if (form!.validate()) {
-      emprunte_dette emprunteDette = emprunte_dette(
-          nom, objectif, int.parse(montant), dateDebut, dateEcheance, 0, a);
-      int x = await helper.insert_EmprunteDatte(emprunteDette);
-      if (x > 0) {
-        print("inserted ");
-        PlusSolde(int.parse(montant));
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
+      if (TypeCompte != "Choisissez le type de solde") {
+        emprunte_dette emprunteDette = emprunte_dette(nom, objectif,
+            int.parse(montant), dateDebut, dateEcheance, 0, TypeCompte, a);
+        int x = await helper.insert_EmprunteDatte(emprunteDette);
+        if (x > 0) {
+          print("inserted ");
+          PlusSolde(int.parse(montant), TypeCompte);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
+        } else {
+          print("not inserted");
+        }
       } else {
-        print("not inserted");
+        Toast.show("Choisissez le type de solde");
       }
     }
   }
 
-  PlusSolde(int mnt) async {
+  String TypeCompte = "Choisissez le type de solde";
+  PlusSolde(int mnt, String typeCmp) async {
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    compte? cmp = await helper.getCompteUser(a);
+    compte? cmp = await helper.getCompteUser(a, typeCmp);
     if (cmp != null) {
       int solde = cmp.solde!;
       int newSolde = solde + mnt;
-      compte updateCompte = compte(newSolde, a);
+      compte updateCompte = compte(newSolde, TypeCompte, a);
       helper.update_compte(updateCompte);
     } else {
-      compte newCompte = compte(mnt, a);
+      compte newCompte = compte(mnt, TypeCompte, a);
       helper.insert_compte(newCompte);
     }
   }
@@ -179,7 +185,7 @@ class _formemprunteState extends State<formemprunte> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(left: 10),
+                              padding: EdgeInsets.only(left: 10, bottom: 10),
                               //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                               child: TextFormField(
                                 controller: dateEcheance,
@@ -210,6 +216,30 @@ class _formemprunteState extends State<formemprunte> {
                                     });
                                   }
                                 },
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10, top: 10),
+                              child: DropdownButton<String>(
+                                items: <String>[
+                                  'Compte',
+                                  'Bankily',
+                                  'Bank'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    TypeCompte = value!;
+                                  });
+                                },
+                                isExpanded: true,
+                                //value: currentNomCat,
+                                hint: Text('$TypeCompte'),
+                                //style: TextStyle(fontSize: 18),
                               ),
                             ),
                             Padding(

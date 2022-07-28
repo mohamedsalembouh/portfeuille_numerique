@@ -118,6 +118,7 @@ class _statistiqueState extends State<statistique> {
             allDepensesCats![i].montant! + tot,
             allDepensesCats![i].description,
             allDepensesCats![i].date,
+            allDepensesCats![i].type_compte,
             allDepensesCats![i].id_categorie,
             allDepensesCats![i].nomcat,
             allDepensesCats![i].coleur));
@@ -143,6 +144,7 @@ class _statistiqueState extends State<statistique> {
             allrevenus![i].montant! + tot,
             allrevenus![i].description,
             allrevenus![i].date,
+            allrevenus![i].type_compte,
             allrevenus![i].id_categorie,
             allrevenus![i].nomcat,
             allrevenus![i].coleur));

@@ -63,17 +63,17 @@ class SQL_Helper {
     await db.execute(
         "CREATE TABLE utilisateur(id INTEGER PRIMARY KEY AUTOINCREMENT,nom TEXT,email TEXT,password TEXT)");
     await db.execute(
-        "create table compte(id INTEGER PRIMARY KEY AUTOINCREMENT,solde int not null ,id_utilisateur integer ,foreign key(id_utilisateur) references utilisateur(id))");
+        "create table compte(id INTEGER PRIMARY KEY AUTOINCREMENT,solde int not null,type TEXT not null ,id_utilisateur integer ,foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
         "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nomcat TEXT,coleur TEXT)");
     await db.execute(
-        "create table operation_entree(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
+        "create table operation_entree(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,type_compte TEXT not null ,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table operation_sortir(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
+        "create table operation_sortir(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,type_compte TEXT not null ,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null, id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
+        "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null,type_compte TEXT not null , id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null, id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
+        "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null,type_compte TEXT not null , id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
     await db.execute(
         "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nombdg text not null, montant integer not null,date_debut text not null,date_fin text not null,status INTEGER not null,id_categorie integer ,id_compte integer ,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
@@ -119,20 +119,34 @@ class SQL_Helper {
   //   return result;
   // }
 
-  Future<compte?> getCompteUser(int idutilisateur) async {
+  Future<compte?> getCompteUser(int idutilisateur, String typeCmp) async {
     Database db = await this.database;
-    var result =
-        await db.rawQuery("SELECT * FROM compte WHERE id  ='$idutilisateur'");
+    var result = await db.rawQuery(
+        "SELECT * FROM compte WHERE id_utilisateur  ='$idutilisateur' AND type = '$typeCmp'");
     if (result.length > 0) {
       return new compte.getmap(result.first);
     }
     return null;
   }
 
+  Future<List<compte>> getAllComptesUser(int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db
+        .rawQuery("SELECT * FROM compte WHERE id_utilisateur = '$idUser'");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return compte(
+          maps[i]['solde'], maps[i]['type'], maps[i]['id_utilisateur']);
+    });
+  }
+
   Future<int> update_compte(compte comp) async {
     Database db = await this.database;
-    var result = await db.rawUpdate("UPDATE compte SET solde = ? WHERE id = ?",
-        [comp.solde, comp.id_utilisateur]);
+    var result = await db.rawUpdate(
+        "UPDATE compte SET solde = ? WHERE id_utilisateur = ? AND type = ?",
+        [comp.solde, comp.id_utilisateur, comp.type]);
     return result;
   }
 
@@ -202,8 +216,13 @@ class SQL_Helper {
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
-      return operation_entree(maps[i]['montant'], maps[i]['description'],
-          maps[i]['date'], maps[i]['id_categorie'], maps[i]['id_compte']);
+      return operation_entree(
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['type_comte'],
+          maps[i]['id_categorie'],
+          maps[i]['id_compte']);
     });
   }
 
@@ -215,8 +234,13 @@ class SQL_Helper {
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
-      return operation_sortir(maps[i]['montant'], maps[i]['description'],
-          maps[i]['date'], maps[i]['id_categorie'], maps[i]['id_compte']);
+      return operation_sortir(
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['type_compte'],
+          maps[i]['id_categorie'],
+          maps[i]['id_compte']);
     });
   }
 
@@ -233,6 +257,7 @@ class SQL_Helper {
           maps[i]['montant'],
           maps[i]['description'],
           maps[i]['date'],
+          maps[i]['type_compte'],
           maps[i]['id_categorie'],
           maps[i]['nomcat'],
           maps[i]['coleur']);
@@ -252,6 +277,7 @@ class SQL_Helper {
           maps[i]['montant'],
           maps[i]['description'],
           maps[i]['date'],
+          maps[i]['type_compte'],
           maps[i]['id_categorie'],
           maps[i]['nomcat'],
           maps[i]['coleur']);
@@ -272,6 +298,7 @@ class SQL_Helper {
           maps[i]['montant'],
           maps[i]['description'],
           maps[i]['date'],
+          maps[i]['type_compte'],
           maps[i]['id_categorie'],
           maps[i]['nomcat'],
           maps[i]['coleur']);
@@ -300,6 +327,7 @@ class SQL_Helper {
         maps[i]['date_debut'],
         maps[i]['date_echeance'],
         maps[i]['status'],
+        maps[i]['type_compte'],
         maps[i]['id_compte'],
       );
     });
@@ -327,6 +355,7 @@ class SQL_Helper {
         maps[i]['date_debut'],
         maps[i]['date_echeance'],
         maps[i]['status'],
+        maps[i]['type_compte'],
         maps[i]['id_compte'],
       );
     });
@@ -477,6 +506,7 @@ class SQL_Helper {
           maps[i]['montant'],
           maps[i]['description'],
           maps[i]['date'],
+          maps[i]['type_compte'],
           maps[i]['id_categorie'],
           maps[i]['nomcat'],
           maps[i]['coleur']);

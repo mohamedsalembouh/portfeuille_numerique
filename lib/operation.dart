@@ -59,7 +59,7 @@ class _operationState extends State<operation> {
 
   SQL_Helper helper = new SQL_Helper();
   String currentNomCat = "Choisir une categorie";
-
+  String TypeCompte = "Choisissez le type de solde";
   // updatedepenses() async {
   //   utilisateur? user =
   //       await helper.getUser(this.usr!.email!, this.usr!.password!);
@@ -78,63 +78,96 @@ class _operationState extends State<operation> {
   //     });
   //   }
   // }
+  int getTypeCompte(String typeCmp) {
+    if (typeCmp == "Compte") {
+      return 0;
+    } else if (typeCmp == "Bankily") {
+      return 1;
+    } else {
+      return 2;
+    }
+  }
 
-  insertRevenus(String value, String description) async {
+  insertRevenus(String value, String description, String typeCmp) async {
     final form = _formKey1.currentState!;
     // final form = _formKey.currentState;
     // if (form!.validate()) {
     // if (montant == 0) {
     //   Toast.show("entrer montant");
     // }
-    if (form.validate()) {
-      int montant = int.parse(value);
-      categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
-      int idCat = cat!.id!;
-      DateTime maintenant = DateTime.now();
-      String date_maintenant = DateFormat("dd-MM-yyyy").format(maintenant);
-      operation_entree entree = new operation_entree(
-          montant, description, date_maintenant, idCat, this.numero);
-      int a = await helper.insertOperationEntree(entree);
-      if (a != 0) {
-        print("operation inserted");
-      } else {
-        print("not inserted");
-      }
-    }
-  }
-
-  insertDepense(String value, String description) async {
-    final form = _formKey2.currentState!;
-    if (form.validate()) {
-      int montant = int.parse(value);
-      compte? comp = await helper.getCompteUser(numero!);
-      if (comp != null) {
-        int solde = comp.solde!;
-        if (solde > montant) {
+    if (currentNomCat != "Choisir une categorie") {
+      if (form.validate()) {
+        if (typeCmp != "Choisissez le type de solde") {
+          int montant = int.parse(value);
           categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
           int idCat = cat!.id!;
           DateTime maintenant = DateTime.now();
           String date_maintenant = DateFormat("dd-MM-yyyy").format(maintenant);
-          operation_sortir sortir = new operation_sortir(
-              montant, description, date_maintenant, idCat, this.numero);
-          int a = await helper.insertOperationSortir(sortir);
+          operation_entree entree = new operation_entree(montant, description,
+              date_maintenant, typeCmp, idCat, this.numero);
+          int a = await helper.insertOperationEntree(entree);
           if (a != 0) {
-            print("operation sortir inserted");
+            print("operation inserted");
+            int montant = int.parse(entreeMontant.text);
+            Map<int, int> myData = new Map();
+            myData[0] = 0;
+            myData[1] = montant;
+            myData[2] = getTypeCompte(TypeCompte);
+            Navigator.of(context).pop(myData);
           } else {
             print("not inserted");
           }
-
-          Map<int, int> myData = new Map();
-          myData[0] = 1;
-          myData[1] = montant;
-          Navigator.of(context, rootNavigator: true).pop(myData);
         } else {
-          showText(context, "désolé",
-              "vous n'avez pas de solde sufficant pour cette operation");
+          Toast.show("Choisissez le type de solde");
         }
-      } else {
-        showText(context, "désolé", "vous n'avez pas de solde");
       }
+    } else {
+      Toast.show("Choisir une categorie");
+    }
+  }
+
+  insertDepense(String value, String description, String typeCmp) async {
+    final form = _formKey2.currentState!;
+    if (currentNomCat != "Choisir une categorie") {
+      if (form.validate()) {
+        if (typeCmp != "Choisissez le type de solde") {
+          int montant = int.parse(value);
+          compte? comp = await helper.getCompteUser(numero!, typeCmp);
+          if (comp != null) {
+            int solde = comp.solde!;
+            if (solde > montant) {
+              categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
+              int idCat = cat!.id!;
+              DateTime maintenant = DateTime.now();
+              String date_maintenant =
+                  DateFormat("dd-MM-yyyy").format(maintenant);
+              operation_sortir sortir = new operation_sortir(montant,
+                  description, date_maintenant, TypeCompte, idCat, this.numero);
+              int a = await helper.insertOperationSortir(sortir);
+              if (a != 0) {
+                print("operation sortir inserted");
+                Map<int, int> myData = new Map();
+                myData[0] = 1;
+                myData[1] = montant;
+                myData[2] = getTypeCompte(TypeCompte);
+                Navigator.of(context, rootNavigator: true).pop(myData);
+              } else {
+                print("not inserted");
+              }
+            } else {
+              showText(context, "désolé",
+                  "vous n'avez pas de solde sufficant pour cette operation dans $typeCmp");
+            }
+          } else {
+            showText(
+                context, "désolé", "vous n'avez pas de solde dans $typeCmp");
+          }
+        } else {
+          Toast.show("Choisissez le type de solde");
+        }
+      }
+    } else {
+      Toast.show("Choisir une categorie SVP");
     }
 
     // updatedepenses();
@@ -257,7 +290,7 @@ class _operationState extends State<operation> {
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return "entree une montant";
+                                    return "entree un montant";
                                   }
                                   return null;
                                 },
@@ -280,6 +313,30 @@ class _operationState extends State<operation> {
                               ),
                             ),
                             Padding(
+                              padding: EdgeInsets.only(top: 10, left: 10),
+                              child: DropdownButton<String>(
+                                items: <String>[
+                                  'Compte',
+                                  'Bankily',
+                                  'Bank'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    TypeCompte = value!;
+                                  });
+                                },
+                                isExpanded: true,
+                                //value: currentNomCat,
+                                hint: Text('$TypeCompte'),
+                                //style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),
                               child: Row(
                                 children: [
@@ -296,21 +353,10 @@ class _operationState extends State<operation> {
                                     padding: EdgeInsets.only(),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        if (currentNomCat ==
-                                            "Choisir une categorie") {
-                                          Toast.show(
-                                              "choisir une categorie SVP");
-                                        } else {
-                                          insertRevenus(entreeMontant.text,
-                                              entreeDesc.text);
-                                          int montant =
-                                              int.parse(entreeMontant.text);
-                                          Map<int, int> myData = new Map();
-                                          myData[0] = 0;
-                                          myData[1] = montant;
-                                          Navigator.of(context).pop(myData);
-                                          // Navigator.pop(context, myData);
-                                        }
+                                        insertRevenus(entreeMontant.text,
+                                            entreeDesc.text, TypeCompte);
+
+                                        // Navigator.pop(context, myData);
                                       },
                                       child: Text('Enregistrer'),
                                     ),
@@ -407,6 +453,30 @@ class _operationState extends State<operation> {
                               ),
                             ),
                             Padding(
+                              padding: EdgeInsets.only(top: 10, left: 10),
+                              child: DropdownButton<String>(
+                                items: <String>[
+                                  'Compte',
+                                  'Bankily',
+                                  'Bank'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    TypeCompte = value!;
+                                  });
+                                },
+                                isExpanded: true,
+                                //value: currentNomCat,
+                                hint: Text('$TypeCompte'),
+                                //style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),
                               child: Row(
                                 children: [
@@ -425,16 +495,10 @@ class _operationState extends State<operation> {
                                     padding: EdgeInsets.only(),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        if (currentNomCat ==
-                                            "Choisir une categorie") {
-                                          Toast.show(
-                                              "choisir une categorie SVP");
-                                        } else {
-                                          insertDepense(sortirMontant.text,
-                                              sortirDesc.text);
+                                        insertDepense(sortirMontant.text,
+                                            sortirDesc.text, TypeCompte);
 
-                                          // Navigator.pop(context, myData);
-                                        }
+                                        // Navigator.pop(context, myData);
                                       },
                                       child: Text('Enregistrer'),
                                     ),

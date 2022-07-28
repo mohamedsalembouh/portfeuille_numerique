@@ -59,23 +59,23 @@ class _alldettesState extends State<alldettes> {
     super.initState();
   }
 
-  void updateSolde() async {
-    utilisateur? user =
-        await helper.getUser(this.usr!.email!, this.usr!.password!);
-    int a = user!.id!;
-    final Future<Database>? db = helper.initialiseDataBase();
-    var our_db = db;
-    if (our_db != null) {
-      our_db.then((database) {
-        Future<int?> reloadsolde = getsoldeUser(a);
-        reloadsolde.then((sol) {
-          setState(() {
-            this.so = sol;
-          });
-        });
-      });
-    }
-  }
+  // void updateSolde() async {
+  //   utilisateur? user =
+  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
+  //   int a = user!.id!;
+  //   final Future<Database>? db = helper.initialiseDataBase();
+  //   var our_db = db;
+  //   if (our_db != null) {
+  //     our_db.then((database) {
+  //       Future<int?> reloadsolde = getsoldeUser(a);
+  //       reloadsolde.then((sol) {
+  //         setState(() {
+  //           this.so = sol;
+  //         });
+  //       });
+  //     });
+  //   }
+  // }
 
   // Future<bool> oldSolde(int mnt) async {
   //   utilisateur? user =
@@ -94,16 +94,16 @@ class _alldettesState extends State<alldettes> {
   //   }
   // }
 
-  minsSolde(int mnt, int idEmprunte) async {
+  minsSolde(int mnt, int idEmprunte, String typeCmp) async {
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    compte? cmp = await helper.getCompteUser(a);
+    compte? cmp = await helper.getCompteUser(a, typeCmp);
     if (cmp != null) {
       int solde = cmp.solde!;
       if (solde > mnt) {
         int newSolde = solde - mnt;
-        compte updateCompte = compte(newSolde, a);
+        compte updateCompte = compte(newSolde, cmp.type, a);
         int? r1 = await helper.update_compte(updateCompte);
         int? r2 = await helper.update_EmprunteDette(idEmprunte);
         if (r1 != 0 && r2 != 0) {
@@ -115,15 +115,15 @@ class _alldettesState extends State<alldettes> {
     }
   }
 
-  PlusSolde(int mnt, int idPrette) async {
+  PlusSolde(int mnt, int idPrette, String typeCmp) async {
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    compte? cmp = await helper.getCompteUser(a);
+    compte? cmp = await helper.getCompteUser(a, typeCmp);
     if (cmp != null) {
       int solde = cmp.solde!;
       int newSolde = solde + mnt;
-      compte updateCompte = compte(newSolde, a);
+      compte updateCompte = compte(newSolde, cmp.type, a);
       int? res1 = await helper.update_compte(updateCompte);
       int? res2 = await helper.update_pretteDette(idPrette);
       if (res1 != 0 && res2 != 0) {
@@ -203,9 +203,9 @@ class _alldettesState extends State<alldettes> {
     if (this.empruntedetes == null) {
       getAllEmprunteDette();
     }
-    if (this.so == null) {
-      updateSolde();
-    }
+    // if (this.so == null) {
+    //   updateSolde();
+    // }
 
     prettes = this.pretedetes;
     empruntes = this.empruntedetes;
@@ -277,8 +277,10 @@ class _alldettesState extends State<alldettes> {
                                             style: TextStyle(color: Colors.red),
                                           ),
                                           onPressed: () {
-                                            PlusSolde(prettes[pos].montant,
-                                                prettes[pos].id);
+                                            PlusSolde(
+                                                prettes[pos].montant,
+                                                prettes[pos].id,
+                                                prettes[pos].type_compte);
 
                                             Navigator.of(context,
                                                     rootNavigator: true)
@@ -351,8 +353,10 @@ class _alldettesState extends State<alldettes> {
                                             style: TextStyle(color: Colors.red),
                                           ),
                                           onPressed: () {
-                                            minsSolde(empruntes[pos].montant,
-                                                empruntes[pos].id);
+                                            minsSolde(
+                                                empruntes[pos].montant,
+                                                empruntes[pos].id,
+                                                empruntes[pos].type_compte);
 
                                             Navigator.of(context,
                                                     rootNavigator: true)

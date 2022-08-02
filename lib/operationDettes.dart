@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/form_emprunteDatte.dart';
 import 'package:portfeuille_numerique/form_pretteDate.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 
 class operdatte extends StatefulWidget {
   utilisateur? usr;
+  List<diagrameSolde>? allUpdateSolde;
   //const operdatte({Key? key}) : super(key: key);
-  operdatte(this.usr);
+  operdatte(this.usr, this.allUpdateSolde);
   @override
-  State<operdatte> createState() => _operdatteState(this.usr);
+  State<operdatte> createState() =>
+      _operdatteState(this.usr, this.allUpdateSolde);
 }
 
 class _operdatteState extends State<operdatte> {
   utilisateur? usr;
-  _operdatteState(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  _operdatteState(this.usr, this.allUpdateSolde);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +63,8 @@ class _operdatteState extends State<operdatte> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => form_prette(this.usr)));
+                                  builder: (context) => form_prette(
+                                      this.usr, this.allUpdateSolde)));
                         },
                         child: Text(
                           "Prette Dette",
@@ -84,8 +89,8 @@ class _operdatteState extends State<operdatte> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      formemprunte(this.usr)));
+                                  builder: (context) => formemprunte(
+                                      this.usr, this.allUpdateSolde)));
                         },
                         child: Text(
                           "Emprunte dette",

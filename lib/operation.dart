@@ -10,6 +10,7 @@ import 'package:portfeuille_numerique/models/operation_entree.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/services/local_notification_service.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 
@@ -23,9 +24,11 @@ class operation extends StatefulWidget {
   //String? nomCategorie;
   int? numero;
   utilisateur? usr;
-  operation(this.usr, this.numero);
+  List<diagrameSolde>? allUpdateSolde;
+  operation(this.usr, this.numero, this.allUpdateSolde);
   @override
-  State<operation> createState() => _operationState(this.usr, this.numero);
+  State<operation> createState() =>
+      _operationState(this.usr, this.numero, this.allUpdateSolde);
 }
 
 class _operationState extends State<operation> {
@@ -45,7 +48,8 @@ class _operationState extends State<operation> {
   // int? selectedPage;
   int? numero;
   utilisateur? usr;
-  _operationState(this.usr, this.numero);
+  List<diagrameSolde>? allUpdateSolde;
+  _operationState(this.usr, this.numero, this.allUpdateSolde);
   List<operation_sortir>? alldepenses;
   int? count;
   final List<Tab> mytabs = [
@@ -224,7 +228,7 @@ class _operationState extends State<operation> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
 
-          drawer: drowerfunction(context, usr),
+          drawer: drowerfunction(context, usr, this.allUpdateSolde),
           appBar: AppBar(
               toolbarHeight: 100,
               bottom: TabBar(tabs: mytabs),

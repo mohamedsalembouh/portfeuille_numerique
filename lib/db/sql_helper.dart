@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:portfeuille_numerique/models/argent.dart';
 import 'package:portfeuille_numerique/models/budgete.dart';
 import 'package:portfeuille_numerique/models/catBudget.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
@@ -63,7 +64,7 @@ class SQL_Helper {
     await db.execute(
         "CREATE TABLE utilisateur(id INTEGER PRIMARY KEY AUTOINCREMENT,nom TEXT,email TEXT,password TEXT)");
     await db.execute(
-        "create table compte(id INTEGER PRIMARY KEY AUTOINCREMENT,solde int not null,type TEXT not null ,id_utilisateur integer ,foreign key(id_utilisateur) references utilisateur(id))");
+        "create table compte(id INTEGER PRIMARY KEY AUTOINCREMENT,solde int not null,type TEXT not null,date TEXT not null ,id_utilisateur integer ,foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
         "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nomcat TEXT,coleur TEXT)");
     await db.execute(
@@ -71,13 +72,15 @@ class SQL_Helper {
     await db.execute(
         "create table operation_sortir(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,type_compte TEXT not null ,id_categorie INTEGER,id_compte INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null,type_compte TEXT not null , id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
+        "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date TEXT not null,date_debut text not null,date_echeance text not null,status INTEGER not null,type_compte TEXT not null , id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date_debut text not null,date_echeance text not null,status INTEGER not null,type_compte TEXT not null , id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
+        "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date TEXT not null,date_debut text not null,date_echeance text not null,status INTEGER not null,type_compte TEXT not null , id_compte INTEGER not null, foreign key(id_compte) references compte(id))");
     await db.execute(
         "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nombdg text not null, montant integer not null,date_debut text not null,date_fin text not null,status INTEGER not null,id_categorie integer ,id_compte integer ,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id))");
     await db.execute(
-        "create table objectif(id INTEGER PRIMARY KEY AUTOINCREMENT,nom_objective text not null,montant_cible integer not null,montant_donnee integer not null,id_compte integer not null,foreign key(id_compte) references compte(id))");
+        "create table objectif(id INTEGER PRIMARY KEY AUTOINCREMENT,nom_objective text not null,montant_cible integer not null,montant_donnee integer not null,date TEXT not null,id_compte integer not null,foreign key(id_compte) references compte(id))");
+    await db.execute(
+        "create table argent(id INTEGER PRIMARY KEY AUTOINCREMENT,montant integer not null,date TEXT not null,type TEXT not null,id_compte integer not null,foreign key(id_compte) references compte(id))");
   }
 
   Future<int> insert_user(utilisateur user) async {
@@ -109,6 +112,7 @@ class SQL_Helper {
   Future<int> insert_compte(compte cmp) async {
     Database db = await this.database;
     var result = db.insert("compte", cmp.tomap());
+
     return result;
   }
 
@@ -137,16 +141,16 @@ class SQL_Helper {
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
-      return compte(
-          maps[i]['solde'], maps[i]['type'], maps[i]['id_utilisateur']);
+      return compte(maps[i]['solde'], maps[i]['type'], maps[i]['date'],
+          maps[i]['id_utilisateur']);
     });
   }
 
   Future<int> update_compte(compte comp) async {
     Database db = await this.database;
     var result = await db.rawUpdate(
-        "UPDATE compte SET solde = ? WHERE id_utilisateur = ? AND type = ?",
-        [comp.solde, comp.id_utilisateur, comp.type]);
+        "UPDATE compte SET solde = ? , date = ? WHERE id_utilisateur = ? AND type = ?",
+        [comp.solde, comp.date, comp.id_utilisateur, comp.type]);
     return result;
   }
 
@@ -324,6 +328,7 @@ class SQL_Helper {
         maps[i]['nom'],
         maps[i]['objectif'],
         maps[i]['montant'],
+        maps[i]['date'],
         maps[i]['date_debut'],
         maps[i]['date_echeance'],
         maps[i]['status'],
@@ -352,6 +357,7 @@ class SQL_Helper {
         maps[i]['nom'],
         maps[i]['objectif'],
         maps[i]['montant'],
+        maps[i]['date'],
         maps[i]['date_debut'],
         maps[i]['date_echeance'],
         maps[i]['status'],
@@ -421,6 +427,7 @@ class SQL_Helper {
         maps[i]['nom_objective'],
         maps[i]['montant_cible'],
         maps[i]['montant_donnee'],
+        maps[i]['date'],
         maps[i]['id_compte'],
       );
     });
@@ -510,6 +517,27 @@ class SQL_Helper {
           maps[i]['id_categorie'],
           maps[i]['nomcat'],
           maps[i]['coleur']);
+    });
+  }
+
+  Future<int> insert_argent(argent arg) async {
+    Database db = await this.database;
+    var result = db.insert("argent", arg.tomap());
+    return result;
+  }
+
+  Future<List<argent>> getAllArgent(String type, int id) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM argent WHERE type = '$type' AND id_compte = '$id'");
+    return List.generate(maps.length, (i) {
+      return argent(
+        maps[i]['montant'],
+        maps[i]['date'],
+        maps[i]['type'],
+        maps[i]['id_compte'],
+      );
     });
   }
 }

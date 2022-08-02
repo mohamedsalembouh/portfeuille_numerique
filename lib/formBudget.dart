@@ -4,6 +4,7 @@ import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/models/budgete.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
 
 import 'models/categorie.dart';
@@ -11,14 +12,17 @@ import 'models/categorie.dart';
 class formbudget extends StatefulWidget {
   //const formbudget({Key? key}) : super(key: key);
   utilisateur? usr;
-  formbudget(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  formbudget(this.usr, this.allUpdateSolde);
   @override
-  State<formbudget> createState() => _formbudgetState(this.usr);
+  State<formbudget> createState() =>
+      _formbudgetState(this.usr, this.allUpdateSolde);
 }
 
 class _formbudgetState extends State<formbudget> {
   utilisateur? usr;
-  _formbudgetState(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  _formbudgetState(this.usr, this.allUpdateSolde);
   TextEditingController nom = TextEditingController();
   TextEditingController montant = TextEditingController();
   TextEditingController dateDebut = TextEditingController();
@@ -46,7 +50,9 @@ class _formbudgetState extends State<formbudget> {
       if (x > 0) {
         print("ok inserted");
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => budget(usr, 0)));
+            context,
+            MaterialPageRoute(
+                builder: (context) => budget(usr, 0, this.allUpdateSolde)));
       }
     }
   }

@@ -19,11 +19,12 @@ import 'objectifs.dart';
 class alldettes extends StatefulWidget {
   utilisateur? usr;
   int? selectedPage;
+  List<diagrameSolde>? allUpdateSolde;
   //alldettes({Key? key}) : super(key: key);
-  alldettes(this.usr, this.selectedPage);
+  alldettes(this.usr, this.selectedPage, this.allUpdateSolde);
   @override
   State<alldettes> createState() =>
-      _alldettesState(this.usr, this.selectedPage);
+      _alldettesState(this.usr, this.selectedPage, this.allUpdateSolde);
 }
 
 class _alldettesState extends State<alldettes> {
@@ -40,7 +41,8 @@ class _alldettesState extends State<alldettes> {
   ];
   utilisateur? usr;
   int? selectedPage;
-  _alldettesState(this.usr, this.selectedPage);
+  List<diagrameSolde>? allUpdateSolde;
+  _alldettesState(this.usr, this.selectedPage, this.allUpdateSolde);
   List<prette_dette>? pretedetes;
   int count = 0;
   static var prettes;
@@ -95,6 +97,8 @@ class _alldettesState extends State<alldettes> {
   // }
 
   minsSolde(int mnt, int idEmprunte, String typeCmp) async {
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
@@ -103,7 +107,7 @@ class _alldettesState extends State<alldettes> {
       int solde = cmp.solde!;
       if (solde > mnt) {
         int newSolde = solde - mnt;
-        compte updateCompte = compte(newSolde, cmp.type, a);
+        compte updateCompte = compte(newSolde, cmp.type, date_maintenant, a);
         int? r1 = await helper.update_compte(updateCompte);
         int? r2 = await helper.update_EmprunteDette(idEmprunte);
         if (r1 != 0 && r2 != 0) {
@@ -116,6 +120,8 @@ class _alldettesState extends State<alldettes> {
   }
 
   PlusSolde(int mnt, int idPrette, String typeCmp) async {
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
@@ -123,7 +129,7 @@ class _alldettesState extends State<alldettes> {
     if (cmp != null) {
       int solde = cmp.solde!;
       int newSolde = solde + mnt;
-      compte updateCompte = compte(newSolde, cmp.type, a);
+      compte updateCompte = compte(newSolde, cmp.type, date_maintenant, a);
       int? res1 = await helper.update_compte(updateCompte);
       int? res2 = await helper.update_pretteDette(idPrette);
       if (res1 != 0 && res2 != 0) {
@@ -220,7 +226,7 @@ class _alldettesState extends State<alldettes> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Dettes"),
-          drawer: drowerfunction(context, usr),
+          drawer: drowerfunction(context, usr, this.allUpdateSolde),
           body: TabBarView(
             children: [
               Column(
@@ -388,7 +394,8 @@ class _alldettesState extends State<alldettes> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => operdatte(this.usr)));
+                                builder: (context) =>
+                                    operdatte(this.usr, this.allUpdateSolde)));
                       },
                     ),
                   ),
@@ -677,7 +684,9 @@ class _alldettesState extends State<alldettes> {
     if (payload != null && payload.isNotEmpty) {
       print("payload $payload");
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => alldettes(usr, 2)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => alldettes(usr, 2, this.allUpdateSolde)));
     }
   }
 }

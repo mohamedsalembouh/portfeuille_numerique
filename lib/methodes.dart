@@ -83,7 +83,8 @@ PreferredSize appbar3function(String title) {
   );
 }
 
-Widget drowerfunction(BuildContext context, utilisateur? user) {
+Widget drowerfunction(BuildContext context, utilisateur? user,
+    List<diagrameSolde>? allUpdateSolde) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.only(top: 50),
@@ -118,8 +119,10 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
             leading: Icon(Icons.home),
             title: Text("Accueil", style: TextStyle(fontSize: 20)),
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => homepage(user)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => homepage(user, allUpdateSolde)));
             },
           ),
         ),
@@ -130,8 +133,10 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
           ),
           title: Text("Dettes", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => alldettes(user, 0)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => alldettes(user, 0, allUpdateSolde)));
           },
         ),
         ListTile(
@@ -141,8 +146,10 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
           ),
           title: Text("Budgets", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => budget(user, 0)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => budget(user, 0, allUpdateSolde)));
           },
         ),
         ListTile(
@@ -152,8 +159,10 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
           ),
           title: Text("Objectifs", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => objectif(user)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => objectif(user, allUpdateSolde)));
           },
         ),
         ListTile(
@@ -163,8 +172,10 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
           ),
           title: Text("Statistiques", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => statistique(user)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => statistique(user, allUpdateSolde)));
           },
         ),
         ListTile(
@@ -174,8 +185,10 @@ Widget drowerfunction(BuildContext context, utilisateur? user) {
           ),
           title: Text("Partage en groupe", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => partage(user)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => partage(user, allUpdateSolde)));
           },
         ),
         ListTile(
@@ -293,6 +306,14 @@ Widget myBottomNavBar() {
     //backgroundColor: Colors.purpleAccent,
   );
 }
+
+// getListSoldes(List<diagrameSolde> y, String typeSolde, int idUser) async {
+//   compte? comp = await helper.getCompteUser(idUser, typeSolde);
+//   y.add(diagrameSolde(DateTime.parse(comp!.date!), comp.solde, comp.type));
+//   return y;
+// }
+
+
   // void updateSolde( String email,String pass,int? a,int? k) async {
   //  // updateCategories();
   //  // allcat = await getNomCategorie();

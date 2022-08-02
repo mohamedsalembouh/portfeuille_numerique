@@ -19,6 +19,7 @@ import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 import 'db/sql_helper.dart';
+import 'models/argent.dart';
 import 'models/catBudget.dart';
 import 'models/emprunte_dette.dart';
 import 'profileUser.dart';
@@ -28,12 +29,14 @@ class homepage extends StatefulWidget {
   String? email;
   String? pass;
   utilisateur? user;
+  List<diagrameSolde>? allUpdateSolde;
   // homepage(this.email, this.pass);
-  homepage(this.user);
+  homepage(this.user, this.allUpdateSolde);
 
   @override
   // State<homepage> createState() => _homepageState(this.email, this.pass);
-  State<homepage> createState() => _homepageState(this.user);
+  State<homepage> createState() =>
+      _homepageState(this.user, this.allUpdateSolde!);
 }
 
 class _homepageState extends State<homepage> {
@@ -52,9 +55,11 @@ class _homepageState extends State<homepage> {
   Map? myresult;
   // static var h;
   int? total;
+  List<diagrameSolde> allUpdateSolde = [];
+  _homepageState(this.user, this.allUpdateSolde);
   TextEditingController f_solde = TextEditingController();
   // _homepageState(this.email, this.pass);
-  _homepageState(this.user);
+
   String TypeCompte = "Choisissez le type de solde";
   SQL_Helper helper = new SQL_Helper();
   List<charts.Series<diagram, String>?>? _seriedata;
@@ -145,13 +150,25 @@ class _homepageState extends State<homepage> {
     //     await helper.getUser(this.user!.email!, this.user!.password!);
     // a = user!.id;
     if (TypeCompte != "Choisissez le type de solde") {
-      compte new_cmp =
-          new compte(int.parse(f_solde.text), typeCmp, this.user!.id!);
+      DateTime maintenant = DateTime.now();
+      String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
+      compte new_cmp = new compte(
+          int.parse(f_solde.text), typeCmp, date_maintenant, this.user!.id!);
       compte? exist_cmp = await helper.getCompteUser(this.user!.id!, typeCmp);
       if (exist_cmp != null) {
         helper.update_compte(new_cmp);
+        argent arg = argent(
+            new_cmp.solde, new_cmp.date, new_cmp.type, new_cmp.id_utilisateur);
+        helper.insert_argent(arg);
+        allUpdateSolde
+            .add(diagrameSolde(maintenant, int.parse(f_solde.text), typeCmp));
       } else {
-        await helper.insert_compte(new_cmp);
+        helper.insert_compte(new_cmp);
+        argent arg = argent(
+            new_cmp.solde, new_cmp.date, new_cmp.type, new_cmp.id_utilisateur);
+        helper.insert_argent(arg);
+        allUpdateSolde
+            .add(diagrameSolde(maintenant, int.parse(f_solde.text), typeCmp));
       }
 
       updateSoldeBankily();
@@ -162,6 +179,8 @@ class _homepageState extends State<homepage> {
     } else {
       Toast.show("Choisissez le type de solde");
     }
+    // this.allUpdateSolde =
+    //     getListSoldes(allUpdateSolde!, typeCmp, this.user!.id!);
   }
 
   // Future<compte?> getcompteUser(int id_utilisateur) async {
@@ -293,9 +312,8 @@ class _homepageState extends State<homepage> {
   }
 
   modifySolde(int val, int montant, int valTypeCmp) async {
-    // utilisateur? user =
-    //     await helper.getUser(this.user!.email!, this.user!.password!);
-    // a = user!.id;
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     String? typeCmp;
     if (valTypeCmp == 0) {
       typeCmp = "Compte";
@@ -310,19 +328,34 @@ class _homepageState extends State<homepage> {
         int solde = cmp.solde!;
         int newMontant = solde + montant;
         //print(newMontant);
-        compte updateComp = compte(newMontant, typeCmp, this.user!.id!);
+        compte updateComp =
+            compte(newMontant, typeCmp, date_maintenant, this.user!.id!);
         helper.update_compte(updateComp);
+        argent arg = argent(updateComp.solde, updateComp.date, updateComp.type,
+            updateComp.id_utilisateur);
+        helper.insert_argent(arg);
+        allUpdateSolde.add(diagrameSolde(maintenant, newMontant, typeCmp));
       } else {
-        compte newCompte = compte(montant, typeCmp, this.user!.id!);
+        compte newCompte =
+            compte(montant, typeCmp, date_maintenant, this.user!.id!);
         helper.insert_compte(newCompte);
+        argent arg = argent(newCompte.solde, newCompte.date, newCompte.type,
+            newCompte.id_utilisateur);
+        helper.insert_argent(arg);
+        allUpdateSolde.add(diagrameSolde(maintenant, montant, typeCmp));
       }
     } else {
       if (cmp != null) {
         int solde = cmp.solde!;
         int newMontant = solde - montant;
         //print(newMontant);
-        compte updateComp = compte(newMontant, typeCmp, this.user!.id!);
+        compte updateComp =
+            compte(newMontant, typeCmp, date_maintenant, this.user!.id!);
         helper.update_compte(updateComp);
+        argent arg = argent(updateComp.solde, updateComp.date, updateComp.type,
+            updateComp.id_utilisateur);
+        helper.insert_argent(arg);
+        allUpdateSolde.add(diagrameSolde(maintenant, montant, typeCmp));
       } else {
         //showText(context, "désolé", "vous n'avez pas de solde");
       }
@@ -331,6 +364,9 @@ class _homepageState extends State<homepage> {
     updateSoldeBank();
     updateSoldeCompte();
     updateSoldeGlobale();
+
+    // this.allUpdateSolde =
+    //     getListSoldes(this.allUpdateSolde!, typeCmp, this.user!.id!);
   }
 
   TextEditingController dateDebut = TextEditingController();
@@ -357,7 +393,7 @@ class _homepageState extends State<homepage> {
     } else {
       print("videeeee depenses");
     }
-    // print(allSolde);
+    print(allUpdateSolde);
     faireNotifications();
     faireNotificationDettes();
     //print(allDepenses![0].date);
@@ -368,7 +404,7 @@ class _homepageState extends State<homepage> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbarfunction(context, mytabs, "Accueil", this.user!),
-          drawer: drowerfunction(context, this.user),
+          drawer: drowerfunction(context, this.user, this.allUpdateSolde),
           body: TabBarView(
             children: [
               Container(
@@ -691,8 +727,8 @@ class _homepageState extends State<homepage> {
                             myresult = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        operation(this.user, this.user!.id!)));
+                                    builder: (context) => operation(this.user,
+                                        this.user!.id!, this.allUpdateSolde)));
 
                             if (myresult != null) {
                               // updateSolde();
@@ -865,10 +901,14 @@ class _homepageState extends State<homepage> {
       print("payload $payload");
       if (payload == "payload budget") {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => budget(user, 2)));
+            context,
+            MaterialPageRoute(
+                builder: (context) => budget(user, 2, this.allUpdateSolde)));
       } else if (payload == "payload dette") {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => alldettes(user, 2)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => alldettes(user, 2, this.allUpdateSolde)));
       }
     }
   }

@@ -1,24 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:portfeuille_numerique/models/argent.dart';
+import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/depensesCats.dart';
+import 'package:portfeuille_numerique/models/emprunte_dette.dart';
+import 'package:portfeuille_numerique/models/objective.dart';
 import 'package:portfeuille_numerique/models/operation_entree.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
+import 'package:portfeuille_numerique/models/prette_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class statistique extends StatefulWidget {
   //const statistique({Key? key}) : super(key: key);
 
   utilisateur? usr;
-  statistique(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  statistique(this.usr, this.allUpdateSolde);
   @override
-  State<statistique> createState() => _statistiqueState(this.usr);
+  State<statistique> createState() =>
+      _statistiqueState(this.usr, this.allUpdateSolde!);
 }
 
 class _statistiqueState extends State<statistique> {
   utilisateur? usr;
-  _statistiqueState(this.usr);
+  List<diagrameSolde> allUpdateSolde = [];
+  _statistiqueState(this.usr, this.allUpdateSolde);
   int? total;
   int? totalRevenus;
   List<charts.Series<diagram, String>>? _seriedata;
@@ -220,6 +231,91 @@ class _statistiqueState extends State<statistique> {
   //     });
   //   }
   // }
+  // List<diagrameSolde> diagramData =
+  // [
+  //   diagrameSolde(DateTime.parse("2000-10-02"), 35, "bb"),
+  //   diagrameSolde(DateTime.parse("2000-10-03"), 28, "bb"),
+  //   diagrameSolde(DateTime.parse("2000-10-05"), 34, "bb"),
+  //   diagrameSolde(DateTime.parse("2000-10-07"), 32, "bb"),
+  //   diagrameSolde(DateTime.parse("2000-10-09"), 40, "bb"),
+  // ];
+
+  List<argent>? allargentCompte;
+  List<argent>? allargentBankily;
+  List<argent>? allargentBank;
+  static var diagramdata;
+  static var diagramDataBank;
+  static var diagramDataBankily;
+  static var diagramDataCompte;
+  // fullListes() {
+  //   allUpdateSolde.forEach((element) {
+  //     diagramData.add(element);
+  //     // if (element.type == "Bankily") {
+  //     //   diagramDataBankily.add(element);
+  //     // } else if (element.type == "Bank") {
+  //     //   diagramDataBank.add(element);
+  //     // } else {
+  //     //   diagramDataCompte.add(element);
+  //     // }
+  //   });
+  // }
+
+  printListe() {
+    allUpdateSolde.forEach((element) {
+      print(element);
+    });
+  }
+
+  // getAllMontant(int id) async {
+  //   List<compte> Soldes = await helper.getAllComptesUser(id);
+  //   List<operation_entree> revenus = await helper.getAllRevenus(id);
+  //   List<operation_sortir> depenses = await helper.getAllDepenses(id);
+  //   List<prette_dette> prettes = await helper.getAllPrettesDettes(id);
+  //   List<emprunte_dette> empruntes = await helper.getAllEmprunteDettes(id);
+  //   List<objective> objectifs = await helper.getAllObjectivfs(id);
+  //   Soldes.forEach((element) {
+  //     allUpdateSolde
+  //         .add(diagrameSolde.aaa(DateTime.parse(element.date!), element.solde));
+  //   });
+  //   revenus.forEach((element) {
+  //     allUpdateSolde.add(
+  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
+  //   });
+  //   depenses.forEach((element) {
+  //     allUpdateSolde.add(
+  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
+  //   });
+  //   prettes.forEach((element) {
+  //     allUpdateSolde.add(
+  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
+  //   });
+  //   empruntes.forEach((element) {
+  //     allUpdateSolde.add(
+  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
+  //   });
+  //   objectifs.forEach((element) {
+  //     allUpdateSolde.add(diagrameSolde.aaa(
+  //         DateTime.parse(element.date!), element.montant_donnee));
+  //   });
+  //   diagramData = allUpdateSolde;
+  // }
+
+  getTousArgent(String type) async {
+    int a = this.usr!.id!;
+    final Future<Database>? db = helper.initialiseDataBase();
+    var ourDb = db;
+    if (ourDb != null) {
+      ourDb.then((database) {
+        Future<List<argent>> argents = helper.getAllArgent(type, a);
+
+        argents.then((theList) {
+          setState(() {
+            this.allargentCompte = theList;
+          });
+        });
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -246,6 +342,9 @@ class _statistiqueState extends State<statistique> {
   ];
   @override
   Widget build(BuildContext context) {
+    //fullListes();
+    //getAllMontant(this.usr!.id!);
+
     if (allrevenus == null) {
       getAllRevenusCats();
     }
@@ -256,6 +355,11 @@ class _statistiqueState extends State<statistique> {
       _seriedata = [];
       generatedData();
     }
+    if (this.allargentCompte == null) {
+      getTousArgent("Compte");
+    }
+    diagramdata = this.allargentCompte;
+    print(diagramdata);
     // print(allDepensesCats!.length);
     // print(allrevenus!.length);
     revenus = getUniqueRevenus();
@@ -265,12 +369,14 @@ class _statistiqueState extends State<statistique> {
     //depenses = this.alldepenses;
     total = getTotal();
     totalRevenus = getTotalRevenus();
-    print(count);
-    print(depenses);
-    print(depenses.length);
+    //print(allUpdateSolde[0].montant);
+    //print(allUpdateSolde[1].montant);
+    // print(allUpdateSolde[2].montant);
     // print(total);
     // print(usr!.password);
     // print(allDepensesCats!.length);
+    //printListe();
+    //print(allUpdateSolde.length);
     return MaterialApp(
         home: DefaultTabController(
       length: mytabs.length,
@@ -282,67 +388,30 @@ class _statistiqueState extends State<statistique> {
             tabs: mytabs,
           ),
         ),
-        drawer: drowerfunction(context, usr),
+        drawer: drowerfunction(context, usr, this.allUpdateSolde),
         body: TabBarView(
           children: [
             //first container
-            Container(
-                //   child: Column(
-                //     children: [
-                //       Container(
-                //         width: 400,
-                //         height: 200,
-                //         child: charts.BarChart(
-                //           _mesdata,
-                //           animate: true,
-                //           animationDuration: Duration(seconds: 5),
-                //           //barGroupingType: charts.BarGroupingType.grouped,
-                //           defaultRenderer:
-                //               charts.BarRendererConfig(maxBarWidthPx: 40),
-                //           // behaviors: [
-                //           //   new charts.DatumLegend(
-                //           //     outsideJustification:
-                //           //         charts.OutsideJustification.endDrawArea,
-                //           //     horizontalFirst: false,
-                //           //     desiredMaxRows: 2,
-                //           //     cellPadding: new EdgeInsets.only(right: 4, bottom: 4),
-                //           //     entryTextStyle: charts.TextStyleSpec(
-                //           //       color: charts.MaterialPalette.purple.shadeDefault,
-                //           //       fontSize: 11,
-                //           //     ),
-                //           //   )
-                //           // ],
-                //         ),
-                //       ),
-                //       Container(
-                //         width: 400,
-                //         height: 200,
-                //         child: charts.LineChart(
-                //           _allsalles,
-                //           animate: true,
-                //           animationDuration: Duration(seconds: 5),
-                //           //barGroupingType: charts.BarGroupingType.grouped,
-                //           defaultRenderer: charts.LineRendererConfig(
-                //               includeArea: true, stacked: true),
-                //           behaviors: [
-                //             charts.ChartTitle('year',
-                //                 behaviorPosition: charts.BehaviorPosition.bottom,
-                //                 titleOutsideJustification:
-                //                     charts.OutsideJustification.middleDrawArea),
-                //             charts.ChartTitle('sales',
-                //                 behaviorPosition: charts.BehaviorPosition.start,
-                //                 titleOutsideJustification:
-                //                     charts.OutsideJustification.middleDrawArea),
-                //             charts.ChartTitle('departement',
-                //                 behaviorPosition: charts.BehaviorPosition.end,
-                //                 titleOutsideJustification:
-                //                     charts.OutsideJustification.middleDrawArea)
-                //           ],
-                //         ),
-                //       ),
-                //     ],
-                //   ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 50),
+              child: Container(
+                child: SfCartesianChart(
+                  primaryXAxis: CategoryAxis(),
+                  title: ChartTitle(text: 'yearly sallles analys'),
+                  legend: Legend(isVisible: true),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: <ChartSeries<argent, int>>[
+                    LineSeries(
+                        dataSource: diagramdata,
+                        xValueMapper: (argent diag, _) =>
+                            DateTime.parse(diag.date!).day,
+                        yValueMapper: (argent diag, _) => diag.montant,
+                        name: 'Sales',
+                        dataLabelSettings: DataLabelSettings(isVisible: true))
+                  ],
                 ),
+              ),
+            ),
             //end of first container
 
             //start second container
@@ -490,6 +559,15 @@ class diagram {
   Color? colorval;
   diagram.withnull();
   diagram(this.nomCat, this.montant, this.colorval);
+}
+
+class diagrameSolde {
+  //String? month;
+  int? montant;
+  DateTime? date;
+  String? type;
+  diagrameSolde(this.date, this.montant, this.type);
+  diagrameSolde.aaa(this.date, this.montant);
 }
 
 // _generatedData() {

@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/form_objectif.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/objective.dart';
 import 'package:portfeuille_numerique/newObjectif.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 
+import 'models/argent.dart';
 import 'models/utilisateur.dart';
 
 class objectif extends StatefulWidget {
   // const objectif({Key? key}) : super(key: key);
   utilisateur? usr;
-  objectif(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  objectif(this.usr, this.allUpdateSolde);
   @override
-  State<objectif> createState() => _objectifState(this.usr);
+  State<objectif> createState() =>
+      _objectifState(this.usr, this.allUpdateSolde!);
 }
 
 class _objectifState extends State<objectif> {
   utilisateur? usr;
-  _objectifState(this.usr);
+  List<diagrameSolde> allUpdateSolde = [];
+  _objectifState(this.usr, this.allUpdateSolde);
   TextEditingController mnt_donnee = TextEditingController();
   final List<Tab> mytabs = [
     Tab(
@@ -55,6 +61,8 @@ class _objectifState extends State<objectif> {
   }
 
   augmeterMontant(int idobj, int mnt) async {
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     if (TypeCompte != "Choisissez le type de solde") {
       utilisateur? user =
           await helper.getUser(this.usr!.email!, this.usr!.password!);
@@ -69,12 +77,22 @@ class _objectifState extends State<objectif> {
             int new_mnt = old_mnt + mnt;
             if (new_mnt <= obj.montant_cible!) {
               objective update_obj = objective.withId(obj.id, obj.nom_objective,
-                  obj.montant_cible, new_mnt, obj.id_compte);
+                  obj.montant_cible, new_mnt, date_maintenant, obj.id_compte);
               int? x = await helper.update_objective(update_obj);
               int newSolde = solde - mnt;
-              compte updateCompte = compte(newSolde, TypeCompte, a);
+              compte updateCompte =
+                  compte(newSolde, TypeCompte, date_maintenant, a);
               int y = await helper.update_compte(updateCompte);
+
+              allUpdateSolde
+                  .add(diagrameSolde(maintenant, newSolde, TypeCompte));
               if (x != 0 && y != 0) {
+                argent arg = argent(updateCompte.solde, updateCompte.date,
+                    updateCompte.type, updateCompte.id_utilisateur);
+                int m = await helper.insert_argent(arg);
+                if (m > 0) {
+                  print("ok inserted");
+                }
                 print("updated");
                 getAllObjectif();
                 Navigator.of(context, rootNavigator: true).pop();
@@ -95,6 +113,8 @@ class _objectifState extends State<objectif> {
     } else {
       Toast.show("Choisissez le type de solde");
     }
+    // this.allUpdateSolde =
+    //     getListSoldes(this.allUpdateSolde!, TypeCompte, this.usr!.id!);
   }
 
   supprimerObjectif(int idObj) async {
@@ -122,7 +142,7 @@ class _objectifState extends State<objectif> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Objectifs"),
-          drawer: drowerfunction(context, this.usr),
+          drawer: drowerfunction(context, this.usr, this.allUpdateSolde),
           body: TabBarView(
             children: [
               Column(
@@ -317,7 +337,8 @@ class _objectifState extends State<objectif> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => form_objectif(usr)));
+                                builder: (context) =>
+                                    form_objectif(usr, this.allUpdateSolde)));
                       },
                       child: Icon(Icons.add),
                     ),

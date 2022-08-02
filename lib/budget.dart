@@ -9,6 +9,7 @@ import 'package:portfeuille_numerique/models/depensesCats.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/services/local_notification_service.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'models/categorie.dart';
@@ -16,10 +17,12 @@ import 'models/categorie.dart';
 class budget extends StatefulWidget {
   utilisateur? usr;
   int? selectedPage;
+  List<diagrameSolde>? allUpdateSolde;
   // budget({Key? key}) : super(key: key);
-  budget(this.usr, this.selectedPage);
+  budget(this.usr, this.selectedPage, this.allUpdateSolde);
   @override
-  State<budget> createState() => _budgetState(this.usr, this.selectedPage);
+  State<budget> createState() =>
+      _budgetState(this.usr, this.selectedPage, this.allUpdateSolde);
 }
 
 class _budgetState extends State<budget> {
@@ -36,7 +39,8 @@ class _budgetState extends State<budget> {
   ];
   utilisateur? usr;
   int? selectedPage;
-  _budgetState(this.usr, this.selectedPage);
+  List<diagrameSolde>? allUpdateSolde;
+  _budgetState(this.usr, this.selectedPage, this.allUpdateSolde);
   List<catBudget>? allbudgets;
   int count = 0;
   static var budgets;
@@ -134,7 +138,7 @@ class _budgetState extends State<budget> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Budgets"),
-          drawer: drowerfunction(context, this.usr),
+          drawer: drowerfunction(context, this.usr, this.allUpdateSolde),
           body: TabBarView(
             children: [
               Column(
@@ -224,7 +228,8 @@ class _budgetState extends State<budget> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => formbudget(this.usr)));
+                                  builder: (context) => formbudget(
+                                      this.usr, this.allUpdateSolde)));
                         },
                         child: Icon(Icons.add),
                       ),
@@ -390,7 +395,9 @@ class _budgetState extends State<budget> {
     if (payload != null && payload.isNotEmpty) {
       print("payload $payload");
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => budget(usr, 2)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => budget(usr, 2, this.allUpdateSolde)));
     }
   }
 }

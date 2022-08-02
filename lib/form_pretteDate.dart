@@ -4,22 +4,27 @@ import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/prette_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:intl/intl.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
 
+import 'models/argent.dart';
 import 'models/compte.dart';
 
 class form_prette extends StatefulWidget {
   // const form_prette({Key? key}) : super(key: key);
   utilisateur? usr;
-  form_prette(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  form_prette(this.usr, this.allUpdateSolde);
 
   @override
-  State<form_prette> createState() => _form_pretteState(this.usr);
+  State<form_prette> createState() =>
+      _form_pretteState(this.usr, this.allUpdateSolde!);
 }
 
 class _form_pretteState extends State<form_prette> {
   utilisateur? usr;
-  _form_pretteState(this.usr);
+  List<diagrameSolde> allUpdateSolde = [];
+  _form_pretteState(this.usr, this.allUpdateSolde);
   final _formKey = GlobalKey<FormState>();
   TextEditingController nom = TextEditingController();
   TextEditingController objet = TextEditingController();
@@ -30,6 +35,8 @@ class _form_pretteState extends State<form_prette> {
 
   insertPretteDette(String nom, String objectif, String montant,
       String dateDebut, String dateEcheance) async {
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     final form = _formKey.currentState;
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
@@ -39,7 +46,7 @@ class _form_pretteState extends State<form_prette> {
 
     if (form!.validate()) {
       prette_dette pretteDette = prette_dette(nom, objectif, int.parse(montant),
-          dateDebut, dateEcheance, 0, typeCmp, a);
+          date_maintenant, dateDebut, dateEcheance, 0, typeCmp, a);
       int x = await helper.insert_pretteDatte(pretteDette);
       if (x > 0) {
         print("inserted ");
@@ -51,6 +58,8 @@ class _form_pretteState extends State<form_prette> {
 
   String typeCmp = "Choisissez le type de solde";
   minsSolde(String value, String typecomp) async {
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     final form = _formKey.currentState;
     if (form!.validate()) {
       if (typeCmp != "Choisissez le type de solde") {
@@ -63,13 +72,20 @@ class _form_pretteState extends State<form_prette> {
           int solde = cmp.solde!;
           if (solde > mnt) {
             int newSolde = solde - mnt;
-            compte updateCompte = compte(newSolde, typeCmp, a);
+            compte updateCompte = compte(newSolde, typeCmp, date_maintenant, a);
             helper.update_compte(updateCompte);
+            argent arg = argent(updateCompte.solde, updateCompte.date,
+                updateCompte.type, updateCompte.id_utilisateur);
+            helper.insert_argent(arg);
+            allUpdateSolde.add(diagrameSolde(maintenant, newSolde, typecomp));
             insertPretteDette(nom.text, objet.text, montant.text,
                 dateDebut.text, dateEcheance.text);
 
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        alldettes(usr, 0, this.allUpdateSolde)));
           } else {
             showText(context, "désolé",
                 "Le montant que vous entree est plus grand que votre solde dans $typeCmp");
@@ -81,6 +97,8 @@ class _form_pretteState extends State<form_prette> {
         Toast.show("Choisissez le type de solde");
       }
     }
+    // this.allUpdateSolde =
+    //     getListSoldes(this.allUpdateSolde!, typecomp, this.usr!.id!);
   }
 
   @override

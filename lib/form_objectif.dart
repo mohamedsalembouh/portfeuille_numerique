@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/objective.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
 
 import 'methodes.dart';
+import 'models/argent.dart';
 
 class form_objectif extends StatefulWidget {
   //const form_objectif({Key? key}) : super(key: key);
   utilisateur? usr;
-  form_objectif(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  form_objectif(this.usr, this.allUpdateSolde);
 
   @override
-  State<form_objectif> createState() => _form_objectifState(this.usr);
+  State<form_objectif> createState() =>
+      _form_objectifState(this.usr, this.allUpdateSolde!);
 }
 
 class _form_objectifState extends State<form_objectif> {
   utilisateur? usr;
-  _form_objectifState(this.usr);
+  List<diagrameSolde> allUpdateSolde = [];
+  _form_objectifState(this.usr, this.allUpdateSolde);
   final _formKey = GlobalKey<FormState>();
   TextEditingController nomObj = TextEditingController();
   TextEditingController montantCible = TextEditingController();
@@ -27,6 +33,8 @@ class _form_objectifState extends State<form_objectif> {
   SQL_Helper helper = SQL_Helper();
 
   insertObjectif(String nomobj, String value1, String value2) async {
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     final form = _formKey.currentState!;
     if (form.validate()) {
       if (TypeCompte != "Choisissez le type de solde") {
@@ -39,25 +47,37 @@ class _form_objectifState extends State<form_objectif> {
         if (cmp != null) {
           int solde = cmp.solde!;
           if (mntEnregistree < solde) {
-            objective obj = objective(nomobj, mntCible, mntEnregistree, a);
+            objective obj =
+                objective(nomobj, mntCible, mntEnregistree, date_maintenant, a);
             int result = await helper.insert_objectif(obj);
             int newSolde = solde - mntEnregistree;
-            compte updateCompte = compte(newSolde, TypeCompte, a);
+            compte updateCompte =
+                compte(newSolde, TypeCompte, date_maintenant, a);
+
             int result2 = await helper.update_compte(updateCompte);
+            argent arg = argent(updateCompte.solde, updateCompte.date,
+                updateCompte.type, updateCompte.id_utilisateur);
+            helper.insert_argent(arg);
+            allUpdateSolde.add(diagrameSolde(maintenant, newSolde, TypeCompte));
             if (result != 0 && result2 != 0) {
               print("ok objective enregistre");
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => objectif(usr)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          objectif(usr, this.allUpdateSolde)));
             }
           } else {
             showText(context, "Desole",
-                "Le montant que vous voulez enregistree est plus grand que votre solde");
+                "Le montant que vous voulez enregistree est plus grand que votre solde ");
           }
         }
       } else {
         Toast.show("Choisissez le type de solde");
       }
     }
+    // this.allUpdateSolde =
+    //     getListSoldes(this.allUpdateSolde!, TypeCompte, this.usr!.id!);
   }
 
   String TypeCompte = "Choisissez le type de solde";

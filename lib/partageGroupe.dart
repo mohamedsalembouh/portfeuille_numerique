@@ -3,18 +3,21 @@ import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/services/local_notification_service.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 
 class partage extends StatefulWidget {
   // const partage({Key? key}) : super(key: key);
   utilisateur? usr;
-  partage(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  partage(this.usr, this.allUpdateSolde);
   @override
-  State<partage> createState() => _partageState(this.usr);
+  State<partage> createState() => _partageState(this.usr, this.allUpdateSolde);
 }
 
 class _partageState extends State<partage> {
   utilisateur? usr;
-  _partageState(this.usr);
+  List<diagrameSolde>? allUpdateSolde;
+  _partageState(this.usr, this.allUpdateSolde);
   late final LocalNotificationService service;
   @override
   void initState() {
@@ -31,7 +34,7 @@ class _partageState extends State<partage> {
       appBar: AppBar(
         title: Text("Partage en groupe"),
       ),
-      drawer: drowerfunction(context, usr),
+      drawer: drowerfunction(context, usr, this.allUpdateSolde),
       body: Column(
         children: [
           Expanded(
@@ -95,7 +98,9 @@ class _partageState extends State<partage> {
     if (payload != null && payload.isNotEmpty) {
       print("payload $payload");
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => budget(usr, 2)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => budget(usr, 2, this.allUpdateSolde)));
     }
   }
 }

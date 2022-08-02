@@ -4,22 +4,28 @@ import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/models/emprunte_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
 
+import 'methodes.dart';
+import 'models/argent.dart';
 import 'models/compte.dart';
 
 class formemprunte extends StatefulWidget {
   utilisateur? usr;
+  List<diagrameSolde>? allUpdateSolde;
   //const formemprunte({Key? key}) : super(key: key);
-  formemprunte(this.usr);
+  formemprunte(this.usr, this.allUpdateSolde);
 
   @override
-  State<formemprunte> createState() => _formemprunteState(this.usr);
+  State<formemprunte> createState() =>
+      _formemprunteState(this.usr, this.allUpdateSolde!);
 }
 
 class _formemprunteState extends State<formemprunte> {
   utilisateur? usr;
-  _formemprunteState(this.usr);
+  List<diagrameSolde> allUpdateSolde = [];
+  _formemprunteState(this.usr, this.allUpdateSolde);
   final _formKey = GlobalKey<FormState>();
   TextEditingController nom = TextEditingController();
   TextEditingController objet = TextEditingController();
@@ -31,6 +37,8 @@ class _formemprunteState extends State<formemprunte> {
 
   insertEmprunteDette(String nom, String objectif, String montant,
       String dateDebut, String dateEcheance) async {
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     final form = _formKey.currentState;
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
@@ -40,14 +48,25 @@ class _formemprunteState extends State<formemprunte> {
 
     if (form!.validate()) {
       if (TypeCompte != "Choisissez le type de solde") {
-        emprunte_dette emprunteDette = emprunte_dette(nom, objectif,
-            int.parse(montant), dateDebut, dateEcheance, 0, TypeCompte, a);
+        emprunte_dette emprunteDette = emprunte_dette(
+            nom,
+            objectif,
+            int.parse(montant),
+            date_maintenant,
+            dateDebut,
+            dateEcheance,
+            0,
+            TypeCompte,
+            a);
         int x = await helper.insert_EmprunteDatte(emprunteDette);
         if (x > 0) {
           print("inserted ");
           PlusSolde(int.parse(montant), TypeCompte);
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      alldettes(usr, 0, this.allUpdateSolde)));
         } else {
           print("not inserted");
         }
@@ -59,6 +78,8 @@ class _formemprunteState extends State<formemprunte> {
 
   String TypeCompte = "Choisissez le type de solde";
   PlusSolde(int mnt, String typeCmp) async {
+    DateTime maintenant = DateTime.now();
+    String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
@@ -66,12 +87,22 @@ class _formemprunteState extends State<formemprunte> {
     if (cmp != null) {
       int solde = cmp.solde!;
       int newSolde = solde + mnt;
-      compte updateCompte = compte(newSolde, TypeCompte, a);
+      compte updateCompte = compte(newSolde, TypeCompte, date_maintenant, a);
       helper.update_compte(updateCompte);
+      argent arg = argent(updateCompte.solde, updateCompte.date,
+          updateCompte.type, updateCompte.id_utilisateur);
+      helper.insert_argent(arg);
+      allUpdateSolde.add(diagrameSolde(maintenant, newSolde, TypeCompte));
     } else {
-      compte newCompte = compte(mnt, TypeCompte, a);
+      compte newCompte = compte(mnt, TypeCompte, date_maintenant, a);
       helper.insert_compte(newCompte);
+      argent arg = argent(newCompte.solde, newCompte.date, newCompte.type,
+          newCompte.id_utilisateur);
+      helper.insert_argent(arg);
+      allUpdateSolde.add(diagrameSolde(maintenant, mnt, TypeCompte));
     }
+    // this.allUpdateSolde =
+    //     getListSoldes(this.allUpdateSolde!, typeCmp, this.usr!.id!);
   }
 
   @override

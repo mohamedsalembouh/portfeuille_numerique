@@ -4,6 +4,7 @@ import 'package:portfeuille_numerique/homePage.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/signup.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
 
 class signinPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class _signinPageState extends State<signinPage> {
   final f_pass = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
   final toast = ToastContext();
+  List<diagrameSolde> allUpdateSolde = [];
 
   void initState() {
     // TODO: implement initState
@@ -38,7 +40,8 @@ class _signinPageState extends State<signinPage> {
         Navigator.push(
             context,
             // MaterialPageRoute(builder: (context) => homepage(email, pass))
-            MaterialPageRoute(builder: (context) => homepage(user)));
+            MaterialPageRoute(
+                builder: (context) => homepage(user, this.allUpdateSolde)));
         print(user.id);
         print(user.nom);
         print(user.email);

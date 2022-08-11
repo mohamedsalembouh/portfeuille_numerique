@@ -2,17 +2,17 @@ class argent {
   int? id;
   int? montant;
   String? date;
-  String? type;
-  int? id_compte;
-  argent(this.montant, this.date, this.type, this.id_compte);
+  int? id_ressource;
+  int? id_utilisateur;
+  argent(this.montant, this.date, this.id_ressource, this.id_utilisateur);
 
   Map<String, dynamic> tomap() {
     var map = Map<String, dynamic>();
     map['id'] = this.id;
     map['montant'] = this.montant;
     map['date'] = this.date;
-    map['type'] = this.type;
-    map['id_compte'] = this.id_compte;
+    map['id_ressource'] = this.id_ressource;
+    map['id_utilisateur'] = this.id_utilisateur;
     return map;
   }
 
@@ -20,7 +20,7 @@ class argent {
     this.id = map['id'];
     this.montant = map['montant'];
     this.date = map['date'];
-    this.type = map['type'];
-    this.id_compte = map['id_compte'];
+    this.id_ressource = map['id_ressource'];
+    this.id_utilisateur = map['id_utilisateur'];
   }
 }

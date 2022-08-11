@@ -6,18 +6,17 @@ import 'package:portfeuille_numerique/statistiques.dart';
 
 class operdatte extends StatefulWidget {
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
+
   //const operdatte({Key? key}) : super(key: key);
-  operdatte(this.usr, this.allUpdateSolde);
+  operdatte(this.usr);
   @override
-  State<operdatte> createState() =>
-      _operdatteState(this.usr, this.allUpdateSolde);
+  State<operdatte> createState() => _operdatteState(this.usr);
 }
 
 class _operdatteState extends State<operdatte> {
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
-  _operdatteState(this.usr, this.allUpdateSolde);
+  //List<diagrameSolde>? allUpdateSolde;
+  _operdatteState(this.usr);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,8 +62,7 @@ class _operdatteState extends State<operdatte> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => form_prette(
-                                      this.usr, this.allUpdateSolde)));
+                                  builder: (context) => form_prette(this.usr)));
                         },
                         child: Text(
                           "Prette Dette",
@@ -89,8 +87,8 @@ class _operdatteState extends State<operdatte> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => formemprunte(
-                                      this.usr, this.allUpdateSolde)));
+                                  builder: (context) =>
+                                      formemprunte(this.usr)));
                         },
                         child: Text(
                           "Emprunte dette",

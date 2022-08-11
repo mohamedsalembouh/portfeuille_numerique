@@ -12,17 +12,16 @@ import 'models/categorie.dart';
 class formbudget extends StatefulWidget {
   //const formbudget({Key? key}) : super(key: key);
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
-  formbudget(this.usr, this.allUpdateSolde);
+
+  formbudget(this.usr);
   @override
-  State<formbudget> createState() =>
-      _formbudgetState(this.usr, this.allUpdateSolde);
+  State<formbudget> createState() => _formbudgetState(this.usr);
 }
 
 class _formbudgetState extends State<formbudget> {
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
-  _formbudgetState(this.usr, this.allUpdateSolde);
+  // List<diagrameSolde>? allUpdateSolde;
+  _formbudgetState(this.usr);
   TextEditingController nom = TextEditingController();
   TextEditingController montant = TextEditingController();
   TextEditingController dateDebut = TextEditingController();
@@ -50,9 +49,7 @@ class _formbudgetState extends State<formbudget> {
       if (x > 0) {
         print("ok inserted");
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => budget(usr, 0, this.allUpdateSolde)));
+            context, MaterialPageRoute(builder: (context) => budget(usr, 0)));
       }
     }
   }

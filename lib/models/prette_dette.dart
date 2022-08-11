@@ -7,8 +7,8 @@ class prette_dette {
   String? date_debut;
   String? date_echeance;
   int? status;
-  String? type_compte;
   int? id_compte;
+  int? id_utilisateur;
 
   prette_dette(
       this.nom,
@@ -18,8 +18,8 @@ class prette_dette {
       this.date_debut,
       this.date_echeance,
       this.status,
-      this.type_compte,
-      this.id_compte);
+      this.id_compte,
+      this.id_utilisateur);
   prette_dette.withId(
       this.id,
       this.nom,
@@ -29,8 +29,8 @@ class prette_dette {
       this.date_debut,
       this.date_echeance,
       this.status,
-      this.type_compte,
-      this.id_compte);
+      this.id_compte,
+      this.id_utilisateur);
 
   Map<String, dynamic> tomap() {
     var map = Map<String, dynamic>();
@@ -42,8 +42,8 @@ class prette_dette {
     map['date_debut'] = this.date_debut;
     map['date_echeance'] = this.date_echeance;
     map['status'] = this.status;
-    map['type_compte'] = this.type_compte;
     map['id_compte'] = this.id_compte;
+    map['id_utilisateur'] = this.id_utilisateur;
     return map;
   }
 
@@ -56,7 +56,7 @@ class prette_dette {
     this.date_debut = map['date_debut'];
     this.date_echeance = map['date_echeance'];
     this.status = map['status'];
-    this.type_compte = map['type_compte'];
     this.id_compte = map['id_compte'];
+    this.id_utilisateur = map['id_utilisateur'];
   }
 }

@@ -6,6 +6,7 @@ import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
+import 'package:portfeuille_numerique/models/compteRessource.dart';
 import 'package:portfeuille_numerique/models/operation_entree.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
@@ -18,17 +19,17 @@ import 'budget.dart';
 import 'models/catBudget.dart';
 import 'models/compte.dart';
 import 'models/depensesCats.dart';
+import 'models/ressource.dart';
 
 class operation extends StatefulWidget {
   //operation({Key? key}) : super(key: key);
   //String? nomCategorie;
   int? numero;
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
-  operation(this.usr, this.numero, this.allUpdateSolde);
+
+  operation(this.usr, this.numero);
   @override
-  State<operation> createState() =>
-      _operationState(this.usr, this.numero, this.allUpdateSolde);
+  State<operation> createState() => _operationState(this.usr, this.numero);
 }
 
 class _operationState extends State<operation> {
@@ -48,8 +49,8 @@ class _operationState extends State<operation> {
   // int? selectedPage;
   int? numero;
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
-  _operationState(this.usr, this.numero, this.allUpdateSolde);
+  // List<diagrameSolde>? allUpdateSolde;
+  _operationState(this.usr, this.numero);
   List<operation_sortir>? alldepenses;
   int? count;
   final List<Tab> mytabs = [
@@ -82,15 +83,15 @@ class _operationState extends State<operation> {
   //     });
   //   }
   // }
-  int getTypeCompte(String typeCmp) {
-    if (typeCmp == "Compte") {
-      return 0;
-    } else if (typeCmp == "Bankily") {
-      return 1;
-    } else {
-      return 2;
-    }
-  }
+  // int getTypeCompte(String typeCmp) {
+  //   if (typeCmp == "Compte") {
+  //     return 0;
+  //   } else if (typeCmp == "Bankily") {
+  //     return 1;
+  //   } else {
+  //     return 2;
+  //   }
+  // }
 
   insertRevenus(String value, String description, String typeCmp) async {
     final form = _formKey1.currentState!;
@@ -106,9 +107,13 @@ class _operationState extends State<operation> {
           categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
           int idCat = cat!.id!;
           DateTime maintenant = DateTime.now();
-          String date_maintenant = DateFormat("dd-MM-yyyy").format(maintenant);
+          String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
+          ressource? res = await helper.getSpecifyRessource(typeCmp);
+          int id_res = res!.id_ress!;
+          compte? cmp = await helper.getSpecifyCompte(id_res);
+          int id_compte = cmp!.id!;
           operation_entree entree = new operation_entree(montant, description,
-              date_maintenant, typeCmp, idCat, this.numero);
+              date_maintenant, idCat, id_compte, this.numero);
           int a = await helper.insertOperationEntree(entree);
           if (a != 0) {
             print("operation inserted");
@@ -116,7 +121,7 @@ class _operationState extends State<operation> {
             Map<int, int> myData = new Map();
             myData[0] = 0;
             myData[1] = montant;
-            myData[2] = getTypeCompte(TypeCompte);
+            myData[2] = id_res;
             Navigator.of(context).pop(myData);
           } else {
             print("not inserted");
@@ -135,8 +140,12 @@ class _operationState extends State<operation> {
     if (currentNomCat != "Choisir une categorie") {
       if (form.validate()) {
         if (typeCmp != "Choisissez le type de solde") {
+          ressource? res = await helper.getSpecifyRessource(typeCmp);
+          int id_res = res!.id_ress!;
+          compte? cmp = await helper.getSpecifyCompte(id_res);
+          int id_compte = cmp!.id!;
           int montant = int.parse(value);
-          compte? comp = await helper.getCompteUser(numero!, typeCmp);
+          compte? comp = await helper.getCompteUser(numero!, id_res);
           if (comp != null) {
             int solde = comp.solde!;
             if (solde > montant) {
@@ -144,16 +153,16 @@ class _operationState extends State<operation> {
               int idCat = cat!.id!;
               DateTime maintenant = DateTime.now();
               String date_maintenant =
-                  DateFormat("dd-MM-yyyy").format(maintenant);
+                  DateFormat("yyyy-MM-dd").format(maintenant);
               operation_sortir sortir = new operation_sortir(montant,
-                  description, date_maintenant, TypeCompte, idCat, this.numero);
+                  description, date_maintenant, idCat, id_compte, this.numero);
               int a = await helper.insertOperationSortir(sortir);
               if (a != 0) {
                 print("operation sortir inserted");
                 Map<int, int> myData = new Map();
                 myData[0] = 1;
                 myData[1] = montant;
-                myData[2] = getTypeCompte(TypeCompte);
+                myData[2] = id_res;
                 Navigator.of(context, rootNavigator: true).pop(myData);
               } else {
                 print("not inserted");
@@ -228,7 +237,7 @@ class _operationState extends State<operation> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
 
-          drawer: drowerfunction(context, usr, this.allUpdateSolde),
+          drawer: drowerfunction(context, usr),
           appBar: AppBar(
               toolbarHeight: 100,
               bottom: TabBar(tabs: mytabs),
@@ -317,28 +326,40 @@ class _operationState extends State<operation> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(top: 10, left: 10),
-                              child: DropdownButton<String>(
-                                items: <String>[
-                                  'Compte',
-                                  'Bankily',
-                                  'Bank'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    TypeCompte = value!;
-                                  });
-                                },
-                                isExpanded: true,
-                                //value: currentNomCat,
-                                hint: Text('$TypeCompte'),
-                                //style: TextStyle(fontSize: 18),
-                              ),
+                              padding: EdgeInsets.only(top: 30, left: 10),
+                              child: FutureBuilder(
+                                  future: getComptesRessource(this.usr!.id!),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<compteRessource>>
+                                          snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return CircularProgressIndicator();
+                                    } else {
+                                      return DropdownButton<String>(
+                                        items: snapshot.data!
+                                            .map((cmpRes) =>
+                                                DropdownMenuItem<String>(
+                                                  child: Text(cmpRes.nom_ress!),
+                                                  value: cmpRes.nom_ress,
+                                                ))
+                                            .toList(),
+                                        onChanged: (String? value) {
+                                          setState(() {
+                                            TypeCompte = value!;
+                                          });
+                                        },
+                                        isExpanded: true,
+                                        //value: currentNomCat,
+                                        hint: Text(
+                                          '$TypeCompte',
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            //fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),
@@ -457,28 +478,40 @@ class _operationState extends State<operation> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(top: 10, left: 10),
-                              child: DropdownButton<String>(
-                                items: <String>[
-                                  'Compte',
-                                  'Bankily',
-                                  'Bank'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    TypeCompte = value!;
-                                  });
-                                },
-                                isExpanded: true,
-                                //value: currentNomCat,
-                                hint: Text('$TypeCompte'),
-                                //style: TextStyle(fontSize: 18),
-                              ),
+                              padding: EdgeInsets.only(top: 30, left: 10),
+                              child: FutureBuilder(
+                                  future: getComptesRessource(this.usr!.id!),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<compteRessource>>
+                                          snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return CircularProgressIndicator();
+                                    } else {
+                                      return DropdownButton<String>(
+                                        items: snapshot.data!
+                                            .map((cmpRes) =>
+                                                DropdownMenuItem<String>(
+                                                  child: Text(cmpRes.nom_ress!),
+                                                  value: cmpRes.nom_ress,
+                                                ))
+                                            .toList(),
+                                        onChanged: (String? value) {
+                                          setState(() {
+                                            TypeCompte = value!;
+                                          });
+                                        },
+                                        isExpanded: true,
+                                        //value: currentNomCat,
+                                        hint: Text(
+                                          '$TypeCompte',
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            //fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),

@@ -9,22 +9,22 @@ import 'package:toast/toast.dart';
 
 import 'models/argent.dart';
 import 'models/compte.dart';
+import 'models/compteRessource.dart';
+import 'models/ressource.dart';
 
 class form_prette extends StatefulWidget {
   // const form_prette({Key? key}) : super(key: key);
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
-  form_prette(this.usr, this.allUpdateSolde);
+  form_prette(this.usr);
 
   @override
-  State<form_prette> createState() =>
-      _form_pretteState(this.usr, this.allUpdateSolde!);
+  State<form_prette> createState() => _form_pretteState(this.usr);
 }
 
 class _form_pretteState extends State<form_prette> {
   utilisateur? usr;
-  List<diagrameSolde> allUpdateSolde = [];
-  _form_pretteState(this.usr, this.allUpdateSolde);
+  // List<diagrameSolde> allUpdateSolde = [];
+  _form_pretteState(this.usr);
   final _formKey = GlobalKey<FormState>();
   TextEditingController nom = TextEditingController();
   TextEditingController objet = TextEditingController();
@@ -41,15 +41,19 @@ class _form_pretteState extends State<form_prette> {
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    // DateTime now = DateTime.now();
-    // String dateDebut = now.toString();
+    ressource? res = await helper.getSpecifyRessource(typeCmp);
+    int id_res = res!.id_ress!;
+    compte? cmp = await helper.getSpecifyCompte(id_res);
+    int id_compte = cmp!.id!;
 
     if (form!.validate()) {
       prette_dette pretteDette = prette_dette(nom, objectif, int.parse(montant),
-          date_maintenant, dateDebut, dateEcheance, 0, typeCmp, a);
+          date_maintenant, dateDebut, dateEcheance, 0, id_compte, a);
       int x = await helper.insert_pretteDatte(pretteDette);
       if (x > 0) {
         print("inserted ");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
       } else {
         print("not inserted");
       }
@@ -63,29 +67,22 @@ class _form_pretteState extends State<form_prette> {
     final form = _formKey.currentState;
     if (form!.validate()) {
       if (typeCmp != "Choisissez le type de solde") {
+        ressource? res = await helper.getSpecifyRessource(typeCmp);
+        int id_res = res!.id_ress!;
         int mnt = int.parse(value);
-        utilisateur? user =
-            await helper.getUser(this.usr!.email!, this.usr!.password!);
-        int a = user!.id!;
-        compte? cmp = await helper.getCompteUser(a, typeCmp);
+
+        compte? cmp = await helper.getCompteUser(this.usr!.id!, id_res);
         if (cmp != null) {
           int solde = cmp.solde!;
           if (solde > mnt) {
             int newSolde = solde - mnt;
-            compte updateCompte = compte(newSolde, typeCmp, date_maintenant, a);
+            compte updateCompte =
+                compte(newSolde, date_maintenant, id_res, this.usr!.id);
             helper.update_compte(updateCompte);
-            argent arg = argent(updateCompte.solde, updateCompte.date,
-                updateCompte.type, updateCompte.id_utilisateur);
-            helper.insert_argent(arg);
-            allUpdateSolde.add(diagrameSolde(maintenant, newSolde, typecomp));
+            insertArgent(updateCompte.solde!, updateCompte.date!,
+                updateCompte.id_ressource!, updateCompte.id_utilisateur!);
             insertPretteDette(nom.text, objet.text, montant.text,
                 dateDebut.text, dateEcheance.text);
-
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        alldettes(usr, 0, this.allUpdateSolde)));
           } else {
             showText(context, "désolé",
                 "Le montant que vous entree est plus grand que votre solde dans $typeCmp");
@@ -97,8 +94,6 @@ class _form_pretteState extends State<form_prette> {
         Toast.show("Choisissez le type de solde");
       }
     }
-    // this.allUpdateSolde =
-    //     getListSoldes(this.allUpdateSolde!, typecomp, this.usr!.id!);
   }
 
   @override
@@ -246,28 +241,40 @@ class _form_pretteState extends State<form_prette> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(left: 10, top: 10),
-                              child: DropdownButton<String>(
-                                items: <String>[
-                                  'Compte',
-                                  'Bankily',
-                                  'Bank'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    typeCmp = value!;
-                                  });
-                                },
-                                isExpanded: true,
-                                //value: currentNomCat,
-                                hint: Text('$typeCmp'),
-                                //style: TextStyle(fontSize: 18),
-                              ),
+                              padding: EdgeInsets.only(top: 30, left: 10),
+                              child: FutureBuilder(
+                                  future: getComptesRessource(this.usr!.id!),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<compteRessource>>
+                                          snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return CircularProgressIndicator();
+                                    } else {
+                                      return DropdownButton<String>(
+                                        items: snapshot.data!
+                                            .map((cmpRes) =>
+                                                DropdownMenuItem<String>(
+                                                  child: Text(cmpRes.nom_ress!),
+                                                  value: cmpRes.nom_ress,
+                                                ))
+                                            .toList(),
+                                        onChanged: (String? value) {
+                                          setState(() {
+                                            typeCmp = value!;
+                                          });
+                                        },
+                                        isExpanded: true,
+                                        //value: currentNomCat,
+                                        hint: Text(
+                                          '$typeCmp',
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            //fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),

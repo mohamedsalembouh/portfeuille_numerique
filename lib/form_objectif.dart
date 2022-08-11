@@ -10,22 +10,23 @@ import 'package:toast/toast.dart';
 
 import 'methodes.dart';
 import 'models/argent.dart';
+import 'models/compteRessource.dart';
+import 'models/ressource.dart';
 
 class form_objectif extends StatefulWidget {
   //const form_objectif({Key? key}) : super(key: key);
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
-  form_objectif(this.usr, this.allUpdateSolde);
+
+  form_objectif(this.usr);
 
   @override
-  State<form_objectif> createState() =>
-      _form_objectifState(this.usr, this.allUpdateSolde!);
+  State<form_objectif> createState() => _form_objectifState(this.usr);
 }
 
 class _form_objectifState extends State<form_objectif> {
   utilisateur? usr;
-  List<diagrameSolde> allUpdateSolde = [];
-  _form_objectifState(this.usr, this.allUpdateSolde);
+  //List<diagrameSolde> allUpdateSolde = [];
+  _form_objectifState(this.usr);
   final _formKey = GlobalKey<FormState>();
   TextEditingController nomObj = TextEditingController();
   TextEditingController montantCible = TextEditingController();
@@ -38,34 +39,34 @@ class _form_objectifState extends State<form_objectif> {
     final form = _formKey.currentState!;
     if (form.validate()) {
       if (TypeCompte != "Choisissez le type de solde") {
+        ressource? res = await helper.getSpecifyRessource(TypeCompte);
+        int id_res = res!.id_ress!;
+        compte? cmpe = await helper.getSpecifyCompte(id_res);
+        int id_cmpe = cmpe!.id!;
         utilisateur? user =
             await helper.getUser(this.usr!.email!, this.usr!.password!);
         int a = user!.id!;
         int mntCible = int.parse(value1);
         int mntEnregistree = int.parse(value2);
-        compte? cmp = await helper.getCompteUser(a, TypeCompte);
+        compte? cmp = await helper.getCompteUser(a, id_res);
         if (cmp != null) {
           int solde = cmp.solde!;
           if (mntEnregistree < solde) {
-            objective obj =
-                objective(nomobj, mntCible, mntEnregistree, date_maintenant, a);
+            objective obj = objective(
+                nomobj, mntCible, mntEnregistree, date_maintenant, id_cmpe, a);
             int result = await helper.insert_objectif(obj);
             int newSolde = solde - mntEnregistree;
-            compte updateCompte =
-                compte(newSolde, TypeCompte, date_maintenant, a);
-
+            compte updateCompte = compte(newSolde, date_maintenant, id_res, a);
+            insertArgent(updateCompte.solde!, updateCompte.date!,
+                updateCompte.id_ressource!, updateCompte.id_utilisateur!);
             int result2 = await helper.update_compte(updateCompte);
             argent arg = argent(updateCompte.solde, updateCompte.date,
-                updateCompte.type, updateCompte.id_utilisateur);
+                updateCompte.id_ressource, updateCompte.id_utilisateur);
             helper.insert_argent(arg);
-            allUpdateSolde.add(diagrameSolde(maintenant, newSolde, TypeCompte));
             if (result != 0 && result2 != 0) {
               print("ok objective enregistre");
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          objectif(usr, this.allUpdateSolde)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => objectif(usr)));
             }
           } else {
             showText(context, "Desole",
@@ -166,26 +167,41 @@ class _form_objectifState extends State<form_objectif> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 10, top: 10),
-                                child: DropdownButton<String>(
-                                  items: <String>['Compte', 'Bankily', 'Bank']
-                                      .map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? value) {
-                                    setState(() {
-                                      TypeCompte = value!;
-                                    });
-                                  },
-                                  isExpanded: true,
-                                  //value: currentNomCat,
-                                  hint: Text('$TypeCompte'),
-                                  //style: TextStyle(fontSize: 18),
-                                ),
+                                padding: EdgeInsets.only(top: 30, left: 10),
+                                child: FutureBuilder(
+                                    future: getComptesRessource(this.usr!.id!),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<List<compteRessource>>
+                                            snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return CircularProgressIndicator();
+                                      } else {
+                                        return DropdownButton<String>(
+                                          items: snapshot.data!
+                                              .map((cmpRes) =>
+                                                  DropdownMenuItem<String>(
+                                                    child:
+                                                        Text(cmpRes.nom_ress!),
+                                                    value: cmpRes.nom_ress,
+                                                  ))
+                                              .toList(),
+                                          onChanged: (String? value) {
+                                            setState(() {
+                                              TypeCompte = value!;
+                                            });
+                                          },
+                                          isExpanded: true,
+                                          //value: currentNomCat,
+                                          hint: Text(
+                                            '$TypeCompte',
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              //fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(top: 40, left: 100),

@@ -1,42 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:portfeuille_numerique/methodes.dart';
+import 'package:portfeuille_numerique/db/sql_helper.dart';
+import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:portfeuille_numerique/models/argent.dart';
-import 'package:portfeuille_numerique/models/compte.dart';
-import 'package:portfeuille_numerique/models/depensesCats.dart';
-import 'package:portfeuille_numerique/models/emprunte_dette.dart';
-import 'package:portfeuille_numerique/models/objective.dart';
-import 'package:portfeuille_numerique/models/operation_entree.dart';
-import 'package:portfeuille_numerique/models/operation_sortir.dart';
-import 'package:portfeuille_numerique/models/prette_dette.dart';
-import 'package:portfeuille_numerique/models/ressource.dart';
-import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-
+import 'methodes.dart';
+import 'models/argent.dart';
+import 'models/compte.dart';
 import 'models/compteRessource.dart';
+import 'models/depensesCats.dart';
+import 'models/ressource.dart';
 
-class statistique extends StatefulWidget {
-  //const statistique({Key? key}) : super(key: key);
+class detailStatistique extends StatefulWidget {
+  // const detailStatistique({ Key? key }) : super(key: key);
+  int? id_utilisateur;
+  detailStatistique(this.id_utilisateur);
 
-  utilisateur? usr;
-
-  statistique(this.usr);
   @override
-  State<statistique> createState() => _statistiqueState(this.usr);
+  State<detailStatistique> createState() =>
+      _detailStatistiqueState(this.id_utilisateur);
 }
 
-class _statistiqueState extends State<statistique> {
-  utilisateur? usr;
-  //List<diagrameSolde> allUpdateSolde = [];
-  _statistiqueState(this.usr);
+class _detailStatistiqueState extends State<detailStatistique> {
+  int? id_utilisateur;
+  _detailStatistiqueState(this.id_utilisateur);
+  final List<Tab> mytabs = [
+    Tab(
+      text: "solde",
+    ),
+    Tab(
+      text: "depense",
+    ),
+    Tab(
+      text: "Rapports",
+    )
+  ];
   int? total;
   int? totalRevenus;
   List<charts.Series<diagram, String>>? _seriedata;
-  List<charts.Series<pollution, String>>? _mesdata;
-  List<charts.Series<salles, int>>? _allsalles;
   List<depensesCats>? allDepensesCats;
   int? count;
   int? count2;
@@ -46,11 +48,13 @@ class _statistiqueState extends State<statistique> {
   //List<operation_sortir>? alldepenses;
   static var revenus;
   static var depenses;
-  List<depensesCats>? depens;
-  _generatedData() {}
+  List<argent>? allargentCompte;
+  static var diagramdata;
+  SQL_Helper helper = SQL_Helper();
   TextEditingController dateDebut = TextEditingController();
   TextEditingController dateFin = TextEditingController();
   var piedata2 = <diagram>[];
+
   generatedData() async {
     Color col;
     var piedata = <diagram>[];
@@ -166,7 +170,6 @@ class _statistiqueState extends State<statistique> {
     return uniquerevenu;
   }
 
-  String? nomchange;
   String nomRessource = "Specifie un compte";
   updateCategories(String nomRess) async {
     if (nomRess != "Specifie un compte") {
@@ -179,7 +182,7 @@ class _statistiqueState extends State<statistique> {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> depenses =
-              helper.getSpecifyDepensesCats(id_cmp, this.usr!.id!);
+              helper.getSpecifyDepensesCats(id_cmp, this.id_utilisateur!);
 
           depenses.then((theList) {
             setState(() {
@@ -197,7 +200,7 @@ class _statistiqueState extends State<statistique> {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> depenses =
-              helper.getAllDepensesCats(this.usr!.id!);
+              helper.getAllDepensesCats(this.id_utilisateur!);
 
           depenses.then((theList) {
             setState(() {
@@ -223,7 +226,7 @@ class _statistiqueState extends State<statistique> {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> revenies =
-              helper.getSpecifyRevenusCats(id_cmp, this.usr!.id!);
+              helper.getSpecifyRevenusCats(id_cmp, this.id_utilisateur!);
 
           revenies.then((theList) {
             setState(() {
@@ -241,7 +244,7 @@ class _statistiqueState extends State<statistique> {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> revenies =
-              helper.getAllRevenusCats(this.usr!.id!);
+              helper.getAllRevenusCats(this.id_utilisateur!);
 
           revenies.then((theList) {
             setState(() {
@@ -263,7 +266,7 @@ class _statistiqueState extends State<statistique> {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> revenies =
-              helper.getAllRevenusrecherche(debut, fin, this.usr!.id!);
+              helper.getAllRevenusrecherche(debut, fin, this.id_utilisateur!);
 
           revenies.then((theList) {
             setState(() {
@@ -284,8 +287,9 @@ class _statistiqueState extends State<statistique> {
       var ourDb = db;
       if (ourDb != null) {
         ourDb.then((database) {
-          Future<List<depensesCats>> revenies = helper
-              .getSpecifyRevenusrecherche(debut, fin, id_cmp, this.usr!.id!);
+          Future<List<depensesCats>> revenies =
+              helper.getSpecifyRevenusrecherche(
+                  debut, fin, id_cmp, this.id_utilisateur!);
 
           revenies.then((theList) {
             setState(() {
@@ -307,7 +311,7 @@ class _statistiqueState extends State<statistique> {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> depense =
-              helper.getRechercheDepenses(debut, fin, this.usr!.id!);
+              helper.getRechercheDepenses(debut, fin, this.id_utilisateur!);
 
           depense.then((theList) {
             setState(() {
@@ -328,8 +332,9 @@ class _statistiqueState extends State<statistique> {
       var ourDb = db;
       if (ourDb != null) {
         ourDb.then((database) {
-          Future<List<depensesCats>> depense = helper
-              .getSpecifyRechercheDepenses(debut, fin, id_cmp, this.usr!.id!);
+          Future<List<depensesCats>> depense =
+              helper.getSpecifyRechercheDepenses(
+                  debut, fin, id_cmp, this.id_utilisateur!);
 
           depense.then((theList) {
             setState(() {
@@ -344,95 +349,11 @@ class _statistiqueState extends State<statistique> {
     }
   }
 
-  // getAllDepenses() async {
-  //   utilisateur? user =
-  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
-  //   int a = user!.id!;
-  //   final Future<Database>? db = helper.initialiseDataBase();
-  //   var ourDb = db;
-  //   if (ourDb != null) {
-  //     ourDb.then((database) {
-  //       Future<List<operation_sortir>> revenies = helper.getAllDepenses(a);
-
-  //       revenies.then((theList) {
-  //         setState(() {
-  //           this.alldepenses = theList;
-  //           if (alldepenses != null) {
-  //             this.depensesCount = theList.length;
-  //           }
-  //         });
-  //       });
-  //     });
-  //   }
-  // }
-  // List<diagrameSolde> diagramData =
-  // [
-  //   diagrameSolde(DateTime.parse("2000-10-02"), 35, "bb"),
-  //   diagrameSolde(DateTime.parse("2000-10-03"), 28, "bb"),
-  //   diagrameSolde(DateTime.parse("2000-10-05"), 34, "bb"),
-  //   diagrameSolde(DateTime.parse("2000-10-07"), 32, "bb"),
-  //   diagrameSolde(DateTime.parse("2000-10-09"), 40, "bb"),
-  // ];
-
-  List<argent>? allargentCompte;
-  List<argent>? allargentBankily;
-  List<argent>? allargentBank;
-  static var diagramdata;
-  static var diagramDataBank;
-  static var diagramDataBankily;
-  static var diagramDataCompte;
-  // fullListes() {
-  //   allUpdateSolde.forEach((element) {
-  //     diagramData.add(element);
-  //     // if (element.type == "Bankily") {
-  //     //   diagramDataBankily.add(element);
-  //     // } else if (element.type == "Bank") {
-  //     //   diagramDataBank.add(element);
-  //     // } else {
-  //     //   diagramDataCompte.add(element);
-  //     // }
-  //   });
-  // }
-
-  // getAllMontant(int id) async {
-  //   List<compte> Soldes = await helper.getAllComptesUser(id);
-  //   List<operation_entree> revenus = await helper.getAllRevenus(id);
-  //   List<operation_sortir> depenses = await helper.getAllDepenses(id);
-  //   List<prette_dette> prettes = await helper.getAllPrettesDettes(id);
-  //   List<emprunte_dette> empruntes = await helper.getAllEmprunteDettes(id);
-  //   List<objective> objectifs = await helper.getAllObjectivfs(id);
-  //   Soldes.forEach((element) {
-  //     allUpdateSolde
-  //         .add(diagrameSolde.aaa(DateTime.parse(element.date!), element.solde));
-  //   });
-  //   revenus.forEach((element) {
-  //     allUpdateSolde.add(
-  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
-  //   });
-  //   depenses.forEach((element) {
-  //     allUpdateSolde.add(
-  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
-  //   });
-  //   prettes.forEach((element) {
-  //     allUpdateSolde.add(
-  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
-  //   });
-  //   empruntes.forEach((element) {
-  //     allUpdateSolde.add(
-  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
-  //   });
-  //   objectifs.forEach((element) {
-  //     allUpdateSolde.add(diagrameSolde.aaa(
-  //         DateTime.parse(element.date!), element.montant_donnee));
-  //   });
-  //   diagramData = allUpdateSolde;
-  // }
-
   getTousArgent(String nomRess) async {
     if (nomRess != "Specifie un compte") {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idRes = res!.id_ress!;
-      int a = this.usr!.id!;
+      int a = this.id_utilisateur!;
       final Future<Database>? db = helper.initialiseDataBase();
       var ourDb = db;
       if (ourDb != null) {
@@ -448,7 +369,7 @@ class _statistiqueState extends State<statistique> {
         });
       }
     } else {
-      int a = this.usr!.id!;
+      int a = this.id_utilisateur!;
       final Future<Database>? db = helper.initialiseDataBase();
       var ourDb = db;
       if (ourDb != null) {
@@ -465,68 +386,8 @@ class _statistiqueState extends State<statistique> {
     }
   }
 
-  List<depensesCats> mylist = [];
-  int totl = 0;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    updateCategories(nomRessource);
-    _seriedata = [];
-    _mesdata = [];
-    _allsalles = [];
-    // _generatedData();
-    generatedData();
-  }
-
-  final List<Tab> mytabs = [
-    Tab(
-      text: "solde",
-    ),
-    Tab(
-      text: "depense",
-    ),
-    Tab(
-      text: "Rapports",
-    )
-  ];
-  // getRechercheRevenus(DateTime debut, DateTime fin, String nomRess) async {
-  //   List<depensesCats> someRevenus = [];
-  //   if (nomRess != "Specifie un compte") {
-  //     ressource? res = await helper.getSpecifyRessource(nomRess);
-  //     int idRes = res!.id_ress!;
-  //     compte? cmp = await helper.getSpecifyCompte(idRes);
-  //     int id_compte = cmp!.id!;
-  //     List<depensesCats>? revenies =
-  //         await helper.getSpecifyRevenusCats(id_compte, this.usr!.id!);
-  //     revenies.forEach((element) {
-  //       DateTime dateBetween = DateTime.parse(element.date!);
-  //       if (dateBetween.compareTo(debut) > 0 &&
-  //           dateBetween.compareTo(fin) < 0) {
-  //         someRevenus.add(element);
-  //       }
-  //     });
-  //   } else {
-  //     List<depensesCats>? revenies =
-  //         await helper.getAllRevenusCats(this.usr!.id!);
-  //     revenies.forEach((element) {
-  //       DateTime dateBetween = DateTime.parse(element.date!);
-  //       if (dateBetween.compareTo(debut) > 0 &&
-  //           dateBetween.compareTo(fin) < 0) {
-  //         someRevenus.add(element);
-  //       }
-  //     });
-  //   }
-  //   setState(() {
-  //     this.allrevenus = someRevenus;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    //fullListes();
-    //getAllMontant(this.usr!.id!);
-
     if (allrevenus == null) {
       getAllRevenusCats(nomRessource);
     }
@@ -551,28 +412,23 @@ class _statistiqueState extends State<statistique> {
     //depenses = this.alldepenses;
     total = getTotal();
     totalRevenus = getTotalRevenus();
-
-    //print(allUpdateSolde[0].montant);
-    //print(allUpdateSolde[1].montant);
-    // print(allUpdateSolde[2].montant);
-    // print(total);
-    // print(usr!.password);
-    // print(allDepensesCats!.length);
-    //printListe();
-    //print(allUpdateSolde.length);
-
     return MaterialApp(
         home: DefaultTabController(
       length: mytabs.length,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: BackButtonIcon(),
+          ),
           title: Text("Statistiques"),
           bottom: TabBar(
             tabs: mytabs,
           ),
         ),
-        drawer: drowerfunction(context, usr),
         body: TabBarView(
           children: [
             //first container
@@ -581,7 +437,7 @@ class _statistiqueState extends State<statistique> {
                 Padding(
                   padding: EdgeInsets.only(top: 30, left: 10),
                   child: FutureBuilder(
-                      future: getComptesRessource(this.usr!.id!),
+                      future: getComptesRessource(this.id_utilisateur!),
                       builder: (BuildContext context,
                           AsyncSnapshot<List<compteRessource>> snapshot) {
                         if (!snapshot.hasData) {
@@ -644,26 +500,10 @@ class _statistiqueState extends State<statistique> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Padding(
-                  //   padding: EdgeInsets.only(top: 40, bottom: 20),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //     children: [
-                  //       Text(
-                  //         "Le total de depenses  :",
-                  //         style: TextStyle(fontSize: 20),
-                  //       ),
-                  //       Text(
-                  //         "$total",
-                  //         style: TextStyle(fontSize: 20, color: Colors.green),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   Padding(
                     padding: EdgeInsets.only(top: 30, left: 10),
                     child: FutureBuilder(
-                        future: getComptesRessource(this.usr!.id!),
+                        future: getComptesRessource(this.id_utilisateur!),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<compteRessource>> snapshot) {
                           if (!snapshot.hasData) {
@@ -767,6 +607,9 @@ class _statistiqueState extends State<statistique> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2050));
 
+                              if (pickeddate == null) {
+                                pickeddate = DateTime.now();
+                              }
                               setState(() {
                                 dateDebut.text = DateFormat("yyyy-MM-dd")
                                     .format(pickeddate!);
@@ -797,6 +640,9 @@ class _statistiqueState extends State<statistique> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2050));
 
+                              if (pickeddate == null) {
+                                pickeddate = DateTime.now();
+                              }
                               setState(() {
                                 dateFin.text = DateFormat("yyyy-MM-dd")
                                     .format(pickeddate!);
@@ -807,24 +653,19 @@ class _statistiqueState extends State<statistique> {
                       ),
                     ],
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: ElevatedButton(
                       onPressed: () {
                         // DateTime debut = DateTime.parse(dateDebut.text);
                         // DateTime fin = DateTime.parse(dateFin.text);
-                        // if ((dateDebut.text == "choisisez un date") ||
-                        //     (dateFin.text == "choisisez un date")) {
 
-                        // } else {
                         getRechercheRevenus(
                             dateDebut.text, dateFin.text, nomRessource);
                         getRechercheDepense(
                             dateDebut.text, dateFin.text, nomRessource);
-                        //   // dateDebut.clear();
-                        //   // dateFin.clear();
-                        // }
+                        dateDebut.clear();
+                        dateFin.clear();
                       },
                       child: Text('Rechercher'),
                     ),
@@ -832,7 +673,7 @@ class _statistiqueState extends State<statistique> {
                   Padding(
                     padding: EdgeInsets.only(top: 10, left: 10),
                     child: FutureBuilder(
-                        future: getComptesRessource(this.usr!.id!),
+                        future: getComptesRessource(this.id_utilisateur!),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<compteRessource>> snapshot) {
                           if (!snapshot.hasData) {
@@ -848,15 +689,10 @@ class _statistiqueState extends State<statistique> {
                               onChanged: (String? value) {
                                 setState(() {
                                   nomRessource = value!;
-                                  // dateDebut.clear();
-                                  // dateFin.clear();
                                 });
                                 updateCategories(nomRessource);
                                 getAllRevenusCats(nomRessource);
-                                dateDebut.clear();
-                                dateFin.clear();
                               },
-
                               isExpanded: true,
                               //value: currentNomCat,
                               hint: Text(
@@ -902,38 +738,6 @@ class _statistiqueState extends State<statistique> {
                             trailing: Text("${revenus[pos].montant}"),
                           ),
                         );
-                        // if (dateDebut.text == "choisisez un date" ||
-                        //     dateFin.text == "choisisez un date") {
-
-                        //   return Card(
-                        //     color: Colors.white,
-                        //     //elevation: 2.0,
-                        //     child: ListTile(
-                        //       title: Text("${revenus[pos].nomcat}"),
-                        //       trailing: Text("${revenus[pos].montant}"),
-                        //     ),
-                        //   );
-                        // } else {
-                        //   DateTime datebetween =
-                        //       DateTime.parse(revenus[pos].date!);
-                        //   DateTime debut = DateTime.parse(dateDebut.text);
-                        //   DateTime fin = DateTime.parse(dateFin.text);
-                        //   if (datebetween.compareTo(debut) > 0 &&
-                        //       datebetween.compareTo(fin) < 0) {
-                        //    // totl = (totl + revenus[pos].montant) as int;
-
-                        //     return Card(
-                        //       color: Colors.white,
-                        //       //elevation: 2.0,
-                        //       child: ListTile(
-                        //         title: Text("${revenus[pos].nomcat}"),
-                        //         trailing: Text("${revenus[pos].montant}"),
-                        //       ),
-                        //     );
-                        //   } else {
-                        //     return Container();
-                        //   }
-                        // }
                       },
                     ),
                   ),
@@ -951,52 +755,6 @@ class _statistiqueState extends State<statistique> {
                                 trailing: Text("${depenses[pos].montant}"),
                               ),
                             );
-                            // DateTime datebetween =
-                            //     DateTime.parse(depenses[pos].date!);
-                            // String date1 = DateFormat("yyyy-MM-dd")
-                            //     .format(DateTime.parse(dateDebut.text));
-                            // DateTime debut = DateTime.parse(dateDebut.text);
-                            // String date2 = DateFormat("yyyy-MM-dd")
-                            //     .format(DateTime.parse(dateFin.text));
-                            // DateTime fin = DateTime.parse(dateFin.text);
-                            // if ((datebetween.compareTo(debut) > 0 &&
-                            //         datebetween.compareTo(fin) < 0) ||
-                            //     (debut.compareTo(fin) == 0)) {
-                            // if (dateDebut.text == "choisisez un date" ||
-                            //     dateFin.text == "choisisez un date") {
-                            //   return Card(
-                            //     child: ListTile(
-                            //       title: Text("${depenses[pos].nomcat}"),
-                            //       trailing: Text("${depenses[pos].montant}"),
-                            //     ),
-                            //   );
-                            // } else {
-                            //   DateTime datebetween =
-                            //       DateTime.parse(revenus[pos].date!);
-                            //   DateTime debut = DateTime.parse(dateDebut.text);
-                            //   DateTime fin = DateTime.parse(dateFin.text);
-                            //   if (datebetween.compareTo(debut) > 0 &&
-                            //       datebetween.compareTo(fin) < 0) {
-                            //     return Card(
-                            //       child: ListTile(
-                            //         title: Text("${depenses[pos].nomcat}"),
-                            //         trailing: Text("${depenses[pos].montant}"),
-                            //       ),
-                            //     );
-                            //   } else {
-                            //     return Container();
-                            //   }
-                            // }
-
-                            // } else {
-                            //   return Container();
-                            // }
-                            // return Card(
-                            //   child: ListTile(
-                            //     title: Text("${depenses[pos].nomcat}"),
-                            //     trailing: Text("${depenses[pos].montant}"),
-                            //   ),
-                            // );
                           })),
                 ],
               ),
@@ -1007,132 +765,3 @@ class _statistiqueState extends State<statistique> {
     ));
   }
 }
-
-class Task {
-  String? task;
-  double? taskvalue;
-  Color? colorval;
-
-  Task(this.task, this.taskvalue, this.colorval);
-}
-
-class pollution {
-  String? place;
-  int? year;
-  int? quantite;
-  pollution(this.place, this.year, this.quantite);
-}
-
-class salles {
-  int? salle;
-  int? year;
-  salles(this.salle, this.year);
-}
-
-class diagram {
-  String? nomCat;
-  int? montant;
-  Color? colorval;
-  diagram.withnull();
-  diagram(this.nomCat, this.montant, this.colorval);
-}
-
-class diagrameSolde {
-  //String? month;
-  int? montant;
-  DateTime? date;
-  String? type;
-  diagrameSolde(this.date, this.montant, this.type);
-  diagrameSolde.aaa(this.date, this.montant);
-}
-
-// _generatedData() {
-//   var listsalles1 = [
-//     salles(1, 10),
-//     salles(2, 20),
-//     salles(3, 30),
-//     salles(4, 60),
-//   ];
-//   var listsalles2 = [
-//     salles(1, 25),
-//     salles(2, 45),
-//     salles(3, 70),
-//     salles(4, 90),
-//   ];
-//   var listsalles3 = [
-//     salles(1, 65),
-//     salles(2, 28),
-//     salles(3, 35),
-//     salles(4, 55),
-//   ];
-//   var data1 = [
-//     pollution("NKTT", 2018, 2345),
-//     pollution("NDB", 2010, 20000),
-//     pollution("Kiffa", 2020, 40000),
-//   ];
-//   var data2 = [
-//     pollution("Rosso", 2019, 234500),
-//     pollution("Nema", 2010, 50000),
-//     pollution("Aioun", 2022, 400000)
-//   ];
-//   var data3 = [
-//     pollution("aaa", 2001, 100000),
-//     pollution("bbb", 2002, 200000),
-//     pollution("ccc", 2003, 300000)
-//   ];
-//   var piedata = [
-//     Task("work", 40000, Colors.red),
-//     Task("work", 5000, Colors.red),
-//     Task("achats", 2000, Colors.green),
-//     // Task("ventes", 40000, Colors.orange),
-//     // Task("hhhh", 40000, Colors.yellow),
-//   ];
-//   _allsalles!.add(
-//     charts.Series(
-//       domainFn: (salles sale, _) => sale.year,
-//       measureFn: (salles sale, _) => sale.salle,
-//       id: '2025',
-//       data: listsalles1,
-//       // fillPatternFn: (_, __) => charts.FillPatternType.solid,
-//     ),
-//   );
-//   _allsalles!.add(
-//     charts.Series(
-//       domainFn: (salles sale, _) => sale.year,
-//       measureFn: (salles sale, _) => sale.salle,
-//       id: '2025',
-//       data: listsalles2,
-//       // fillPatternFn: (_, __) => charts.FillPatternType.solid,
-//     ),
-//   );
-//   _mesdata!.add(
-//     charts.Series(
-//         domainFn: (pollution poll, _) => poll.place,
-//         measureFn: (pollution poll, _) => poll.quantite,
-//         id: '2025',
-//         data: data1,
-//         fillPatternFn: (_, __) => charts.FillPatternType.solid,
-//         fillColorFn: (pollution poll, _) =>
-//             charts.ColorUtil.fromDartColor(Colors.green)),
-//   );
-//   _mesdata!.add(
-//     charts.Series(
-//         domainFn: (pollution poll, _) => poll.place,
-//         measureFn: (pollution poll, _) => poll.quantite,
-//         id: '2025',
-//         data: data2,
-//         fillPatternFn: (_, __) => charts.FillPatternType.solid,
-//         fillColorFn: (pollution poll, _) =>
-//             charts.ColorUtil.fromDartColor(Colors.green)),
-//   );
-//   // _seriedata!.add(
-//   //   charts.Series(
-//   //       data: piedata,
-//   //       domainFn: (Task task, _) => task.task,
-//   //       measureFn: (Task task, _) => task.taskvalue,
-//   //       colorFn: (Task task, _) =>
-//   //           charts.ColorUtil.fromDartColor(task.colorval),
-//   //       id: 'Daily task',
-//   //       labelAccessorFn: (Task row, _) => '${row.taskvalue}'),
-//   // );
-// }

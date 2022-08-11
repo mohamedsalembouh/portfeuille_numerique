@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/nouveauCategorie.dart';
+import 'package:portfeuille_numerique/nouveauxRessource.dart';
 
 class parametrage extends StatefulWidget {
   //const parametrage({Key? key}) : super(key: key);
@@ -58,6 +59,18 @@ class _parametrageState extends State<parametrage> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           nouveauCategorie()));
+                            },
+                          ),
+                          ListTile(
+                            title: Text("Ressources"),
+                            leading: Icon(Icons.account_box),
+                            subtitle: Text("Ajoutez des Nouveaux Ressources"),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          nouveauxRessource(usr)));
                             },
                           ),
                         ],

@@ -7,6 +7,7 @@ import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
+import 'package:portfeuille_numerique/models/compteRessource.dart';
 import 'package:portfeuille_numerique/models/depensesCats.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
@@ -22,6 +23,7 @@ import 'db/sql_helper.dart';
 import 'models/argent.dart';
 import 'models/catBudget.dart';
 import 'models/emprunte_dette.dart';
+import 'models/ressource.dart';
 import 'profileUser.dart';
 
 class homepage extends StatefulWidget {
@@ -29,14 +31,13 @@ class homepage extends StatefulWidget {
   String? email;
   String? pass;
   utilisateur? user;
-  List<diagrameSolde>? allUpdateSolde;
+  // List<diagrameSolde>? allUpdateSolde;
   // homepage(this.email, this.pass);
-  homepage(this.user, this.allUpdateSolde);
+  homepage(this.user);
 
   @override
   // State<homepage> createState() => _homepageState(this.email, this.pass);
-  State<homepage> createState() =>
-      _homepageState(this.user, this.allUpdateSolde!);
+  State<homepage> createState() => _homepageState(this.user);
 }
 
 class _homepageState extends State<homepage> {
@@ -55,8 +56,8 @@ class _homepageState extends State<homepage> {
   Map? myresult;
   // static var h;
   int? total;
-  List<diagrameSolde> allUpdateSolde = [];
-  _homepageState(this.user, this.allUpdateSolde);
+  // List<diagrameSolde> allUpdateSolde = [];
+  _homepageState(this.user);
   TextEditingController f_solde = TextEditingController();
   // _homepageState(this.email, this.pass);
 
@@ -67,6 +68,7 @@ class _homepageState extends State<homepage> {
   static var depenses;
   int count = 0;
   var piedata2 = <diagram>[];
+  List<cmpress> monliste = [];
 
   generatedData() async {
     Color col;
@@ -150,31 +152,26 @@ class _homepageState extends State<homepage> {
     //     await helper.getUser(this.user!.email!, this.user!.password!);
     // a = user!.id;
     if (TypeCompte != "Choisissez le type de solde") {
+      ressource? res = await helper.getSpecifyRessource(typeCmp);
+      int id_res = res!.id_ress!;
       DateTime maintenant = DateTime.now();
       String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
       compte new_cmp = new compte(
-          int.parse(f_solde.text), typeCmp, date_maintenant, this.user!.id!);
-      compte? exist_cmp = await helper.getCompteUser(this.user!.id!, typeCmp);
+          int.parse(f_solde.text), date_maintenant, id_res, this.user!.id!);
+      compte? exist_cmp = await helper.getCompteUser(this.user!.id!, id_res);
       if (exist_cmp != null) {
         helper.update_compte(new_cmp);
-        argent arg = argent(
-            new_cmp.solde, new_cmp.date, new_cmp.type, new_cmp.id_utilisateur);
-        helper.insert_argent(arg);
-        allUpdateSolde
-            .add(diagrameSolde(maintenant, int.parse(f_solde.text), typeCmp));
       } else {
         helper.insert_compte(new_cmp);
-        argent arg = argent(
-            new_cmp.solde, new_cmp.date, new_cmp.type, new_cmp.id_utilisateur);
-        helper.insert_argent(arg);
-        allUpdateSolde
-            .add(diagrameSolde(maintenant, int.parse(f_solde.text), typeCmp));
       }
-
-      updateSoldeBankily();
-      updateSoldeBank();
-      updateSoldeCompte();
+      insertArgent(new_cmp.solde!, new_cmp.date!, new_cmp.id_ressource!,
+          new_cmp.id_utilisateur!);
+      // updateSoldeBankily();
+      // updateSoldeBank();
+      // updateSoldeCompte();
+      // updateSoldeGlobale();
       updateSoldeGlobale();
+      updateEverySolde();
       Navigator.pop(context);
     } else {
       Toast.show("Choisissez le type de solde");
@@ -188,9 +185,9 @@ class _homepageState extends State<homepage> {
   //   return comp;
   // }
 
-  Future<int?> getsoldeUser(int id_utilisateur, String typeCmp) async {
+  Future<int?> getsoldeUser(int id_utilisateur, int id_res) async {
     int? solde;
-    compte? comp = await helper.getCompteUser(id_utilisateur, typeCmp);
+    compte? comp = await helper.getCompteUser(id_utilisateur, id_res);
     if (comp == null) {
       solde = 0;
     } else {
@@ -207,6 +204,7 @@ class _homepageState extends State<homepage> {
     });
     return soldes;
   }
+  //Future<int?> get
 
   updateCategories() async {
     // utilisateur? user =
@@ -231,65 +229,101 @@ class _homepageState extends State<homepage> {
     }
   }
 
-  void updateSoldeBankily() async {
-    updateCategories();
-    // utilisateur? user =
-    //     await helper.getUser(this.user!.email!, this.user!.password!);
-    // a = user!.id;
-    // h = user.nom;
-    final Future<Database>? db = helper.initialiseDataBase();
-    var our_db = db;
-    if (our_db != null) {
-      our_db.then((database) {
-        Future<int?> solde = getsoldeUser(this.user!.id!, "Bankily");
-        solde.then((reloadsolde) {
-          setState(() {
-            this.k1 = reloadsolde;
-          });
-        });
-      });
-    }
+  // void updateEverySolde(int idUser) async {
+  //   List<compteRessource> cmpRessources =
+  //       await helper.getAllCompteRessource(idUser);
+  //   cmpRessources.forEach((element) async {
+  //     int? solde = await getsoldeUser(idUser, element.id_ress!);
+  //     cmpress compres = cmpress(element.nom_ress, solde);
+  //     monliste.add(compres);
+  //   });
+  // }
+
+  // void updateEverySolde() async {
+  //   // monliste.add(cmpress("hhh", 1111));
+  //   List<cmpress> localliste = [];
+  //   List<ressource> Ressources = await helper.getAllRessource(this.user!.id!);
+  //   Ressources.forEach((element) async {
+  //     int? solde = await getsoldeUser(this.user!.id!, element.id_ress!);
+  //     cmpress compres = cmpress(element.nom_ress, solde);
+  //     localliste.add(compres);
+  //   });
+  //   monliste = localliste;
+  //   //updateCategories();
+  // }
+  void updateEverySolde() async {
+    // monliste.add(cmpress("hhh", 1111));
+    List<cmpress> localliste = [];
+    List<compteRessource> comptesRessources =
+        await helper.getAllCompteRessource(this.user!.id!);
+    comptesRessources.forEach((element) async {
+      int? solde = await getsoldeUser(this.user!.id!, element.id!);
+      cmpress compres = cmpress(element.nom_ress, solde);
+      localliste.add(compres);
+    });
+    monliste = localliste;
+    //updateCategories();
   }
 
-  void updateSoldeBank() async {
-    updateCategories();
-    // utilisateur? user =
-    //     await helper.getUser(this.user!.email!, this.user!.password!);
-    // a = user!.id;
-    // h = user.nom;
-    final Future<Database>? db = helper.initialiseDataBase();
-    var our_db = db;
-    if (our_db != null) {
-      our_db.then((database) {
-        Future<int?> solde = getsoldeUser(this.user!.id!, "Bank");
-        solde.then((reloadsolde) {
-          setState(() {
-            this.k2 = reloadsolde;
-          });
-        });
-      });
-    }
-  }
+  // void updateSoldeBankily() async {
+  //   updateCategories();
+  //   // utilisateur? user =
+  //   //     await helper.getUser(this.user!.email!, this.user!.password!);
+  //   // a = user!.id;
+  //   // h = user.nom;
+  //   final Future<Database>? db = helper.initialiseDataBase();
+  //   var our_db = db;
+  //   if (our_db != null) {
+  //     our_db.then((database) {
+  //       Future<int?> solde = getsoldeUser(this.user!.id!, "Bankily");
+  //       solde.then((reloadsolde) {
+  //         setState(() {
+  //           this.k1 = reloadsolde;
+  //         });
+  //       });
+  //     });
+  //   }
+  // }
 
-  void updateSoldeCompte() async {
-    updateCategories();
-    // utilisateur? user =
-    //     await helper.getUser(this.user!.email!, this.user!.password!);
-    // a = user!.id;
-    // h = user.nom;
-    final Future<Database>? db = helper.initialiseDataBase();
-    var our_db = db;
-    if (our_db != null) {
-      our_db.then((database) {
-        Future<int?> solde = getsoldeUser(this.user!.id!, "Compte");
-        solde.then((reloadsolde) {
-          setState(() {
-            this.k3 = reloadsolde;
-          });
-        });
-      });
-    }
-  }
+  // void updateSoldeBank() async {
+  //   updateCategories();
+  //   // utilisateur? user =
+  //   //     await helper.getUser(this.user!.email!, this.user!.password!);
+  //   // a = user!.id;
+  //   // h = user.nom;
+  //   final Future<Database>? db = helper.initialiseDataBase();
+  //   var our_db = db;
+  //   if (our_db != null) {
+  //     our_db.then((database) {
+  //       Future<int?> solde = getsoldeUser(this.user!.id!, "Bank");
+  //       solde.then((reloadsolde) {
+  //         setState(() {
+  //           this.k2 = reloadsolde;
+  //         });
+  //       });
+  //     });
+  //   }
+  // }
+
+  // void updateSoldeCompte() async {
+  //   updateCategories();
+  //   // utilisateur? user =
+  //   //     await helper.getUser(this.user!.email!, this.user!.password!);
+  //   // a = user!.id;
+  //   // h = user.nom;
+  //   final Future<Database>? db = helper.initialiseDataBase();
+  //   var our_db = db;
+  //   if (our_db != null) {
+  //     our_db.then((database) {
+  //       Future<int?> solde = getsoldeUser(this.user!.id!, "Compte");
+  //       solde.then((reloadsolde) {
+  //         setState(() {
+  //           this.k3 = reloadsolde;
+  //         });
+  //       });
+  //     });
+  //   }
+  // }
 
   void updateSoldeGlobale() async {
     updateCategories();
@@ -311,38 +345,34 @@ class _homepageState extends State<homepage> {
     }
   }
 
-  modifySolde(int val, int montant, int valTypeCmp) async {
+  modifySolde(int val, int montant, int id_res) async {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     String? typeCmp;
-    if (valTypeCmp == 0) {
-      typeCmp = "Compte";
-    } else if (valTypeCmp == 1) {
-      typeCmp = "Bankily";
-    } else {
-      typeCmp = "Bank";
-    }
-    compte? cmp = await helper.getCompteUser(this.user!.id!, typeCmp);
+    // if (valTypeCmp == 0) {
+    //   typeCmp = "Compte";
+    // } else if (valTypeCmp == 1) {
+    //   typeCmp = "Bankily";
+    // } else {
+    //   typeCmp = "Bank";
+    // }
+    compte? cmp = await helper.getCompteUser(this.user!.id!, id_res);
     if (val == 0) {
       if (cmp != null) {
         int solde = cmp.solde!;
         int newMontant = solde + montant;
         //print(newMontant);
         compte updateComp =
-            compte(newMontant, typeCmp, date_maintenant, this.user!.id!);
+            compte(newMontant, date_maintenant, id_res, this.user!.id!);
         helper.update_compte(updateComp);
-        argent arg = argent(updateComp.solde, updateComp.date, updateComp.type,
-            updateComp.id_utilisateur);
-        helper.insert_argent(arg);
-        allUpdateSolde.add(diagrameSolde(maintenant, newMontant, typeCmp));
+        insertArgent(updateComp.solde!, updateComp.date!,
+            updateComp.id_ressource!, updateComp.id_utilisateur!);
       } else {
         compte newCompte =
-            compte(montant, typeCmp, date_maintenant, this.user!.id!);
+            compte(montant, date_maintenant, id_res, this.user!.id!);
         helper.insert_compte(newCompte);
-        argent arg = argent(newCompte.solde, newCompte.date, newCompte.type,
-            newCompte.id_utilisateur);
-        helper.insert_argent(arg);
-        allUpdateSolde.add(diagrameSolde(maintenant, montant, typeCmp));
+        insertArgent(newCompte.solde!, newCompte.date!, newCompte.id_ressource!,
+            newCompte.id_utilisateur!);
       }
     } else {
       if (cmp != null) {
@@ -350,20 +380,20 @@ class _homepageState extends State<homepage> {
         int newMontant = solde - montant;
         //print(newMontant);
         compte updateComp =
-            compte(newMontant, typeCmp, date_maintenant, this.user!.id!);
+            compte(newMontant, date_maintenant, id_res, this.user!.id!);
         helper.update_compte(updateComp);
-        argent arg = argent(updateComp.solde, updateComp.date, updateComp.type,
-            updateComp.id_utilisateur);
-        helper.insert_argent(arg);
-        allUpdateSolde.add(diagrameSolde(maintenant, montant, typeCmp));
+        insertArgent(updateComp.solde!, updateComp.date!,
+            updateComp.id_ressource!, updateComp.id_utilisateur!);
       } else {
         //showText(context, "désolé", "vous n'avez pas de solde");
       }
     }
-    updateSoldeBankily();
-    updateSoldeBank();
-    updateSoldeCompte();
+    // updateSoldeBankily();
+    // updateSoldeBank();
+    // updateSoldeCompte();
+    // updateSoldeGlobale();
     updateSoldeGlobale();
+    updateEverySolde();
 
     // this.allUpdateSolde =
     //     getListSoldes(this.allUpdateSolde!, typeCmp, this.user!.id!);
@@ -373,19 +403,20 @@ class _homepageState extends State<homepage> {
 
   @override
   Widget build(BuildContext context) {
-    if (k1 == null || k2 == null || k3 == null || allSolde == null) {
-      updateSoldeBankily();
-      updateSoldeBank();
-      updateSoldeCompte();
+    if (allSolde == null) {
+      // updateSoldeBankily();
+      // updateSoldeBank();
+      // updateSoldeCompte();
       updateSoldeGlobale();
+      updateEverySolde();
     } else {
       _seriedata = [];
       generatedData();
     }
-    m1 = this.k1;
-    m2 = this.k2;
-    m3 = this.k3;
-    m_total = this.allSolde;
+    // m1 = this.k1;
+    // m2 = this.k2;
+    // m3 = this.k3;
+    //m_total = this.allSolde;
     depenses = this.allDepenses;
     // utilisateur usr = utilisateur(h, this.user!.email!, this.user!.password!);
     if (allDepenses != null) {
@@ -393,7 +424,7 @@ class _homepageState extends State<homepage> {
     } else {
       print("videeeee depenses");
     }
-    print(allUpdateSolde);
+    print('mon liste :$monliste');
     faireNotifications();
     faireNotificationDettes();
     //print(allDepenses![0].date);
@@ -404,7 +435,7 @@ class _homepageState extends State<homepage> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbarfunction(context, mytabs, "Accueil", this.user!),
-          drawer: drowerfunction(context, this.user, this.allUpdateSolde),
+          drawer: drowerfunction(context, this.user),
           body: TabBarView(
             children: [
               Container(
@@ -494,32 +525,28 @@ class _homepageState extends State<homepage> {
                                   RaisedButton(
                                     onPressed: () {
                                       print(allSolde);
-                                      print(m1);
-                                      print(m2);
-                                      print(m3);
+
                                       AlertDialog alertDialog = AlertDialog(
                                         title: Text(""),
                                         content: Container(
+                                          width: 100,
                                           height: 200,
                                           child: Column(
                                             children: [
-                                              Card(
-                                                child: ListTile(
-                                                  title: Text("Compte"),
-                                                  trailing: Text("$m3"),
-                                                ),
-                                              ),
-                                              Card(
-                                                child: ListTile(
-                                                  title: Text("Bank"),
-                                                  trailing: Text("$m2"),
-                                                ),
-                                              ),
-                                              Card(
-                                                child: ListTile(
-                                                  title: Text("Bankily"),
-                                                  trailing: Text("$m1"),
-                                                ),
+                                              Expanded(
+                                                child: ListView.builder(
+                                                    itemCount: monliste.length,
+                                                    itemBuilder:
+                                                        (context, pos) {
+                                                      return Card(
+                                                        child: ListTile(
+                                                          title: Text(
+                                                              "${monliste[pos].nom}"),
+                                                          subtitle: Text(
+                                                              "${monliste[pos].solde}"),
+                                                        ),
+                                                      );
+                                                    }),
                                               ),
                                             ],
                                           ),
@@ -575,33 +602,49 @@ class _homepageState extends State<homepage> {
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(
-                                                    bottom: 20, top: 40),
-                                                child: DropdownButton<String>(
-                                                  items: <String>[
-                                                    'Compte',
-                                                    'Bankily',
-                                                    'Bank'
-                                                  ].map<
-                                                          DropdownMenuItem<
-                                                              String>>(
-                                                      (String value) {
-                                                    return DropdownMenuItem<
-                                                        String>(
-                                                      value: value,
-                                                      child: Text(value),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (String? value) {
-                                                    print(TypeCompte);
-                                                    setState(() {
-                                                      TypeCompte = value!;
-                                                    });
-                                                  },
-                                                  isExpanded: true,
-                                                  //value: currentNomCat,
-                                                  hint: Text('$TypeCompte'),
-                                                  //style: TextStyle(fontSize: 18),
-                                                ),
+                                                    top: 30, left: 10),
+                                                child: FutureBuilder(
+                                                    future: getRessources(
+                                                        this.user!.id!),
+                                                    builder: (BuildContext
+                                                            context,
+                                                        AsyncSnapshot<
+                                                                List<ressource>>
+                                                            snapshot) {
+                                                      if (!snapshot.hasData) {
+                                                        return CircularProgressIndicator();
+                                                      } else {
+                                                        return DropdownButton<
+                                                            String>(
+                                                          items: snapshot.data!
+                                                              .map((res) =>
+                                                                  DropdownMenuItem<
+                                                                      String>(
+                                                                    child: Text(
+                                                                        res.nom_ress!),
+                                                                    value: res
+                                                                        .nom_ress,
+                                                                  ))
+                                                              .toList(),
+                                                          onChanged:
+                                                              (String? value) {
+                                                            setState(() {
+                                                              TypeCompte =
+                                                                  value!;
+                                                            });
+                                                          },
+                                                          isExpanded: true,
+                                                          //value: currentNomCat,
+                                                          hint: Text(
+                                                            '$TypeCompte',
+                                                            style: TextStyle(
+                                                              fontSize: 20,
+                                                              //fontWeight: FontWeight.bold
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                    }),
                                               ),
                                               Padding(
                                                 padding:
@@ -727,8 +770,8 @@ class _homepageState extends State<homepage> {
                             myresult = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => operation(this.user,
-                                        this.user!.id!, this.allUpdateSolde)));
+                                    builder: (context) =>
+                                        operation(this.user, this.user!.id!)));
 
                             if (myresult != null) {
                               // updateSolde();
@@ -801,8 +844,8 @@ class _homepageState extends State<homepage> {
                                         trailing: Column(
                                           children: [
                                             Text("${depenses[pos].date}"),
-                                            Text(
-                                                "${depenses[pos].type_compte}"),
+                                            // Text(
+                                            //     "${depenses[pos].type_compte}"),
                                           ],
                                         )),
                                   );
@@ -901,14 +944,10 @@ class _homepageState extends State<homepage> {
       print("payload $payload");
       if (payload == "payload budget") {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => budget(user, 2, this.allUpdateSolde)));
+            context, MaterialPageRoute(builder: (context) => budget(user, 2)));
       } else if (payload == "payload dette") {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => alldettes(user, 2, this.allUpdateSolde)));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => alldettes(user, 2)));
       }
     }
   }
@@ -930,4 +969,10 @@ class diagram {
   Color? colorval;
   diagram.withnull();
   diagram(this.nomCat, this.montant, this.colorval);
+}
+
+class cmpress {
+  int? solde;
+  String? nom;
+  cmpress(this.nom, this.solde);
 }

@@ -10,22 +10,23 @@ import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 
 import 'models/argent.dart';
+import 'models/compteRessource.dart';
+import 'models/ressource.dart';
 import 'models/utilisateur.dart';
 
 class objectif extends StatefulWidget {
   // const objectif({Key? key}) : super(key: key);
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
-  objectif(this.usr, this.allUpdateSolde);
+
+  objectif(this.usr);
   @override
-  State<objectif> createState() =>
-      _objectifState(this.usr, this.allUpdateSolde!);
+  State<objectif> createState() => _objectifState(this.usr);
 }
 
 class _objectifState extends State<objectif> {
   utilisateur? usr;
-  List<diagrameSolde> allUpdateSolde = [];
-  _objectifState(this.usr, this.allUpdateSolde);
+  // List<diagrameSolde> allUpdateSolde = [];
+  _objectifState(this.usr);
   TextEditingController mnt_donnee = TextEditingController();
   final List<Tab> mytabs = [
     Tab(
@@ -64,10 +65,12 @@ class _objectifState extends State<objectif> {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     if (TypeCompte != "Choisissez le type de solde") {
+      ressource? res = await helper.getSpecifyRessource(TypeCompte);
+      int id_res = res!.id_ress!;
       utilisateur? user =
           await helper.getUser(this.usr!.email!, this.usr!.password!);
       int a = user!.id!;
-      compte? cmp = await helper.getCompteUser(a, TypeCompte);
+      compte? cmp = await helper.getCompteUser(a, id_res);
       if (cmp != null) {
         int solde = cmp.solde!;
         if (mnt < solde) {
@@ -76,24 +79,23 @@ class _objectifState extends State<objectif> {
             int old_mnt = obj.montant_donnee!;
             int new_mnt = old_mnt + mnt;
             if (new_mnt <= obj.montant_cible!) {
-              objective update_obj = objective.withId(obj.id, obj.nom_objective,
-                  obj.montant_cible, new_mnt, date_maintenant, obj.id_compte);
+              objective update_obj = objective.withId(
+                  obj.id,
+                  obj.nom_objective,
+                  obj.montant_cible,
+                  new_mnt,
+                  date_maintenant,
+                  obj.id_compte,
+                  obj.id_utilisateur);
               int? x = await helper.update_objective(update_obj);
               int newSolde = solde - mnt;
               compte updateCompte =
-                  compte(newSolde, TypeCompte, date_maintenant, a);
+                  compte(newSolde, date_maintenant, id_res, a);
               int y = await helper.update_compte(updateCompte);
 
-              allUpdateSolde
-                  .add(diagrameSolde(maintenant, newSolde, TypeCompte));
               if (x != 0 && y != 0) {
-                argent arg = argent(updateCompte.solde, updateCompte.date,
-                    updateCompte.type, updateCompte.id_utilisateur);
-                int m = await helper.insert_argent(arg);
-                if (m > 0) {
-                  print("ok inserted");
-                }
-                print("updated");
+                insertArgent(updateCompte.solde!, updateCompte.date!,
+                    updateCompte.id_ressource!, updateCompte.id_utilisateur!);
                 getAllObjectif();
                 Navigator.of(context, rootNavigator: true).pop();
                 mnt_donnee.clear();
@@ -142,7 +144,7 @@ class _objectifState extends State<objectif> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Objectifs"),
-          drawer: drowerfunction(context, this.usr, this.allUpdateSolde),
+          drawer: drowerfunction(context, this.usr),
           body: TabBarView(
             children: [
               Column(
@@ -213,33 +215,53 @@ class _objectifState extends State<objectif> {
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
-                                                      bottom: 20, top: 40),
-                                                  child: DropdownButton<String>(
-                                                    items: <String>[
-                                                      'Compte',
-                                                      'Bankily',
-                                                      'Bank'
-                                                    ].map<
-                                                            DropdownMenuItem<
-                                                                String>>(
-                                                        (String value) {
-                                                      return DropdownMenuItem<
-                                                          String>(
-                                                        value: value,
-                                                        child: Text(value),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (String? value) {
-                                                      print(TypeCompte);
-                                                      setState(() {
-                                                        TypeCompte = value!;
-                                                      });
-                                                    },
-                                                    isExpanded: true,
-                                                    //value: currentNomCat,
-                                                    hint: Text('$TypeCompte'),
-                                                    //style: TextStyle(fontSize: 18),
-                                                  ),
+                                                      top: 30, left: 10),
+                                                  child: FutureBuilder(
+                                                      future:
+                                                          getComptesRessource(
+                                                              this.usr!.id!),
+                                                      builder: (BuildContext
+                                                              context,
+                                                          AsyncSnapshot<
+                                                                  List<
+                                                                      compteRessource>>
+                                                              snapshot) {
+                                                        if (!snapshot.hasData) {
+                                                          return CircularProgressIndicator();
+                                                        } else {
+                                                          return DropdownButton<
+                                                              String>(
+                                                            items: snapshot
+                                                                .data!
+                                                                .map((cmpRes) =>
+                                                                    DropdownMenuItem<
+                                                                        String>(
+                                                                      child: Text(
+                                                                          cmpRes
+                                                                              .nom_ress!),
+                                                                      value: cmpRes
+                                                                          .nom_ress,
+                                                                    ))
+                                                                .toList(),
+                                                            onChanged: (String?
+                                                                value) {
+                                                              setState(() {
+                                                                TypeCompte =
+                                                                    value!;
+                                                              });
+                                                            },
+                                                            isExpanded: true,
+                                                            //value: currentNomCat,
+                                                            hint: Text(
+                                                              '$TypeCompte',
+                                                              style: TextStyle(
+                                                                fontSize: 17,
+                                                                //fontWeight: FontWeight.bold
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                      }),
                                                 ),
                                                 Padding(
                                                   padding:
@@ -337,8 +359,7 @@ class _objectifState extends State<objectif> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    form_objectif(usr, this.allUpdateSolde)));
+                                builder: (context) => form_objectif(usr)));
                       },
                       child: Icon(Icons.add),
                     ),

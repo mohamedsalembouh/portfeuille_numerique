@@ -6,10 +6,10 @@ class budgete {
   String? date_fin;
   int? status;
   int? id_categorie;
-  int? id_compte;
+  int? id_utilisateur;
 
   budgete(this.nombdg, this.montant, this.date_debut, this.date_fin,
-      this.status, this.id_categorie, this.id_compte);
+      this.status, this.id_categorie, this.id_utilisateur);
 
   Map<String, dynamic> tomap() {
     var map = Map<String, dynamic>();
@@ -20,7 +20,7 @@ class budgete {
     map['date_fin'] = this.date_fin;
     map['status'] = this.status;
     map['id_categorie'] = this.id_categorie;
-    map['id_compte'] = this.id_compte;
+    map['id_utilisateur'] = this.id_utilisateur;
     return map;
   }
 
@@ -32,6 +32,6 @@ class budgete {
     this.date_fin = map['date_fin'];
     this.status = map['status'];
     this.id_categorie = map['id_categorie'];
-    this.id_compte = map['id_compte'];
+    this.id_utilisateur = map['id_utilisateur'];
   }
 }

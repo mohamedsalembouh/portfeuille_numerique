@@ -3,6 +3,8 @@ import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/homePage.dart';
+import 'package:portfeuille_numerique/models/argent.dart';
+import 'package:portfeuille_numerique/models/compteRessource.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:portfeuille_numerique/operation.dart';
@@ -14,6 +16,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 
 import 'models/compte.dart';
+import 'models/ressource.dart';
 
 PreferredSize appbarfunction(
     BuildContext context, List<Tab> tabs, String title, utilisateur usr) {
@@ -83,8 +86,10 @@ PreferredSize appbar3function(String title) {
   );
 }
 
-Widget drowerfunction(BuildContext context, utilisateur? user,
-    List<diagrameSolde>? allUpdateSolde) {
+Widget drowerfunction(
+  BuildContext context,
+  utilisateur? user,
+) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.only(top: 50),
@@ -119,10 +124,8 @@ Widget drowerfunction(BuildContext context, utilisateur? user,
             leading: Icon(Icons.home),
             title: Text("Accueil", style: TextStyle(fontSize: 20)),
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => homepage(user, allUpdateSolde)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => homepage(user)));
             },
           ),
         ),
@@ -133,10 +136,8 @@ Widget drowerfunction(BuildContext context, utilisateur? user,
           ),
           title: Text("Dettes", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => alldettes(user, 0, allUpdateSolde)));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => alldettes(user, 0)));
           },
         ),
         ListTile(
@@ -146,10 +147,8 @@ Widget drowerfunction(BuildContext context, utilisateur? user,
           ),
           title: Text("Budgets", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => budget(user, 0, allUpdateSolde)));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => budget(user, 0)));
           },
         ),
         ListTile(
@@ -159,10 +158,8 @@ Widget drowerfunction(BuildContext context, utilisateur? user,
           ),
           title: Text("Objectifs", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => objectif(user, allUpdateSolde)));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => objectif(user)));
           },
         ),
         ListTile(
@@ -172,10 +169,8 @@ Widget drowerfunction(BuildContext context, utilisateur? user,
           ),
           title: Text("Statistiques", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => statistique(user, allUpdateSolde)));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => statistique(user)));
           },
         ),
         ListTile(
@@ -185,10 +180,8 @@ Widget drowerfunction(BuildContext context, utilisateur? user,
           ),
           title: Text("Partage en groupe", style: TextStyle(fontSize: 20)),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => partage(user, allUpdateSolde)));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => partage(user)));
           },
         ),
         ListTile(
@@ -305,6 +298,26 @@ Widget myBottomNavBar() {
     ],
     //backgroundColor: Colors.purpleAccent,
   );
+}
+
+getRessources(int idUser) {
+  Future<List<ressource>> allRessources = helper.getAllRessource(idUser);
+  return allRessources;
+}
+
+getComptesRessource(int idUser) {
+  Future<List<compteRessource>> allCmpRes =
+      helper.getAllCompteRessource(idUser);
+  return allCmpRes;
+}
+
+insertArgent(
+    int montant, String date, int idRessource, int idUtilisateur) async {
+  argent arg = argent(montant, date, idRessource, idUtilisateur);
+  int result = await helper.insert_argent(arg);
+  if (result > 0) {
+    print("hhhh inserted");
+  }
 }
 
 // getListSoldes(List<diagrameSolde> y, String typeSolde, int idUser) async {

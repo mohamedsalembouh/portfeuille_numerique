@@ -10,22 +10,23 @@ import 'package:toast/toast.dart';
 import 'methodes.dart';
 import 'models/argent.dart';
 import 'models/compte.dart';
+import 'models/compteRessource.dart';
+import 'models/ressource.dart';
 
 class formemprunte extends StatefulWidget {
   utilisateur? usr;
-  List<diagrameSolde>? allUpdateSolde;
+
   //const formemprunte({Key? key}) : super(key: key);
-  formemprunte(this.usr, this.allUpdateSolde);
+  formemprunte(this.usr);
 
   @override
-  State<formemprunte> createState() =>
-      _formemprunteState(this.usr, this.allUpdateSolde!);
+  State<formemprunte> createState() => _formemprunteState(this.usr);
 }
 
 class _formemprunteState extends State<formemprunte> {
   utilisateur? usr;
-  List<diagrameSolde> allUpdateSolde = [];
-  _formemprunteState(this.usr, this.allUpdateSolde);
+  // List<diagrameSolde> allUpdateSolde = [];
+  _formemprunteState(this.usr);
   final _formKey = GlobalKey<FormState>();
   TextEditingController nom = TextEditingController();
   TextEditingController objet = TextEditingController();
@@ -40,14 +41,16 @@ class _formemprunteState extends State<formemprunte> {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     final form = _formKey.currentState;
-    utilisateur? user =
-        await helper.getUser(this.usr!.email!, this.usr!.password!);
-    int a = user!.id!;
+
     // DateTime now = DateTime.now();
     // String dateDebut = now.toString();
 
     if (form!.validate()) {
       if (TypeCompte != "Choisissez le type de solde") {
+        ressource? res = await helper.getSpecifyRessource(TypeCompte);
+        int id_res = res!.id_ress!;
+        compte? cmp = await helper.getSpecifyCompte(id_res);
+        int id_compte = cmp!.id!;
         emprunte_dette emprunteDette = emprunte_dette(
             nom,
             objectif,
@@ -56,17 +59,14 @@ class _formemprunteState extends State<formemprunte> {
             dateDebut,
             dateEcheance,
             0,
-            TypeCompte,
-            a);
+            id_compte,
+            this.usr!.id);
         int x = await helper.insert_EmprunteDatte(emprunteDette);
         if (x > 0) {
           print("inserted ");
           PlusSolde(int.parse(montant), TypeCompte);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      alldettes(usr, 0, this.allUpdateSolde)));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => alldettes(usr, 0)));
         } else {
           print("not inserted");
         }
@@ -83,23 +83,21 @@ class _formemprunteState extends State<formemprunte> {
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    compte? cmp = await helper.getCompteUser(a, typeCmp);
+    ressource? res = await helper.getSpecifyRessource(typeCmp);
+    int id_res = res!.id_ress!;
+    compte? cmp = await helper.getCompteUser(a, id_res);
     if (cmp != null) {
       int solde = cmp.solde!;
       int newSolde = solde + mnt;
-      compte updateCompte = compte(newSolde, TypeCompte, date_maintenant, a);
+      compte updateCompte = compte(newSolde, date_maintenant, id_res, a);
       helper.update_compte(updateCompte);
-      argent arg = argent(updateCompte.solde, updateCompte.date,
-          updateCompte.type, updateCompte.id_utilisateur);
-      helper.insert_argent(arg);
-      allUpdateSolde.add(diagrameSolde(maintenant, newSolde, TypeCompte));
+      insertArgent(updateCompte.solde!, updateCompte.date!,
+          updateCompte.id_ressource!, updateCompte.id_utilisateur!);
     } else {
-      compte newCompte = compte(mnt, TypeCompte, date_maintenant, a);
+      compte newCompte = compte(mnt, date_maintenant, id_res, a);
       helper.insert_compte(newCompte);
-      argent arg = argent(newCompte.solde, newCompte.date, newCompte.type,
-          newCompte.id_utilisateur);
-      helper.insert_argent(arg);
-      allUpdateSolde.add(diagrameSolde(maintenant, mnt, TypeCompte));
+      insertArgent(newCompte.solde!, newCompte.date!, newCompte.id_ressource!,
+          newCompte.id_utilisateur!);
     }
     // this.allUpdateSolde =
     //     getListSoldes(this.allUpdateSolde!, typeCmp, this.usr!.id!);
@@ -250,28 +248,40 @@ class _formemprunteState extends State<formemprunte> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(left: 10, top: 10),
-                              child: DropdownButton<String>(
-                                items: <String>[
-                                  'Compte',
-                                  'Bankily',
-                                  'Bank'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    TypeCompte = value!;
-                                  });
-                                },
-                                isExpanded: true,
-                                //value: currentNomCat,
-                                hint: Text('$TypeCompte'),
-                                //style: TextStyle(fontSize: 18),
-                              ),
+                              padding: EdgeInsets.only(top: 30, left: 10),
+                              child: FutureBuilder(
+                                  future: getComptesRessource(this.usr!.id!),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<compteRessource>>
+                                          snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return CircularProgressIndicator();
+                                    } else {
+                                      return DropdownButton<String>(
+                                        items: snapshot.data!
+                                            .map((cmpRes) =>
+                                                DropdownMenuItem<String>(
+                                                  child: Text(cmpRes.nom_ress!),
+                                                  value: cmpRes.nom_ress,
+                                                ))
+                                            .toList(),
+                                        onChanged: (String? value) {
+                                          setState(() {
+                                            TypeCompte = value!;
+                                          });
+                                        },
+                                        isExpanded: true,
+                                        //value: currentNomCat,
+                                        hint: Text(
+                                          '$TypeCompte',
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            //fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),

@@ -14,17 +14,17 @@ import 'budget.dart';
 import 'homePage.dart';
 import 'models/compte.dart';
 import 'models/prette_dette.dart';
+import 'models/ressource.dart';
 import 'objectifs.dart';
 
 class alldettes extends StatefulWidget {
   utilisateur? usr;
   int? selectedPage;
-  List<diagrameSolde>? allUpdateSolde;
   //alldettes({Key? key}) : super(key: key);
-  alldettes(this.usr, this.selectedPage, this.allUpdateSolde);
+  alldettes(this.usr, this.selectedPage);
   @override
   State<alldettes> createState() =>
-      _alldettesState(this.usr, this.selectedPage, this.allUpdateSolde);
+      _alldettesState(this.usr, this.selectedPage);
 }
 
 class _alldettesState extends State<alldettes> {
@@ -41,8 +41,8 @@ class _alldettesState extends State<alldettes> {
   ];
   utilisateur? usr;
   int? selectedPage;
-  List<diagrameSolde>? allUpdateSolde;
-  _alldettesState(this.usr, this.selectedPage, this.allUpdateSolde);
+  // List<diagrameSolde>? allUpdateSolde;
+  _alldettesState(this.usr, this.selectedPage);
   List<prette_dette>? pretedetes;
   int count = 0;
   static var prettes;
@@ -96,21 +96,26 @@ class _alldettesState extends State<alldettes> {
   //   }
   // }
 
-  minsSolde(int mnt, int idEmprunte, String typeCmp) async {
+  minsSolde(int mnt, int idEmprunte, int idCmp) async {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    compte? cmp = await helper.getCompteUser(a, typeCmp);
+    // ressource? res = await helper.getSpecifyRessource(typeCmp);
+    // int id_res = res!.id_ress!;
+    compte? cmp = await helper.getCompteUserById(idCmp, a);
     if (cmp != null) {
       int solde = cmp.solde!;
       if (solde > mnt) {
         int newSolde = solde - mnt;
-        compte updateCompte = compte(newSolde, cmp.type, date_maintenant, a);
+        compte updateCompte =
+            compte(newSolde, date_maintenant, cmp.id_ressource, a);
         int? r1 = await helper.update_compte(updateCompte);
         int? r2 = await helper.update_EmprunteDette(idEmprunte);
         if (r1 != 0 && r2 != 0) {
+          insertArgent(updateCompte.solde!, updateCompte.date!,
+              updateCompte.id_ressource!, updateCompte.id_utilisateur!);
           getAllEmprunteDette();
         }
       } else {
@@ -119,34 +124,37 @@ class _alldettesState extends State<alldettes> {
     }
   }
 
-  PlusSolde(int mnt, int idPrette, String typeCmp) async {
+  PlusSolde(int mnt, int idPrette, int idCmp) async {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    compte? cmp = await helper.getCompteUser(a, typeCmp);
+    // ressource? res = await helper.getSpecifyRessource(typeCmp);
+    // int id_res = res!.id_ress!;
+    compte? cmp = await helper.getCompteUserById(idCmp, a);
     if (cmp != null) {
       int solde = cmp.solde!;
       int newSolde = solde + mnt;
-      compte updateCompte = compte(newSolde, cmp.type, date_maintenant, a);
+      compte updateCompte =
+          compte(newSolde, date_maintenant, cmp.id_ressource, a);
       int? res1 = await helper.update_compte(updateCompte);
       int? res2 = await helper.update_pretteDette(idPrette);
       if (res1 != 0 && res2 != 0) {
+        insertArgent(updateCompte.solde!, updateCompte.date!,
+            updateCompte.id_ressource!, updateCompte.id_utilisateur!);
         getAllPretteDette();
       }
     }
   }
 
   getAllPretteDette() async {
-    utilisateur? user =
-        await helper.getUser(this.usr!.email!, this.usr!.password!);
-    int a = user!.id!;
     final Future<Database>? db = helper.initialiseDataBase();
     var ourDb = db;
     if (ourDb != null) {
       ourDb.then((database) {
-        Future<List<prette_dette>> pretteDettes = helper.getAllPrettesDettes(a);
+        Future<List<prette_dette>> pretteDettes =
+            helper.getAllPrettesDettes(this.usr!.id!);
         pretteDettes.then((theList) {
           setState(() {
             this.pretedetes = theList;
@@ -158,14 +166,12 @@ class _alldettesState extends State<alldettes> {
   }
 
   getAllEmprunteDette() async {
-    utilisateur? user =
-        await helper.getUser(this.usr!.email!, this.usr!.password!);
-    int a = user!.id!;
     final Future<Database>? db = helper.initialiseDataBase();
     var ourDb = db;
     if (ourDb != null) {
       ourDb.then((database) {
-        Future<List<emprunte_dette>> empDettes = helper.getAllEmprunteDettes(a);
+        Future<List<emprunte_dette>> empDettes =
+            helper.getAllEmprunteDettes(this.usr!.id!);
         empDettes.then((theList) {
           setState(() {
             this.empruntedetes = theList;
@@ -226,7 +232,7 @@ class _alldettesState extends State<alldettes> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Dettes"),
-          drawer: drowerfunction(context, usr, this.allUpdateSolde),
+          drawer: drowerfunction(context, usr),
           body: TabBarView(
             children: [
               Column(
@@ -286,7 +292,7 @@ class _alldettesState extends State<alldettes> {
                                             PlusSolde(
                                                 prettes[pos].montant,
                                                 prettes[pos].id,
-                                                prettes[pos].type_compte);
+                                                prettes[pos].id_compte);
 
                                             Navigator.of(context,
                                                     rootNavigator: true)
@@ -362,7 +368,7 @@ class _alldettesState extends State<alldettes> {
                                             minsSolde(
                                                 empruntes[pos].montant,
                                                 empruntes[pos].id,
-                                                empruntes[pos].type_compte);
+                                                empruntes[pos].id_compte);
 
                                             Navigator.of(context,
                                                     rootNavigator: true)
@@ -394,8 +400,7 @@ class _alldettesState extends State<alldettes> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    operdatte(this.usr, this.allUpdateSolde)));
+                                builder: (context) => operdatte(this.usr)));
                       },
                     ),
                   ),
@@ -686,7 +691,10 @@ class _alldettesState extends State<alldettes> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => alldettes(usr, 2, this.allUpdateSolde)));
+              builder: (context) => alldettes(
+                    usr,
+                    2,
+                  )));
     }
   }
 }

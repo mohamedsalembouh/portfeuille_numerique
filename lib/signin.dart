@@ -19,7 +19,7 @@ class _signinPageState extends State<signinPage> {
   final f_pass = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
   final toast = ToastContext();
-  List<diagrameSolde> allUpdateSolde = [];
+  // List<diagrameSolde> allUpdateSolde = [];
 
   void initState() {
     // TODO: implement initState
@@ -40,8 +40,7 @@ class _signinPageState extends State<signinPage> {
         Navigator.push(
             context,
             // MaterialPageRoute(builder: (context) => homepage(email, pass))
-            MaterialPageRoute(
-                builder: (context) => homepage(user, this.allUpdateSolde)));
+            MaterialPageRoute(builder: (context) => homepage(user)));
         print(user.id);
         print(user.nom);
         print(user.email);

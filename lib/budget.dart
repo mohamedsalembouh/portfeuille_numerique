@@ -17,12 +17,11 @@ import 'models/categorie.dart';
 class budget extends StatefulWidget {
   utilisateur? usr;
   int? selectedPage;
-  List<diagrameSolde>? allUpdateSolde;
+  // List<diagrameSolde>? allUpdateSolde;
   // budget({Key? key}) : super(key: key);
-  budget(this.usr, this.selectedPage, this.allUpdateSolde);
+  budget(this.usr, this.selectedPage);
   @override
-  State<budget> createState() =>
-      _budgetState(this.usr, this.selectedPage, this.allUpdateSolde);
+  State<budget> createState() => _budgetState(this.usr, this.selectedPage);
 }
 
 class _budgetState extends State<budget> {
@@ -39,8 +38,8 @@ class _budgetState extends State<budget> {
   ];
   utilisateur? usr;
   int? selectedPage;
-  List<diagrameSolde>? allUpdateSolde;
-  _budgetState(this.usr, this.selectedPage, this.allUpdateSolde);
+  // List<diagrameSolde>? allUpdateSolde;
+  _budgetState(this.usr, this.selectedPage);
   List<catBudget>? allbudgets;
   int count = 0;
   static var budgets;
@@ -138,7 +137,7 @@ class _budgetState extends State<budget> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Budgets"),
-          drawer: drowerfunction(context, this.usr, this.allUpdateSolde),
+          drawer: drowerfunction(context, this.usr),
           body: TabBarView(
             children: [
               Column(
@@ -228,8 +227,7 @@ class _budgetState extends State<budget> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => formbudget(
-                                      this.usr, this.allUpdateSolde)));
+                                  builder: (context) => formbudget(this.usr)));
                         },
                         child: Icon(Icons.add),
                       ),
@@ -395,9 +393,7 @@ class _budgetState extends State<budget> {
     if (payload != null && payload.isNotEmpty) {
       print("payload $payload");
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => budget(usr, 2, this.allUpdateSolde)));
+          context, MaterialPageRoute(builder: (context) => budget(usr, 2)));
     }
   }
 }

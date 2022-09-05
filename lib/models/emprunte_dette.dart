@@ -7,6 +7,7 @@ class emprunte_dette {
   String? date_debut;
   String? date_echeance;
   int? status;
+  int? status_notification;
   int? id_compte;
   int? id_utilisateur;
 
@@ -18,6 +19,7 @@ class emprunte_dette {
       this.date_debut,
       this.date_echeance,
       this.status,
+      this.status_notification,
       this.id_compte,
       this.id_utilisateur);
   emprunte_dette.withId(
@@ -29,6 +31,7 @@ class emprunte_dette {
       this.date_debut,
       this.date_echeance,
       this.status,
+      this.status_notification,
       this.id_compte,
       this.id_utilisateur);
 
@@ -42,6 +45,7 @@ class emprunte_dette {
     map['date_debut'] = this.date_debut;
     map['date_echeance'] = this.date_echeance;
     map['status'] = this.status;
+    map['status_notification'] = this.status_notification;
     map['id_compte'] = this.id_compte;
     map['id_utilisateur'] = this.id_utilisateur;
     return map;
@@ -56,6 +60,7 @@ class emprunte_dette {
     this.date_debut = map['date_debut'];
     this.date_echeance = map['date_echeance'];
     this.status = map['status'];
+    this.status_notification = map['status_notification'];
     this.id_compte = map['id_compte'];
     this.id_utilisateur = map['id_utilisateur'];
   }

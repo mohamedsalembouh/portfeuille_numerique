@@ -6,6 +6,7 @@ import 'package:portfeuille_numerique/homePage.dart';
 import 'package:portfeuille_numerique/models/argent.dart';
 import 'package:portfeuille_numerique/models/compteRessource.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:portfeuille_numerique/notification.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:portfeuille_numerique/operation.dart';
 import 'package:portfeuille_numerique/parametres.dart';
@@ -29,7 +30,12 @@ PreferredSize appbarfunction(
         Padding(
           padding: EdgeInsets.only(right: 20),
           child: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => notification(usr, 0)));
+            },
             child: Icon(Icons.notifications),
           ),
         ),
@@ -159,7 +165,7 @@ Widget drowerfunction(
           title: Text("Objectifs", style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => objectif(user)));
+                MaterialPageRoute(builder: (context) => objectif(user, 0)));
           },
         ),
         ListTile(
@@ -319,6 +325,7 @@ insertArgent(
     print("hhhh inserted");
   }
 }
+
 
 // getListSoldes(List<diagrameSolde> y, String typeSolde, int idUser) async {
 //   compte? comp = await helper.getCompteUser(idUser, typeSolde);

@@ -561,6 +561,88 @@ class _alldettesState extends State<alldettes> {
               //Notifications
               Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Card(
+                      child: Text(
+                        "Notifications Prettes Dettes ",
+                        // style: TextStyle(color: Colors.green),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                      child: ListView.builder(
+                          itemCount: count,
+                          itemBuilder: (context, pos) {
+                            DateTime dateEcheance =
+                                DateTime.parse(prettes[pos].date_echeance!);
+                            String maintenant =
+                                DateFormat("yyyy-MM-dd").format(DateTime.now());
+                            DateTime dateMaintenant =
+                                DateTime.parse(maintenant);
+
+                            if (prettes[pos].status == 0) {
+                              if (dateEcheance
+                                      .difference(dateMaintenant)
+                                      .inDays ==
+                                  3) {
+                                return Card(
+                                    child: Padding(
+                                  padding: EdgeInsets.only(top: 20),
+                                  child: Text(
+                                    " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 3 jours",
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                ));
+                              } else if (dateEcheance
+                                      .difference(dateMaintenant)
+                                      .inDays ==
+                                  2) {
+                                return Card(
+                                    child: Padding(
+                                  padding: EdgeInsets.only(top: 20),
+                                  child: Text(
+                                    " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 2 jours ",
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                ));
+                              } else if (dateEcheance
+                                      .difference(dateMaintenant)
+                                      .inDays ==
+                                  1) {
+                                return Card(
+                                    child: Padding(
+                                  padding: EdgeInsets.only(top: 20),
+                                  child: Text(
+                                    " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 1 jours ",
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                ));
+                              } else if (dateEcheance
+                                      .difference(dateMaintenant)
+                                      .inDays ==
+                                  0) {
+                                return Card(
+                                    child: Padding(
+                                  padding: EdgeInsets.only(top: 20),
+                                  child: Text(
+                                    " ${prettes[pos].nom} va vous donne ${prettes[pos].montant}  Ajourdhui ",
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                ));
+                              } else {
+                                return Container();
+                              }
+                            } else {
+                              return Container();
+                            }
+                          })),
+                  Card(
+                    child: Text(
+                      "Notifications Empruntes Dettes ",
+                      //  style: TextStyle(color: Colors.red),
+                    ),
+                  ),
                   Expanded(
                       child: ListView.builder(
                           itemCount: count2,
@@ -581,7 +663,9 @@ class _alldettesState extends State<alldettes> {
                                     child: Padding(
                                   padding: EdgeInsets.only(top: 20),
                                   child: Text(
-                                      "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 3 jours "),
+                                    "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 3 jours ",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ));
                               } else if (dateEcheance
                                       .difference(dateMaintenant)
@@ -591,7 +675,9 @@ class _alldettesState extends State<alldettes> {
                                     child: Padding(
                                   padding: EdgeInsets.only(top: 20),
                                   child: Text(
-                                      "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 2 jours "),
+                                    "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 2 jours ",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ));
                               } else if (dateEcheance
                                       .difference(dateMaintenant)
@@ -601,7 +687,9 @@ class _alldettesState extends State<alldettes> {
                                     child: Padding(
                                   padding: EdgeInsets.only(top: 20),
                                   child: Text(
-                                      "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 1 jours "),
+                                    "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 1 jours ",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ));
                               } else if (dateEcheance
                                       .difference(dateMaintenant)
@@ -611,7 +699,9 @@ class _alldettesState extends State<alldettes> {
                                     child: Padding(
                                   padding: EdgeInsets.only(top: 20),
                                   child: Text(
-                                      "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant}  Ajourdhui "),
+                                    "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant}  Ajourdhui ",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ));
                               } else {
                                 return Container();
@@ -619,7 +709,7 @@ class _alldettesState extends State<alldettes> {
                             } else {
                               return Container();
                             }
-                          }))
+                          })),
                 ],
               )
             ],

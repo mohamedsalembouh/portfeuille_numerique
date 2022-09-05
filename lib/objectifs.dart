@@ -4,7 +4,7 @@ import 'package:portfeuille_numerique/form_objectif.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/objective.dart';
-import 'package:portfeuille_numerique/newObjectif.dart';
+import 'package:portfeuille_numerique/services/local_notification_service.dart';
 import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
@@ -17,16 +17,17 @@ import 'models/utilisateur.dart';
 class objectif extends StatefulWidget {
   // const objectif({Key? key}) : super(key: key);
   utilisateur? usr;
-
-  objectif(this.usr);
+  int? selectedpage;
+  objectif(this.usr, this.selectedpage);
   @override
-  State<objectif> createState() => _objectifState(this.usr);
+  State<objectif> createState() => _objectifState(this.usr, this.selectedpage);
 }
 
 class _objectifState extends State<objectif> {
   utilisateur? usr;
+  int? selectedpage;
   // List<diagrameSolde> allUpdateSolde = [];
-  _objectifState(this.usr);
+  _objectifState(this.usr, this.selectedpage);
   TextEditingController mnt_donnee = TextEditingController();
   final List<Tab> mytabs = [
     Tab(
@@ -36,12 +37,22 @@ class _objectifState extends State<objectif> {
       text: "Complet",
     )
   ];
+  late final LocalNotificationService service;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    service = LocalNotificationService();
+    service.initialize();
+    listenToNotification();
+  }
 
   List<objective>? allobjectif;
   int count = 0;
   static var allobjectives;
   String TypeCompte = "Choisissez le type de solde";
   Icon? monIcon;
+
   getAllObjectif() async {
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
@@ -67,14 +78,12 @@ class _objectifState extends State<objectif> {
     if (TypeCompte != "Choisissez le type de solde") {
       ressource? res = await helper.getSpecifyRessource(TypeCompte);
       int id_res = res!.id_ress!;
-      utilisateur? user =
-          await helper.getUser(this.usr!.email!, this.usr!.password!);
-      int a = user!.id!;
-      compte? cmp = await helper.getCompteUser(a, id_res);
+      compte? cmp = await helper.getCompteUser(this.usr!.id!, id_res);
       if (cmp != null) {
         int solde = cmp.solde!;
-        if (mnt < solde) {
-          objective? obj = await helper.getSpecifyObjectif(idobj, a);
+        if (mnt <= solde) {
+          objective? obj =
+              await helper.getSpecifyObjectif(idobj, this.usr!.id!);
           if (obj != null) {
             int old_mnt = obj.montant_donnee!;
             int new_mnt = old_mnt + mnt;
@@ -85,12 +94,13 @@ class _objectifState extends State<objectif> {
                   obj.montant_cible,
                   new_mnt,
                   date_maintenant,
+                  obj.status_notification,
                   obj.id_compte,
                   obj.id_utilisateur);
               int? x = await helper.update_objective(update_obj);
               int newSolde = solde - mnt;
               compte updateCompte =
-                  compte(newSolde, date_maintenant, id_res, a);
+                  compte(newSolde, date_maintenant, id_res, this.usr!.id!);
               int y = await helper.update_compte(updateCompte);
 
               if (x != 0 && y != 0) {
@@ -98,6 +108,8 @@ class _objectifState extends State<objectif> {
                     updateCompte.id_ressource!, updateCompte.id_utilisateur!);
                 getAllObjectif();
                 Navigator.of(context, rootNavigator: true).pop();
+                shownot(update_obj);
+                faireNotificationObjectif(update_obj);
                 mnt_donnee.clear();
               } else {
                 print("not updated");
@@ -115,8 +127,6 @@ class _objectifState extends State<objectif> {
     } else {
       Toast.show("Choisissez le type de solde");
     }
-    // this.allUpdateSolde =
-    //     getListSoldes(this.allUpdateSolde!, TypeCompte, this.usr!.id!);
   }
 
   supprimerObjectif(int idObj) async {
@@ -127,6 +137,34 @@ class _objectifState extends State<objectif> {
     if (result != 0) {
       print("deleted one");
       getAllObjectif();
+    }
+  }
+
+  shownot(objective obj) {
+    if (obj.montant_cible == obj.montant_donnee) {
+      showText(context, "Félicitation",
+          "L'objectif ${obj.nom_objective} est realise");
+    }
+  }
+
+  faireNotificationObjectif(objective obj) async {
+    if (obj.status_notification == 0) {
+      if (obj.montant_donnee == obj.montant_cible) {
+        service.showNotificationWithPayload(
+            id: obj.id!,
+            title: "Félicitation",
+            body: "L'objectif ${obj.nom_objective} est realise",
+            payload: "payload objectif");
+      }
+    }
+  }
+
+  void listenToNotification() =>
+      service.onNotificationClick.stream.listen((onNotificationListener));
+  void onNotificationListener(String? payload) {
+    if (payload != null && payload.isNotEmpty) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => objectif(usr, 1)));
     }
   }
 
@@ -141,6 +179,7 @@ class _objectifState extends State<objectif> {
     return MaterialApp(
       home: DefaultTabController(
         length: mytabs.length,
+        initialIndex: this.selectedpage!,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: appbar2function(mytabs, "Objectifs"),
@@ -184,6 +223,8 @@ class _objectifState extends State<objectif> {
                                     //style: TextStyle(color: Colors.green),
                                   ),
                                   onTap: () {
+                                    print(
+                                        allobjectives[pos].status_notification);
                                     AlertDialog alertDialog = AlertDialog(
                                         title:
                                             Text("Augmentez le montant donnee"),
@@ -389,16 +430,15 @@ class _objectifState extends State<objectif> {
                                     "montant cible : ${allobjectives[pos].montant_cible}",
                                     //style: TextStyle(color: Colors.green),
                                   ),
-                                  onLongPress: () {
+                                  onTap: () {
                                     AlertDialog alertDialog = AlertDialog(
-                                      title: Text(
-                                          "Supprimer ${allobjectives[pos].nom_objective}"),
-                                      content: Icon(Icons.delete),
+                                      title: Icon(Icons.delete),
+                                      content: Text(
+                                          "Supprimer L'objectif ${allobjectives[pos].nom_objective}"),
                                       actions: [
                                         TextButton(
                                           child: Text(
                                             "Annuler",
-                                            style: TextStyle(color: Colors.red),
                                           ),
                                           onPressed: () {
                                             Navigator.of(context,
@@ -407,7 +447,10 @@ class _objectifState extends State<objectif> {
                                           },
                                         ),
                                         TextButton(
-                                          child: Text("Supprimer"),
+                                          child: Text(
+                                            "Supprimer",
+                                            style: TextStyle(color: Colors.red),
+                                          ),
                                           onPressed: () {
                                             supprimerObjectif(
                                                 allobjectives[pos].id);

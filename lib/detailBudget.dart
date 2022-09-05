@@ -91,6 +91,7 @@ class _detailBudgetState extends State<detailBudget> {
                               elevation: 2.0,
                               child: ListTile(
                                 isThreeLine: true,
+
                                 // leading: Icon(Icons.category),
                                 title: Text("${budgeets[pos].nombdg}"),
                                 subtitle: Column(

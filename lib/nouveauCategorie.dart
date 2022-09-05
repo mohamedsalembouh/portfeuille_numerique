@@ -16,19 +16,30 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
   TextEditingController cattype = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
 
-  insertCategorie(String nom, String coleur) async {
+  insertCategorie(String name, String coleur) async {
+    String nom = name.toUpperCase();
     categorie cat = new categorie(nom, coleur);
     SQL_Helper helper = new SQL_Helper();
     final form = _formKey.currentState!;
     if (form.validate()) {
-      int result = await helper.insert_categorie(cat);
-      if (result == 0) {
-        print("not inserted");
+      categorie? cate = await helper.getCategorieeByNom(nom);
+      if (cate == null) {
+        categorie? cate_col = await helper.getCategorieeByColor(coleur);
+        if (cate_col == null) {
+          int result = await helper.insert_categorie(cat);
+          if (result == 0) {
+            print("not inserted");
+          } else {
+            print("inserted");
+            showText(context, "", "La categorie est ajouté");
+            catnom.clear();
+            colorValue = "Coleur";
+          }
+        } else {
+          showText(context, "SVP", "cette coleur existe deja");
+        }
       } else {
-        print("inserted");
-        showText(context, "", "La categorie est ajouté");
-        catnom.clear();
-        colorValue = "Coleur";
+        showText(context, "SVP", "cette nom existe deja ");
       }
     }
   }

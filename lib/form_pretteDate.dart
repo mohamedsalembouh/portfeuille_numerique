@@ -48,7 +48,7 @@ class _form_pretteState extends State<form_prette> {
 
     if (form!.validate()) {
       prette_dette pretteDette = prette_dette(nom, objectif, int.parse(montant),
-          date_maintenant, dateDebut, dateEcheance, 0, id_compte, a);
+          date_maintenant, dateDebut, dateEcheance, 0, 0, id_compte, a);
       int x = await helper.insert_pretteDatte(pretteDette);
       if (x > 0) {
         print("inserted ");

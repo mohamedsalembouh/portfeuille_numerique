@@ -10,6 +10,7 @@ import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/compteRessource.dart';
 import 'package:portfeuille_numerique/models/depensesCats.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
+import 'package:portfeuille_numerique/models/prette_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:portfeuille_numerique/operation.dart';
@@ -147,7 +148,7 @@ class _homepageState extends State<homepage> {
     listenToNotification();
   }
 
-  insertSolde(String typeCmp) async {
+  insertSolde(String fSolde, String typeCmp) async {
     // utilisateur? user =
     //     await helper.getUser(this.user!.email!, this.user!.password!);
     // a = user!.id;
@@ -157,7 +158,7 @@ class _homepageState extends State<homepage> {
       DateTime maintenant = DateTime.now();
       String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
       compte new_cmp = new compte(
-          int.parse(f_solde.text), date_maintenant, id_res, this.user!.id!);
+          int.parse(fSolde), date_maintenant, id_res, this.user!.id!);
       compte? exist_cmp = await helper.getCompteUser(this.user!.id!, id_res);
       if (exist_cmp != null) {
         helper.update_compte(new_cmp);
@@ -424,9 +425,9 @@ class _homepageState extends State<homepage> {
     } else {
       print("videeeee depenses");
     }
-    print('mon liste :$monliste');
     faireNotifications();
-    faireNotificationDettes();
+    faireNotificationDettes1();
+    //faireNotificationDettes2();
     //print(allDepenses![0].date);
     // print("alldepenses = ${allDepenses!.length}");
     return MaterialApp(
@@ -538,6 +539,9 @@ class _homepageState extends State<homepage> {
                                                     itemCount: monliste.length,
                                                     itemBuilder:
                                                         (context, pos) {
+                                                      print(monliste[pos].nom);
+                                                      print(
+                                                          monliste[pos].solde);
                                                       return Card(
                                                         child: ListTile(
                                                           title: Text(
@@ -638,7 +642,7 @@ class _homepageState extends State<homepage> {
                                                           hint: Text(
                                                             '$TypeCompte',
                                                             style: TextStyle(
-                                                              fontSize: 20,
+                                                              fontSize: 15,
                                                               //fontWeight: FontWeight.bold
                                                             ),
                                                           ),
@@ -668,7 +672,12 @@ class _homepageState extends State<homepage> {
                                                       child:
                                                           Text("Enregistrer"),
                                                       onPressed: () {
-                                                        insertSolde(TypeCompte);
+                                                        insertSolde(
+                                                            f_solde.text,
+                                                            TypeCompte);
+                                                        f_solde.clear();
+                                                        TypeCompte =
+                                                            "Choisissez le type de solde";
                                                       },
                                                     ),
                                                   ],
@@ -687,7 +696,7 @@ class _homepageState extends State<homepage> {
                                 padding: EdgeInsets.all(5),
                                 color: Colors.red,
                                 textColor: Colors.white,
-                                child: Text("Modifier le solde"),
+                                child: Text("Alimenter le solde"),
                               )
                             ],
                           ),
@@ -792,45 +801,6 @@ class _homepageState extends State<homepage> {
                   Expanded(
                     child: Column(
                       children: [
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        //   children: [
-                        //     Padding(
-                        //       padding: EdgeInsets.only(bottom: 10),
-                        //       //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                        //       child: TextFormField(
-                        //         controller: dateDebut,
-                        //         validator: (value) {
-                        //           if (value == null || value.isEmpty) {
-                        //             return "entrer la date de debut";
-                        //           }
-                        //           return null;
-                        //         },
-                        //         //keyboardType: TextInputType.datetime,
-                        //         decoration: InputDecoration(
-                        //           border: UnderlineInputBorder(),
-                        //           labelText: "Date debut ",
-                        //           icon: Icon(Icons.calendar_today_outlined),
-                        //         ),
-                        //         onTap: () async {
-                        //           DateTime? pickeddate = await showDatePicker(
-                        //               context: context,
-                        //               initialDate: DateTime.now(),
-                        //               firstDate: DateTime(2000),
-                        //               lastDate: DateTime(2050));
-
-                        //           if (pickeddate == null) {
-                        //             pickeddate = DateTime.now();
-                        //           }
-                        //           setState(() {
-                        //             dateDebut.text = DateFormat("yyyy-MM-dd")
-                        //                 .format(pickeddate!);
-                        //           });
-                        //         },
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                         Expanded(
                             child: ListView.builder(
                                 itemCount: count,
@@ -876,7 +846,7 @@ class _homepageState extends State<homepage> {
         allmnt = allmnt + a.montant!;
       }
       for (catBudget bdg in budgets) {
-        if (bdg.status == 0) {
+        if (bdg.status == 0 && bdg.status_notification == 0) {
           DateTime debut = DateTime.parse(bdg.date_debut!);
           DateTime fin = DateTime.parse(bdg.date_fin!);
           DateTime now =
@@ -895,11 +865,11 @@ class _homepageState extends State<homepage> {
     });
   }
 
-  faireNotificationDettes() async {
+  faireNotificationDettes1() async {
     List<emprunte_dette> empruntes =
         await helper.getAllEmprunteDettes(this.user!.id!);
     empruntes.forEach((emprunte) {
-      if (emprunte.status == 0) {
+      if (emprunte.status == 0 && emprunte.status_notification == 0) {
         DateTime dateEcheance = DateTime.parse(emprunte.date_echeance!);
 
         DateTime dateMaintenant =
@@ -931,6 +901,47 @@ class _homepageState extends State<homepage> {
               title: "Attension",
               body:
                   "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} Aujordhui",
+              payload: "payload dette");
+        }
+      }
+    });
+  }
+
+  faireNotificationDettes2() async {
+    List<prette_dette> prettes =
+        await helper.getAllPrettesDettes(this.user!.id!);
+    prettes.forEach((prete) {
+      if (prete.status == 0 && prete.status_notification == 0) {
+        DateTime dateEcheance = DateTime.parse(prete.date_echeance!);
+
+        DateTime dateMaintenant =
+            DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+        if (dateEcheance.difference(dateMaintenant).inDays == 3) {
+          service.showNotificationWithPayload(
+              id: prete.id!,
+              title: "Attension",
+              body:
+                  "${prete.nom} va donnez a vous ${prete.montant} apres 3 jours",
+              payload: "payload dette");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 2) {
+          service.showNotificationWithPayload(
+              id: prete.id!,
+              title: "Attension",
+              body:
+                  " ${prete.nom} va donnez a vous ${prete.montant} apres 2 jours",
+              payload: "payload dette");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 1) {
+          service.showNotificationWithPayload(
+              id: prete.id!,
+              title: "Attension",
+              body:
+                  "${prete.nom} va donne a vous ${prete.montant} apres 1 jours",
+              payload: "payload dette");
+        } else if (dateEcheance.difference(dateMaintenant).inDays == 0) {
+          service.showNotificationWithPayload(
+              id: prete.id!,
+              title: "Attension",
+              body: " ${prete.nom} va donne a vous ${prete.montant} Aujordhui",
               payload: "payload dette");
         }
       }

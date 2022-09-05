@@ -12,4 +12,6 @@ class depensesCats {
 
   depensesCats(this.id, this.montant, this.description, this.date,
       this.id_categorie, this.nomcat, this.coleur);
+  depensesCats.withCompte(this.id, this.montant, this.description, this.date,
+      this.id_categorie, this.id_compte, this.nomcat, this.coleur);
 }

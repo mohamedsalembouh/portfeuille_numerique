@@ -19,16 +19,24 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
   _nouveauxRessourceState(this.usr);
   final _formKey = new GlobalKey<FormState>();
   TextEditingController resnom = TextEditingController();
-  insrtRessource(String nom, int idUser) async {
+
+  insrtRessource(String name, int idUser) async {
+    String nom = name.toUpperCase();
     SQL_Helper helper = SQL_Helper();
     final form = _formKey.currentState!;
     if (form.validate()) {
-      ressource res = ressource(nom, idUser);
-      int result = await helper.insertRessource(res);
-      if (result == 0) {
-        print("not insertes");
+      ressource? rese = await helper.getRessourceByNom(nom);
+      if (rese == null) {
+        ressource res = ressource(nom, idUser);
+        int result = await helper.insertRessource(res);
+        if (result == 0) {
+          print("not inserted");
+        } else {
+          print("inserted");
+          showText(context, "", "La ressource est ajouté");
+        }
       } else {
-        print("inserted");
+        showText(context, "SVP", "cette ressource existe deja");
       }
     }
   }
@@ -91,6 +99,7 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     insrtRessource(resnom.text, this.usr!.id!);
+                                    resnom.clear();
                                   },
                                   child: Text('Enregistrer'),
                                 ),

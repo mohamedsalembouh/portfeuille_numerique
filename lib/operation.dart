@@ -45,6 +45,10 @@ class _operationState extends State<operation> {
   TextEditingController entreeDesc = TextEditingController();
   TextEditingController sortirMontant = TextEditingController();
   TextEditingController sortirDesc = TextEditingController();
+  TextEditingController date1 = TextEditingController(
+      text: DateFormat("yyyy-MM-dd").format(DateTime.now()));
+  TextEditingController date2 = TextEditingController(
+      text: DateFormat("yyyy-MM-dd").format(DateTime.now()));
   // String? nomcategorie;
   // int? selectedPage;
   int? numero;
@@ -93,7 +97,8 @@ class _operationState extends State<operation> {
   //   }
   // }
 
-  insertRevenus(String value, String description, String typeCmp) async {
+  insertRevenus(
+      String value, String description, String date, String typeCmp) async {
     final form = _formKey1.currentState!;
     // final form = _formKey.currentState;
     // if (form!.validate()) {
@@ -106,14 +111,14 @@ class _operationState extends State<operation> {
           int montant = int.parse(value);
           categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
           int idCat = cat!.id!;
-          DateTime maintenant = DateTime.now();
-          String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
+          // DateTime maintenant = DateTime.now();
+          // String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
           ressource? res = await helper.getSpecifyRessource(typeCmp);
           int id_res = res!.id_ress!;
           compte? cmp = await helper.getSpecifyCompte(id_res);
           int id_compte = cmp!.id!;
-          operation_entree entree = new operation_entree(montant, description,
-              date_maintenant, idCat, id_compte, this.numero);
+          operation_entree entree = new operation_entree(
+              montant, description, date, idCat, id_compte, this.numero);
           int a = await helper.insertOperationEntree(entree);
           if (a != 0) {
             print("operation inserted");
@@ -135,7 +140,8 @@ class _operationState extends State<operation> {
     }
   }
 
-  insertDepense(String value, String description, String typeCmp) async {
+  insertDepense(
+      String value, String description, String date, String typeCmp) async {
     final form = _formKey2.currentState!;
     if (currentNomCat != "Choisir une categorie") {
       if (form.validate()) {
@@ -151,11 +157,11 @@ class _operationState extends State<operation> {
             if (solde > montant) {
               categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
               int idCat = cat!.id!;
-              DateTime maintenant = DateTime.now();
-              String date_maintenant =
-                  DateFormat("yyyy-MM-dd").format(maintenant);
-              operation_sortir sortir = new operation_sortir(montant,
-                  description, date_maintenant, idCat, id_compte, this.numero);
+              // DateTime maintenant = DateTime.now();
+              // String date_maintenant =
+              //     DateFormat("yyyy-MM-dd").format(maintenant);
+              operation_sortir sortir = new operation_sortir(
+                  montant, description, date, idCat, id_compte, this.numero);
               int a = await helper.insertOperationSortir(sortir);
               if (a != 0) {
                 print("operation sortir inserted");
@@ -326,6 +332,40 @@ class _operationState extends State<operation> {
                               ),
                             ),
                             Padding(
+                              padding: EdgeInsets.only(left: 10, bottom: 10),
+                              //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                              child: TextFormField(
+                                controller: date1,
+                                // validator: (value) {
+                                //   if (value == null || value.isEmpty) {
+                                //     return "entrer la date de debut";
+                                //   }
+                                //   return null;
+                                // },
+                                //keyboardType: TextInputType.datetime,
+                                decoration: InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: "Date",
+                                  icon: Icon(Icons.calendar_today_outlined),
+                                ),
+                                onTap: () async {
+                                  DateTime? pickeddate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime(2050));
+
+                                  if (pickeddate == null) {
+                                    pickeddate = DateTime.now();
+                                  }
+                                  setState(() {
+                                    date1.text = DateFormat("yyyy-MM-dd")
+                                        .format(pickeddate!);
+                                  });
+                                },
+                              ),
+                            ),
+                            Padding(
                               padding: EdgeInsets.only(top: 30, left: 10),
                               child: FutureBuilder(
                                   future: getComptesRessource(this.usr!.id!),
@@ -378,8 +418,11 @@ class _operationState extends State<operation> {
                                     padding: EdgeInsets.only(),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        insertRevenus(entreeMontant.text,
-                                            entreeDesc.text, TypeCompte);
+                                        insertRevenus(
+                                            entreeMontant.text,
+                                            entreeDesc.text,
+                                            date1.text,
+                                            TypeCompte);
 
                                         // Navigator.pop(context, myData);
                                       },
@@ -478,6 +521,40 @@ class _operationState extends State<operation> {
                               ),
                             ),
                             Padding(
+                              padding: EdgeInsets.only(left: 10, bottom: 10),
+                              //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                              child: TextFormField(
+                                controller: date2,
+                                // validator: (value) {
+                                //   if (value == null || value.isEmpty) {
+                                //     return "entrer la date de debut";
+                                //   }
+                                //   return null;
+                                // },
+                                //keyboardType: TextInputType.datetime,
+                                decoration: InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: "Date",
+                                  icon: Icon(Icons.calendar_today_outlined),
+                                ),
+                                onTap: () async {
+                                  DateTime? pickeddate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime(2050));
+
+                                  if (pickeddate == null) {
+                                    pickeddate = DateTime.now();
+                                  }
+                                  setState(() {
+                                    date2.text = DateFormat("yyyy-MM-dd")
+                                        .format(pickeddate!);
+                                  });
+                                },
+                              ),
+                            ),
+                            Padding(
                               padding: EdgeInsets.only(top: 30, left: 10),
                               child: FutureBuilder(
                                   future: getComptesRessource(this.usr!.id!),
@@ -532,8 +609,11 @@ class _operationState extends State<operation> {
                                     padding: EdgeInsets.only(),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        insertDepense(sortirMontant.text,
-                                            sortirDesc.text, TypeCompte);
+                                        insertDepense(
+                                            sortirMontant.text,
+                                            sortirDesc.text,
+                                            date2.text,
+                                            TypeCompte);
 
                                         // Navigator.pop(context, myData);
                                       },

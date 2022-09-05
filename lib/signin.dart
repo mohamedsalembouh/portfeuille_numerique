@@ -41,10 +41,6 @@ class _signinPageState extends State<signinPage> {
             context,
             // MaterialPageRoute(builder: (context) => homepage(email, pass))
             MaterialPageRoute(builder: (context) => homepage(user)));
-        print(user.id);
-        print(user.nom);
-        print(user.email);
-        print(user.password);
       }
     }
   }
@@ -54,7 +50,7 @@ class _signinPageState extends State<signinPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Rachad",
+          "Tesyir",
           style: TextStyle(fontSize: 25),
         ),
       ),
@@ -70,13 +66,6 @@ class _signinPageState extends State<signinPage> {
                   SizedBox(
                     height: 20,
                   ),
-                  // Text(
-                  //   "Login",
-                  //   style: TextStyle(
-                  //       fontWeight: FontWeight.bold,
-                  //       color: Colors.black,
-                  //       fontSize: 30),
-                  // ),
                   SizedBox(
                     height: 20,
                   ),

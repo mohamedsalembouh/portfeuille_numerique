@@ -44,7 +44,7 @@ class _formbudgetState extends State<formbudget> {
       int montant = int.parse(value);
       categorie? cat = await helper.getSpecifyCategorie(CatNom);
       int idCat = cat!.id!;
-      budgete bdg = budgete(nom, montant, dateDebut, dateFin, 0, idCat, a);
+      budgete bdg = budgete(nom, montant, dateDebut, dateFin, 0, 0, idCat, a);
       int x = await helper.insert_Budget(bdg);
       if (x > 0) {
         print("ok inserted");

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:portfeuille_numerique/form_recherche.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:portfeuille_numerique/models/argent.dart';
@@ -166,7 +167,6 @@ class _statistiqueState extends State<statistique> {
     return uniquerevenu;
   }
 
-  String? nomchange;
   String nomRessource = "Specifie un compte";
   updateCategories(String nomRess) async {
     if (nomRess != "Specifie un compte") {
@@ -743,133 +743,133 @@ class _statistiqueState extends State<statistique> {
                   //   child:
                   // Column(
                   //     children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 200,
-                        child: Padding(
-                          padding: EdgeInsets.only(),
-                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                          child: TextFormField(
-                            // initialValue:
-                            //     DateFormat("yyyy-MM-dd").format(DateTime.now()),
-                            controller: dateDebut,
-                            decoration: InputDecoration(
-                              border: UnderlineInputBorder(),
-                              labelText: "Date debut ",
-                              icon: Icon(Icons.calendar_today_outlined),
-                            ),
-                            onTap: () async {
-                              DateTime? pickeddate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2050));
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Container(
+                  //       width: 200,
+                  //       child: Padding(
+                  //         padding: EdgeInsets.only(),
+                  //         //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  //         child: TextFormField(
+                  //           // initialValue:
+                  //           //     DateFormat("yyyy-MM-dd").format(DateTime.now()),
+                  //           controller: dateDebut,
+                  //           decoration: InputDecoration(
+                  //             border: UnderlineInputBorder(),
+                  //             labelText: "Date debut ",
+                  //             icon: Icon(Icons.calendar_today_outlined),
+                  //           ),
+                  //           onTap: () async {
+                  //             DateTime? pickeddate = await showDatePicker(
+                  //                 context: context,
+                  //                 initialDate: DateTime.now(),
+                  //                 firstDate: DateTime(2000),
+                  //                 lastDate: DateTime(2050));
 
-                              setState(() {
-                                dateDebut.text = DateFormat("yyyy-MM-dd")
-                                    .format(pickeddate!);
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 200,
-                        child: Padding(
-                          padding: EdgeInsets.only(),
-                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                          child: TextFormField(
-                            // initialValue:
-                            //     DateFormat("yyyy-MM-dd").format(DateTime.now()),
-                            controller: dateFin,
-                            //keyboardType: TextInputType.datetime,
-                            decoration: InputDecoration(
-                              border: UnderlineInputBorder(),
-                              labelText: "Date Fin ",
-                              icon: Icon(Icons.calendar_today_outlined),
-                            ),
-                            onTap: () async {
-                              DateTime? pickeddate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2050));
+                  //             setState(() {
+                  //               dateDebut.text = DateFormat("yyyy-MM-dd")
+                  //                   .format(pickeddate!);
+                  //             });
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     Container(
+                  //       width: 200,
+                  //       child: Padding(
+                  //         padding: EdgeInsets.only(),
+                  //         //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  //         child: TextFormField(
+                  //           // initialValue:
+                  //           //     DateFormat("yyyy-MM-dd").format(DateTime.now()),
+                  //           controller: dateFin,
+                  //           //keyboardType: TextInputType.datetime,
+                  //           decoration: InputDecoration(
+                  //             border: UnderlineInputBorder(),
+                  //             labelText: "Date Fin ",
+                  //             icon: Icon(Icons.calendar_today_outlined),
+                  //           ),
+                  //           onTap: () async {
+                  //             DateTime? pickeddate = await showDatePicker(
+                  //                 context: context,
+                  //                 initialDate: DateTime.now(),
+                  //                 firstDate: DateTime(2000),
+                  //                 lastDate: DateTime(2050));
 
-                              setState(() {
-                                dateFin.text = DateFormat("yyyy-MM-dd")
-                                    .format(pickeddate!);
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  //             setState(() {
+                  //               dateFin.text = DateFormat("yyyy-MM-dd")
+                  //                   .format(pickeddate!);
+                  //             });
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
 
                   Padding(
-                    padding: const EdgeInsets.only(top: 5),
+                    padding: const EdgeInsets.only(top: 5, left: 20, right: 20),
                     child: ElevatedButton(
                       onPressed: () {
-                        // DateTime debut = DateTime.parse(dateDebut.text);
-                        // DateTime fin = DateTime.parse(dateFin.text);
-                        // if ((dateDebut.text == "choisisez un date") ||
-                        //     (dateFin.text == "choisisez un date")) {
-
-                        // } else {
-                        getRechercheRevenus(
-                            dateDebut.text, dateFin.text, nomRessource);
-                        getRechercheDepense(
-                            dateDebut.text, dateFin.text, nomRessource);
-                        //   // dateDebut.clear();
-                        //   // dateFin.clear();
-                        // }
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    rechercheRapport(usr!.id!)));
                       },
-                      child: Text('Rechercher'),
+                      child: Row(
+                        children: [
+                          Icon(Icons.search),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Text('Rechercher')
+                        ],
+                      ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10, left: 10),
-                    child: FutureBuilder(
-                        future: getComptesRessource(this.usr!.id!),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<compteRessource>> snapshot) {
-                          if (!snapshot.hasData) {
-                            return CircularProgressIndicator();
-                          } else {
-                            return DropdownButton<String>(
-                              items: snapshot.data!
-                                  .map((cmpRes) => DropdownMenuItem<String>(
-                                        child: Text(cmpRes.nom_ress!),
-                                        value: cmpRes.nom_ress,
-                                      ))
-                                  .toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  nomRessource = value!;
-                                  // dateDebut.clear();
-                                  // dateFin.clear();
-                                });
-                                updateCategories(nomRessource);
-                                getAllRevenusCats(nomRessource);
-                                dateDebut.clear();
-                                dateFin.clear();
-                              },
+                  // Padding(
+                  //   padding: EdgeInsets.only(top: 10, left: 10),
+                  //   child: FutureBuilder(
+                  //       future: getComptesRessource(this.usr!.id!),
+                  //       builder: (BuildContext context,
+                  //           AsyncSnapshot<List<compteRessource>> snapshot) {
+                  //         if (!snapshot.hasData) {
+                  //           return CircularProgressIndicator();
+                  //         } else {
+                  //           return DropdownButton<String>(
+                  //             items: snapshot.data!
+                  //                 .map((cmpRes) => DropdownMenuItem<String>(
+                  //                       child: Text(cmpRes.nom_ress!),
+                  //                       value: cmpRes.nom_ress,
+                  //                     ))
+                  //                 .toList(),
+                  //             onChanged: (String? value) {
+                  //               setState(() {
+                  //                 nomRessource = value!;
+                  //                 // dateDebut.clear();
+                  //                 // dateFin.clear();
+                  //               });
+                  //               updateCategories(nomRessource);
+                  //               getAllRevenusCats(nomRessource);
+                  //               dateDebut.clear();
+                  //               dateFin.clear();
+                  //             },
 
-                              isExpanded: true,
-                              //value: currentNomCat,
-                              hint: Text(
-                                '$nomRessource',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  //fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            );
-                          }
-                        }),
-                  ),
+                  //             isExpanded: true,
+                  //             //value: currentNomCat,
+                  //             hint: Text(
+                  //               '$nomRessource',
+                  //               style: TextStyle(
+                  //                 fontSize: 17,
+                  //                 //fontWeight: FontWeight.bold
+                  //               ),
+                  //             ),
+                  //           );
+                  //         }
+                  //       }),
+                  // ),
 
                   // ],
                   //   ),

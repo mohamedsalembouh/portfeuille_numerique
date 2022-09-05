@@ -76,13 +76,13 @@ class SQL_Helper {
     await db.execute(
         "create table operation_sortir(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,id_categorie INTEGER,id_compte INTEGER,id_utilisateur INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id),foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
-        "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date TEXT not null,date_debut text not null,date_echeance text not null,status INTEGER not null,id_compte INTEGER not null,id_utilisateur INTEGER not null, foreign key(id_compte) references compte(id),foreign key(id_utilisateur) references utilisateur(id))");
+        "create table prette_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date TEXT not null,date_debut text not null,date_echeance text not null,status INTEGER not null,status_notification INTEGER not null,id_compte INTEGER not null,id_utilisateur INTEGER not null, foreign key(id_compte) references compte(id),foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
-        "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date TEXT not null,date_debut text not null,date_echeance text not null,status INTEGER not null,id_compte INTEGER not null,id_utilisateur INTEGER not null, foreign key(id_compte) references compte(id),foreign key(id_utilisateur) references utilisateur(id))");
+        "create table emprunte_dettes(id INTEGER PRIMARY KEY AUTOINCREMENT,nom text not null,objectif text not null,montant integer not null ,date TEXT not null,date_debut text not null,date_echeance text not null,status INTEGER not null,status_notification INTEGER not null,id_compte INTEGER not null,id_utilisateur INTEGER not null, foreign key(id_compte) references compte(id),foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
-        "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nombdg text not null, montant integer not null,date_debut text not null,date_fin text not null,status INTEGER not null,id_categorie integer ,id_utilisateur integer ,foreign key(id_categorie) references categorie(id),foreign key(id_utilisateur) references utilisateur(id))");
+        "create table budget(id INTEGER PRIMARY KEY AUTOINCREMENT,nombdg text not null, montant integer not null,date_debut text not null,date_fin text not null,status INTEGER not null,status_notification INTEGER not null,id_categorie integer ,id_utilisateur integer ,foreign key(id_categorie) references categorie(id),foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
-        "create table objectif(id INTEGER PRIMARY KEY AUTOINCREMENT,nom_objective text not null,montant_cible integer not null,montant_donnee integer not null,date TEXT not null,id_compte integer not null,id_utilisateur INTEGER not null,foreign key(id_compte) references compte(id),foreign key(id_utilisateur) references utilisateur(id))");
+        "create table objectif(id INTEGER PRIMARY KEY AUTOINCREMENT,nom_objective text not null,montant_cible integer not null,montant_donnee integer not null,date TEXT not null,status_notification INTEGER not null,id_compte integer not null,id_utilisateur INTEGER not null,foreign key(id_compte) references compte(id),foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
         "create table argent(id INTEGER PRIMARY KEY AUTOINCREMENT,montant integer not null,date TEXT not null,id_ressource INTEGER not null,id_utilisateur integer not null,foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
@@ -129,19 +129,26 @@ class SQL_Helper {
     return null;
   }
 
+  Future<int> update_password(String pass, int idUser) async {
+    Database db = await this.database;
+    var result = await db.rawUpdate(
+        "UPDATE utilisateur SET password = ?  WHERE id = ? ", [pass, idUser]);
+    return result;
+  }
+
+  Future<int> update_nom(String name, int idUser) async {
+    Database db = await this.database;
+    var result = await db.rawUpdate(
+        "UPDATE utilisateur SET nom = ?  WHERE id = ? ", [name, idUser]);
+    return result;
+  }
+
   Future<int> insert_compte(compte cmp) async {
     Database db = await this.database;
     var result = db.insert("compte", cmp.tomap());
 
     return result;
   }
-
-  // Future<int> delete_compte(int id_user) async {
-  //   Database db = await this.database;
-  //   var result =
-  //       await db.delete("delete from compte where id_utilisateur='$id_user'");
-  //   return result;
-  // }
 
   Future<compte?> getCompteUser(int idutilisateur, int id_res) async {
     Database db = await this.database;
@@ -190,11 +197,25 @@ class SQL_Helper {
     return result;
   }
 
-  // readData(String sql) async {
-  //   Database? db = await database;
-  //   List<Map> response = await db.rawQuery(sql);
-  //   return response;
-  // }
+  Future<categorie?> getCategorieeByNom(String nom) async {
+    Database db = await this.database;
+    var result =
+        await db.rawQuery("SELECT * FROM categorie WHERE nomcat = '$nom'");
+    if (result.length > 0) {
+      return new categorie.getmap(result.first);
+    }
+    return null;
+  }
+
+  Future<categorie?> getCategorieeByColor(String coleur) async {
+    Database db = await this.database;
+    var result =
+        await db.rawQuery("SELECT * FROM categorie WHERE coleur = '$coleur'");
+    if (result.length > 0) {
+      return new categorie.getmap(result.first);
+    }
+    return null;
+  }
 
   Future<List<categorie>> getAllcategories() async {
     Database db = await database;
@@ -260,24 +281,6 @@ class SQL_Helper {
     });
   }
 
-  Future<List<operation_entree>> getSomeRevenus(int idCmp, int idUser) async {
-    Database db = await database;
-
-    final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree WHERE id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
-
-    // Convert the List<Map<String, dynamic> into a List<Dog>.
-    return List.generate(maps.length, (i) {
-      return operation_entree(
-          maps[i]['montant'],
-          maps[i]['description'],
-          maps[i]['date'],
-          maps[i]['id_categorie'],
-          maps[i]['id_compte'],
-          maps[i]['id_utilisateur']);
-    });
-  }
-
   Future<List<operation_sortir>> getAllDepenses(int idUser) async {
     Database db = await database;
 
@@ -315,6 +318,86 @@ class SQL_Helper {
     });
   }
 
+  Future<List<depensesCats>> getAllRevenusCats1(
+      int idCompte, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND id_compte = '$idCompte'  AND id_utilisateur = '$idUser'");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getAllRevenusCats2(
+      String debut, String fin, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND date > '$debut' AND date < '$fin' AND id_utilisateur = $idUser");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getAllRevenusCats3(
+      String debut, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND date > '$debut'  AND id_utilisateur = $idUser");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getAllRevenusCats4(String fin, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND  date < '$fin' AND id_utilisateur = $idUser");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  // je veux effacer apres modifier detailstatistique
   Future<List<depensesCats>> getAllRevenusrecherche(
       String debut, String fin, int idUser) async {
     Database db = await database;
@@ -354,6 +437,7 @@ class SQL_Helper {
           maps[i]['coleur']);
     });
   }
+  /////////////////////////////
 
   Future<List<depensesCats>> getSpecifyRevenusrecherche(
       String debut, String fin, int idCmp, int idUser) async {
@@ -361,6 +445,46 @@ class SQL_Helper {
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
         "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date > '$debut' AND date < '$fin' AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getSpecifyRevenusrecherche2(
+      String debut, int idCmp, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date > '$debut'  AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getSpecifyRevenusrecherche3(
+      String fin, int idCmp, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date < '$fin' AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -383,23 +507,24 @@ class SQL_Helper {
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
-      return depensesCats(
+      return depensesCats.withCompte(
           maps[i]['id'],
           maps[i]['montant'],
           maps[i]['description'],
           maps[i]['date'],
           maps[i]['id_categorie'],
+          maps[i]['id_compte'],
           maps[i]['nomcat'],
           maps[i]['coleur']);
     });
   }
 
-  Future<List<depensesCats>> getRechercheDepenses(
-      String debut, String fin, int idUser) async {
+  Future<List<depensesCats>> getSpecifyRechercheDepenses(
+      String debut, String fin, int idCmp, int idUser) async {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND date < '$fin' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND date < '$fin'AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -434,12 +559,12 @@ class SQL_Helper {
     });
   }
 
-  Future<List<depensesCats>> getSpecifiedDepenses(
-      int idUser, String nomCat) async {
+  Future<List<depensesCats>> getSpecifyDepensesCats2(
+      String debut, int idCmp, int idUser) async {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND id_utilisateur = '$idUser' AND categorie.nomcat='$nomCat'");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND operation_sortir.id_compte = '$idCmp' AND id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -454,12 +579,92 @@ class SQL_Helper {
     });
   }
 
-  Future<List<depensesCats>> getSpecifyRechercheDepenses(
-      String debut, String fin, int idCmp, int idUser) async {
+  Future<List<depensesCats>> getSpecifyDepensesCats3(
+      String fin, int idCmp, int idUser) async {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND date < '$fin'AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date < '$fin' AND operation_sortir.id_compte = '$idCmp' AND id_utilisateur = $idUser");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getRechercheDepenses(
+      String debut, String fin, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND date < '$fin' AND id_utilisateur = $idUser");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getRechercheDepenses2(
+      String debut, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND  id_utilisateur = $idUser");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getRechercheDepenses3(
+      String fin, int idUser) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id  AND date < '$fin' AND id_utilisateur = $idUser");
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return depensesCats(
+          maps[i]['id'],
+          maps[i]['montant'],
+          maps[i]['description'],
+          maps[i]['date'],
+          maps[i]['id_categorie'],
+          maps[i]['nomcat'],
+          maps[i]['coleur']);
+    });
+  }
+
+  Future<List<depensesCats>> getSpecifiedDepenses(
+      int idUser, String nomCat) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND id_utilisateur = '$idUser' AND categorie.nomcat='$nomCat'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -497,6 +702,7 @@ class SQL_Helper {
           maps[i]['date_debut'],
           maps[i]['date_echeance'],
           maps[i]['status'],
+          maps[i]['status_notification'],
           maps[i]['id_compte'],
           maps[i]['id_utilisateur']);
     });
@@ -525,6 +731,7 @@ class SQL_Helper {
           maps[i]['date_debut'],
           maps[i]['date_echeance'],
           maps[i]['status'],
+          maps[i]['status_notification'],
           maps[i]['id_compte'],
           maps[i]['id_utilisateur']);
     });
@@ -547,6 +754,7 @@ class SQL_Helper {
         maps[i]['nombdg'],
         maps[i]['montant'],
         maps[i]['status'],
+        maps[i]['status_notification'],
         maps[i]['date_debut'],
         maps[i]['date_fin'],
         maps[i]['id_categorie'],
@@ -560,13 +768,14 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.date_debut,budget.date_fin FROM budget,categorie WHERE budget.id_categorie = categorie.id AND id_utilisateur = '$idUser' AND categorie.nomcat='$nomCat'");
+        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.status_notification,budget.date_debut,budget.date_fin FROM budget,categorie WHERE budget.id_categorie = categorie.id AND id_utilisateur = '$idUser' AND categorie.nomcat='$nomCat'");
     return List.generate(maps.length, (i) {
       return catBudget.second(
         maps[i]['id'],
         maps[i]['nombdg'],
         maps[i]['montant'],
         maps[i]['status'],
+        maps[i]['status_notification'],
         maps[i]['date_debut'],
         maps[i]['date_fin'],
       );
@@ -591,6 +800,26 @@ class SQL_Helper {
         maps[i]['montant_cible'],
         maps[i]['montant_donnee'],
         maps[i]['date'],
+        maps[i]['status_notification'],
+        maps[i]['id_compte'],
+        maps[i]['id_utilisateur'],
+      );
+    });
+  }
+
+  Future<List<objective>> getSomeObjectivfs(int id) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM objectif WHERE montant_cible = montant_donnee AND id_utilisateur = $id");
+    return List.generate(maps.length, (i) {
+      return objective.withId(
+        maps[i]['id'],
+        maps[i]['nom_objective'],
+        maps[i]['montant_cible'],
+        maps[i]['montant_donnee'],
+        maps[i]['date'],
+        maps[i]['status_notification'],
         maps[i]['id_compte'],
         maps[i]['id_utilisateur'],
       );
@@ -769,6 +998,16 @@ class SQL_Helper {
     });
   }
 
+  Future<ressource?> getRessourceByNom(String nom) async {
+    Database db = await this.database;
+    var result =
+        await db.rawQuery("SELECT * FROM ressource WHERE nom_ress = '$nom'");
+    if (result.length > 0) {
+      return new ressource.getmap(result.first);
+    }
+    return null;
+  }
+
   Future<List<ressource>> getAllRessource(int idUser) async {
     Database db = await database;
 
@@ -817,5 +1056,35 @@ class SQL_Helper {
         maps[i]['id_utilisateur'],
       );
     });
+  }
+
+  Future<int> updateStatusNotificationPretteDette(int x, int id) async {
+    Database db = await this.database;
+    var result = await db.rawUpdate(
+        "UPDATE prette_dettes SET status_notification = ? WHERE id = ?",
+        [x, id]);
+    return result;
+  }
+
+  Future<int> updateStatusNotificationEmprunteDette(int x, int id) async {
+    Database db = await this.database;
+    var result = await db.rawUpdate(
+        "UPDATE emprunte_dettes SET status_notification = ? WHERE id = ?",
+        [x, id]);
+    return result;
+  }
+
+  Future<int> updateStatusNotificationBudget(int x, int id) async {
+    Database db = await this.database;
+    var result = await db.rawUpdate(
+        "UPDATE budget SET status_notification = ? WHERE id = ?", [x, id]);
+    return result;
+  }
+
+  Future<int> updateStatusNotificationObjectif(int x, int id) async {
+    Database db = await this.database;
+    var result = await db.rawUpdate(
+        "UPDATE objectif SET status_notification = ? WHERE id = ?", [x, id]);
+    return result;
   }
 }

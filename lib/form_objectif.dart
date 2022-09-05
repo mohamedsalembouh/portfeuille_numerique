@@ -52,8 +52,8 @@ class _form_objectifState extends State<form_objectif> {
         if (cmp != null) {
           int solde = cmp.solde!;
           if (mntEnregistree < solde) {
-            objective obj = objective(
-                nomobj, mntCible, mntEnregistree, date_maintenant, id_cmpe, a);
+            objective obj = objective(nomobj, mntCible, mntEnregistree,
+                date_maintenant, 0, id_cmpe, a);
             int result = await helper.insert_objectif(obj);
             int newSolde = solde - mntEnregistree;
             compte updateCompte = compte(newSolde, date_maintenant, id_res, a);
@@ -66,7 +66,7 @@ class _form_objectifState extends State<form_objectif> {
             if (result != 0 && result2 != 0) {
               print("ok objective enregistre");
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => objectif(usr)));
+                  MaterialPageRoute(builder: (context) => objectif(usr, 0)));
             }
           } else {
             showText(context, "Desole",

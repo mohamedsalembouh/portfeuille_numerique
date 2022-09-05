@@ -49,7 +49,7 @@ class _splashScreenState extends State<splashScreen> {
               height: 5,
             ),
             Text(
-              "Rachad",
+              "Tesyir",
               style: TextStyle(
                   color: Colors.green,
                   fontWeight: FontWeight.bold,

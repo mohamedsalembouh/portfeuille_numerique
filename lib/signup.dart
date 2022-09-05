@@ -33,7 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
           if (result > 0) {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => signinPage()));
-            showText(context, "Congratulation", "Vous avez enregistre");
+            showText(context, "Félicitation", "Vous avez enregistre");
           }
         } else {
           Toast.show("cette email existe deja");

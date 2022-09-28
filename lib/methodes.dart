@@ -18,13 +18,14 @@ import 'package:toast/toast.dart';
 
 import 'models/compte.dart';
 import 'models/ressource.dart';
+import 'package:get/get.dart';
 
-PreferredSize appbarfunction(
-    BuildContext context, List<Tab> tabs, String title, utilisateur usr) {
+PreferredSize appbarfunction(BuildContext context, List<Tab> tabs, String title,
+    utilisateur usr, TabController _tabController) {
   return PreferredSize(
     preferredSize: Size.fromHeight(100),
     child: AppBar(
-      bottom: TabBar(tabs: tabs),
+      bottom: TabBar(controller: _tabController, tabs: tabs),
       title: Text(title),
       actions: [
         Padding(
@@ -128,7 +129,7 @@ Widget drowerfunction(
           padding: EdgeInsets.only(top: 20),
           child: ListTile(
             leading: Icon(Icons.home),
-            title: Text("Accueil", style: TextStyle(fontSize: 20)),
+            title: Text("10".tr, style: TextStyle(fontSize: 20)),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => homepage(user)));
@@ -140,7 +141,7 @@ Widget drowerfunction(
             Icons.calendar_today_outlined,
             size: 20,
           ),
-          title: Text("Dettes", style: TextStyle(fontSize: 20)),
+          title: Text("a".tr, style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => alldettes(user, 0)));
@@ -151,7 +152,7 @@ Widget drowerfunction(
             Icons.category,
             size: 20,
           ),
-          title: Text("Budgets", style: TextStyle(fontSize: 20)),
+          title: Text("b".tr, style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => budget(user, 0)));
@@ -162,7 +163,7 @@ Widget drowerfunction(
             Icons.emoji_objects,
             size: 20,
           ),
-          title: Text("Objectifs", style: TextStyle(fontSize: 20)),
+          title: Text("c".tr, style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => objectif(user, 0)));
@@ -173,7 +174,7 @@ Widget drowerfunction(
             Icons.bar_chart_sharp,
             size: 20,
           ),
-          title: Text("Statistiques", style: TextStyle(fontSize: 20)),
+          title: Text("d".tr, style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => statistique(user)));
@@ -184,7 +185,7 @@ Widget drowerfunction(
             Icons.group,
             size: 20,
           ),
-          title: Text("Partage en groupe", style: TextStyle(fontSize: 20)),
+          title: Text("e".tr, style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => partage(user)));
@@ -195,7 +196,7 @@ Widget drowerfunction(
             Icons.settings,
             size: 20,
           ),
-          title: Text("Parametres", style: TextStyle(fontSize: 20)),
+          title: Text("f".tr, style: TextStyle(fontSize: 20)),
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => parametrage(user)));
@@ -206,7 +207,7 @@ Widget drowerfunction(
             Icons.help,
             size: 20,
           ),
-          title: Text("Aide", style: TextStyle(fontSize: 20)),
+          title: Text("g".tr, style: TextStyle(fontSize: 20)),
           onTap: () {},
         ),
         Padding(
@@ -218,7 +219,7 @@ Widget drowerfunction(
               Icons.logout,
               size: 20,
             ),
-            title: Text("Deconnection",
+            title: Text("h".tr,
                 style: TextStyle(
                     fontSize: 20,
                     backgroundColor: Colors.black,

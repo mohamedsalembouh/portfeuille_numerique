@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/models/partag.dart';
 import 'package:portfeuille_numerique/partageGroupe.dart';
-import 'package:sqflite/sqflite.dart';
-
 import 'methodes.dart';
 import 'models/utilisateur.dart';
+import 'package:get/get.dart';
 
 class formPartage extends StatefulWidget {
   //const formPartage({Key? key}) : super(key: key);
@@ -31,6 +30,8 @@ class _formPartageState extends State<formPartage> {
         int result = await helper.insert_partage(prt);
         if (result > 0) {
           print("ok partage");
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => partage(this.usr)));
           showText(context, "OK", "vous avez partage votre compte");
           email.clear();
         }
@@ -58,7 +59,7 @@ class _formPartageState extends State<formPartage> {
                         Padding(
                           padding: EdgeInsets.only(bottom: 20),
                           child: Text(
-                            "Donnees l'acces a votre compte a un personne",
+                            "67".tr,
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
@@ -77,15 +78,16 @@ class _formPartageState extends State<formPartage> {
                               }
                               return null;
                             },
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               border: UnderlineInputBorder(),
-                              labelText: "email",
+                              labelText: "2".tr,
                             ),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 40, left: 100),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(right: 30),
@@ -93,7 +95,7 @@ class _formPartageState extends State<formPartage> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text('Annuler'),
+                                  child: Text('26'.tr),
                                 ),
                               ),
                               Padding(
@@ -101,13 +103,8 @@ class _formPartageState extends State<formPartage> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     inseretPartage(email.text);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                partage(this.usr)));
                                   },
-                                  child: Text('Partage'),
+                                  child: Text('68'.tr),
                                 ),
                               ),
                             ],

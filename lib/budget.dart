@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/formBudget.dart';
 import 'package:portfeuille_numerique/methodes.dart';
-import 'package:portfeuille_numerique/models/budgete.dart';
 import 'package:portfeuille_numerique/models/catBudget.dart';
 import 'package:portfeuille_numerique/models/depensesCats.dart';
-import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/services/local_notification_service.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
-
-import 'models/categorie.dart';
+import 'package:get/get.dart';
 
 class budget extends StatefulWidget {
   utilisateur? usr;
@@ -27,13 +21,13 @@ class budget extends StatefulWidget {
 class _budgetState extends State<budget> {
   final List<Tab> mytabs = [
     Tab(
-      text: "En cours",
+      text: "51".tr,
     ),
     Tab(
-      text: "Complet",
+      text: "52".tr,
     ),
     Tab(
-      text: "Notification",
+      text: "32".tr,
     )
   ];
   utilisateur? usr;
@@ -45,17 +39,17 @@ class _budgetState extends State<budget> {
   static var budgets;
   List<depensesCats>? mesDepenses;
   int long = 0;
-
   static var depenses;
-  late final LocalNotificationService service;
-  @override
-  void initState() {
-    // TODO: implement initState
-    service = LocalNotificationService();
-    service.initialize();
-    listenToNotification();
-    super.initState();
-  }
+
+  // late final LocalNotificationService service;
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   service = LocalNotificationService();
+  //   service.initialize();
+  //   listenToNotification();
+  //   super.initState();
+  // }
 
   getAllBudgets() async {
     utilisateur? user =
@@ -123,6 +117,7 @@ class _budgetState extends State<budget> {
     return allMontant;
   }
 
+  int indexTab = 0;
   @override
   Widget build(BuildContext context) {
     if (this.allbudgets == null) {
@@ -130,270 +125,283 @@ class _budgetState extends State<budget> {
     }
     budgets = this.allbudgets;
     //faireNotifications();
-    return MaterialApp(
-      home: DefaultTabController(
-        initialIndex: selectedPage!,
-        length: mytabs.length,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: appbar2function(mytabs, "Budgets"),
-          drawer: drowerfunction(context, this.usr),
-          body: TabBarView(
-            children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                        itemCount: count,
-                        itemBuilder: (context, pos) {
-                          DateTime debut =
-                              DateTime.parse(budgets[pos].date_debut!);
-                          String dateDebut =
-                              DateFormat("dd-MM-yyyy").format(debut);
-                          DateTime fin = DateTime.parse(budgets[pos].date_fin!);
-                          String dateFin = DateFormat("dd-MM-yyyy").format(fin);
-
-                          if (budgets[pos].status == 0) {
-                            return Card(
-                              color: Colors.white,
-                              elevation: 2.0,
-                              child: ListTile(
-                                isThreeLine: true,
-                                // leading: Icon(Icons.category),
-                                title: Text("${budgets[pos].nombdg}"),
-                                subtitle: Column(
-                                  children: [
-                                    Text("montant : ${budgets[pos].montant}"),
-                                    Text("categorie : ${budgets[pos].nomcat}"),
-                                  ],
-                                ),
-                                trailing: Column(
-                                  children: [
-                                    Text(" Date debut : $dateDebut"),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("Date Fin : $dateFin")
-                                  ],
-                                ),
-                                onTap: () {
-                                  AlertDialog alertDialog = AlertDialog(
-                                    //title: Icon(Icons.finish),
-                                    content: Text("Terminez cette budget "),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(
-                                          "Annuler",
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text(
-                                          "Terminer",
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                        onPressed: () {
-                                          termineBudget(budgets[pos].id);
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return alertDialog;
-                                      });
-                                },
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        }),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => formbudget(this.usr)));
-                        },
-                        child: Icon(Icons.add),
-                      ),
-                    ),
-                  ),
-                ],
+    return DefaultTabController(
+      initialIndex: selectedPage!,
+      length: mytabs.length,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          toolbarHeight: 100,
+          bottom: TabBar(
+              onTap: (value) {
+                setState(() {
+                  indexTab = value;
+                });
+              },
+              tabs: mytabs),
+          title: Text("b".tr),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                onTap: () {},
+                child: Icon(Icons.search),
               ),
-              //l'autre page
-              Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                        itemCount: count,
-                        itemBuilder: (context, pos) {
-                          DateTime debut =
-                              DateTime.parse(budgets[pos].date_debut!);
-                          String dateDebut =
-                              DateFormat("dd-MM-yyyy").format(debut);
-                          DateTime fin = DateTime.parse(budgets[pos].date_fin!);
-                          String dateFin = DateFormat("dd-MM-yyyy").format(fin);
-
-                          if (budgets[pos].status == 1) {
-                            return Card(
-                              color: Colors.white,
-                              elevation: 2.0,
-                              child: ListTile(
-                                isThreeLine: true,
-                                //leading: Icon(Icons.check),
-                                title: Text("${budgets[pos].nombdg}"),
-                                subtitle: Column(
-                                  children: [
-                                    Text("montant : ${budgets[pos].montant}"),
-                                    Text("categorie : ${budgets[pos].nomcat}"),
-                                  ],
-                                ),
-                                trailing: Column(
-                                  children: [
-                                    Text(" Date debut : $dateDebut"),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("Date Fin : $dateFin")
-                                  ],
-                                ),
-                                onTap: () {
-                                  AlertDialog alertDialog = AlertDialog(
-                                    title: Icon(Icons.delete),
-                                    content: Text("Supprimez cette budget "),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(
-                                          "Annuler",
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text(
-                                          "Suprimez",
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                        onPressed: () {
-                                          SuprimezBudget(budgets[pos].id);
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return alertDialog;
-                                      });
-                                },
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        }),
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                        itemCount: count,
-                        itemBuilder: (context, pos) {
-                          DateTime debut =
-                              DateTime.parse(budgets[pos].date_debut!);
-                          DateTime fin = DateTime.parse(budgets[pos].date_fin!);
-                          DateTime now = DateTime.parse(
-                              DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                          if (budgets[pos].status == 0) {
-                            int allmnt = someMontant(budgets[pos].nomcat);
-                            if (budgets[pos].montant < allmnt &&
-                                now.compareTo(debut) > 0 &&
-                                now.compareTo(fin) < 0) {
-                              return Card(
-                                  child: Text(
-                                      "Vous avez depasez le budget : ${budgets[pos].nombdg} "));
-                            } else {
-                              return Container();
-                            }
-                          } else {
-                            return Container();
-                          }
-                        }),
-                  )
-                ],
-              ),
-            ],
-          ),
+            )
+          ],
         ),
+        drawer: drowerfunction(context, this.usr),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: count,
+                      itemBuilder: (context, pos) {
+                        DateTime debut =
+                            DateTime.parse(budgets[pos].date_debut!);
+                        String dateDebut =
+                            DateFormat("dd-MM-yyyy").format(debut);
+                        DateTime fin = DateTime.parse(budgets[pos].date_fin!);
+                        String dateFin = DateFormat("dd-MM-yyyy").format(fin);
+
+                        if (budgets[pos].status == 0) {
+                          return Card(
+                            color: Colors.white,
+                            elevation: 2.0,
+                            child: ListTile(
+                              isThreeLine: true,
+                              // leading: Icon(Icons.category),
+                              title: Text("${budgets[pos].nombdg}"),
+                              subtitle: Column(
+                                children: [
+                                  Text("22".tr + "${budgets[pos].montant}"),
+                                  Text("64".tr + "${budgets[pos].nomcat}"),
+                                ],
+                              ),
+                              trailing: Column(
+                                children: [
+                                  Text("47".tr + "$dateDebut"),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text("57".tr + "$dateFin")
+                                ],
+                              ),
+                              onTap: () {
+                                AlertDialog alertDialog = AlertDialog(
+                                  //title: Icon(Icons.finish),
+                                  content: Text("53".tr),
+                                  actions: [
+                                    TextButton(
+                                      child: Text(
+                                        "26".tr,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text(
+                                        "36".tr,
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                      onPressed: () {
+                                        termineBudget(budgets[pos].id);
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return alertDialog;
+                                    });
+                              },
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
+                ),
+              ],
+            ),
+            //l'autre page
+            Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: count,
+                      itemBuilder: (context, pos) {
+                        DateTime debut =
+                            DateTime.parse(budgets[pos].date_debut!);
+                        String dateDebut =
+                            DateFormat("dd-MM-yyyy").format(debut);
+                        DateTime fin = DateTime.parse(budgets[pos].date_fin!);
+                        String dateFin = DateFormat("dd-MM-yyyy").format(fin);
+
+                        if (budgets[pos].status == 1) {
+                          return Card(
+                            color: Colors.white,
+                            elevation: 2.0,
+                            child: ListTile(
+                              isThreeLine: true,
+                              //leading: Icon(Icons.check),
+                              title: Text("${budgets[pos].nombdg}"),
+                              subtitle: Column(
+                                children: [
+                                  Text("22".tr + "${budgets[pos].montant}"),
+                                  Text("64".tr + "${budgets[pos].nomcat}"),
+                                ],
+                              ),
+                              trailing: Column(
+                                children: [
+                                  Text("47".tr + "$dateDebut"),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text("57".tr + "$dateFin")
+                                ],
+                              ),
+                              onTap: () {
+                                AlertDialog alertDialog = AlertDialog(
+                                  title: Icon(Icons.delete),
+                                  content: Text("54".tr),
+                                  actions: [
+                                    TextButton(
+                                      child: Text(
+                                        "26".tr,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text(
+                                        "38".tr,
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                      onPressed: () {
+                                        SuprimezBudget(budgets[pos].id);
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return alertDialog;
+                                    });
+                              },
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: count,
+                      itemBuilder: (context, pos) {
+                        DateTime debut =
+                            DateTime.parse(budgets[pos].date_debut!);
+                        DateTime fin = DateTime.parse(budgets[pos].date_fin!);
+                        DateTime now = DateTime.parse(
+                            DateFormat("yyyy-MM-dd").format(DateTime.now()));
+                        if (budgets[pos].status == 0) {
+                          int allmnt = someMontant(budgets[pos].nomcat);
+                          if (budgets[pos].montant < allmnt &&
+                              now.compareTo(debut) > 0 &&
+                              now.compareTo(fin) < 0) {
+                            return Card(
+                                child: Text(
+                                    "Vous avez depasez le budget : ${budgets[pos].nombdg} "));
+                          } else {
+                            return Container();
+                          }
+                        } else {
+                          return Container();
+                        }
+                      }),
+                )
+              ],
+            ),
+          ],
+        ),
+        floatingActionButton: indexTab == 0
+            ? FloatingActionButton(
+                child: Icon(
+                  Icons.add,
+                  size: 20,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => formbudget(this.usr)));
+                },
+              )
+            : null,
       ),
     );
   }
 
-  faireNotifications() async {
-    SQL_Helper helper = SQL_Helper();
-    utilisateur? user =
-        await helper.getUser(this.usr!.email!, this.usr!.password!);
-    int a = user!.id!;
-    List<categorie> allcategories = await helper.getAllcategories();
-    allcategories.forEach((cat) async {
-      List<depensesCats> depenses =
-          await helper.getSpecifiedDepenses(a, cat.nomcat!);
-      List<catBudget> budgets =
-          await helper.getAllSpecifiedBudgets(a, cat.nomcat!);
-      int allmnt = 0;
-      for (depensesCats a in depenses) {
-        allmnt = allmnt + a.montant!;
-      }
-      for (catBudget bdg in budgets) {
-        if (bdg.status == 0) {
-          DateTime debut = DateTime.parse(bdg.date_debut!);
-          DateTime fin = DateTime.parse(bdg.date_fin!);
-          DateTime now =
-              DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-          if (bdg.montant! < allmnt &&
-              now.compareTo(debut) > 0 &&
-              now.compareTo(fin) < 0) {
-            service.showNotificationWithPayload(
-                id: bdg.id!,
-                title: "Hiiii",
-                body: "vous etes depasez le budget ${bdg.nombdg}",
-                payload: 'payload navigation');
-          }
-        }
-      }
-    });
-  }
+  // faireNotifications() async {
+  //   int idUsere = this.usr!.id!;
+  //   List<categorie> allcategories = await helper.getAllcategories(idUsere);
+  //   allcategories.forEach((cat) async {
+  //     List<depensesCats> depenses =
+  //         await helper.getSpecifiedDepenses(idUsere, cat.nomcat!);
+  //     List<catBudget> budgets =
+  //         await helper.getAllSpecifiedBudgets(idUsere, cat.nomcat!);
+  //     int allmnt = 0;
+  //     for (depensesCats a in depenses) {
+  //       allmnt = allmnt + a.montant!;
+  //     }
+  //     for (catBudget bdg in budgets) {
+  //       if (bdg.status == 0) {
+  //         DateTime debut = DateTime.parse(bdg.date_debut!);
+  //         DateTime fin = DateTime.parse(bdg.date_fin!);
+  //         DateTime now =
+  //             DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.now()));
+  //         if (bdg.montant! < allmnt &&
+  //             now.compareTo(debut) > 0 &&
+  //             now.compareTo(fin) < 0) {
+  //           service.showNotificationWithPayload(
+  //               id: bdg.id!,
+  //               title: "Hiiii",
+  //               body: "vous etes depasez le budget ${bdg.nombdg}",
+  //               payload: 'payload navigation');
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
 
-  void listenToNotification() =>
-      service.onNotificationClick.stream.listen((onNotificationListener));
-  void onNotificationListener(String? payload) {
-    if (payload != null && payload.isNotEmpty) {
-      print("payload $payload");
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => budget(usr, 2)));
-    }
-  }
+  // void listenToNotification() =>
+  //     service.onNotificationClick.stream.listen((onNotificationListener));
+  // void onNotificationListener(String? payload) {
+  //   if (payload != null && payload.isNotEmpty) {
+  //     print("payload $payload");
+  //     Navigator.push(
+  //         context, MaterialPageRoute(builder: (context) => budget(usr, 2)));
+  //   }
+  // }
 }

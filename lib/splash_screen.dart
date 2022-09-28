@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/signin.dart';
+import 'package:get/get.dart';
 
 class splashScreen extends StatefulWidget {
-  const splashScreen({Key? key}) : super(key: key);
+  splashScreen({Key? key}) : super(key: key);
+  //final void Function(Locale locale) setLocale;
 
   @override
   State<splashScreen> createState() => _splashScreenState();
@@ -23,6 +25,41 @@ class _splashScreenState extends State<splashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // return Scaffold(
+    //   body: Column(
+    //     children: [
+    //       Padding(
+    //         padding: const EdgeInsets.all(90),
+    //         child: Container(
+    //             child: Text(AppLocalizations.of(context)!.helloWorld)),
+    //       ),
+    //       ListTile(
+    //         title: Text("Anglais"),
+    //         onTap: () {
+    //           widget.setLocale(Locale.fromSubtags(languageCode: 'en'));
+    //         },
+    //       ),
+    //       ListTile(
+    //         title: Text("Espanish"),
+    //         onTap: () {
+    //           widget.setLocale(Locale.fromSubtags(languageCode: 'es'));
+    //         },
+    //       ),
+    //       ListTile(
+    //         title: Text("frensh"),
+    //         onTap: () {
+    //           widget.setLocale(Locale.fromSubtags(languageCode: 'fr'));
+    //         },
+    //       ),
+    //       ListTile(
+    //         title: Text("arabe"),
+    //         onTap: () {
+    //           widget.setLocale(Locale.fromSubtags(languageCode: 'ar'));
+    //         },
+    //       ),
+    //     ],
+    //   ),
+    // );
     return Scaffold(
       //backgroundColor: Colors.green[600],
       body: Center(
@@ -37,9 +74,10 @@ class _splashScreenState extends State<splashScreen> {
                   child: Padding(
                     padding: EdgeInsets.all(8),
                     child: Image(
-                      width: 400,
-                      height: 400,
-                      image: AssetImage("assets/images/img_tesyir.jpg"),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      // image: AssetImage("assets/images/img_tesyir.jpg"),
+                      image: AssetImage("assets/images/imageApp.jpg"),
                     ),
                   ),
                 ),
@@ -49,7 +87,7 @@ class _splashScreenState extends State<splashScreen> {
               height: 5,
             ),
             Text(
-              "Tesyir",
+              "1".tr,
               style: TextStyle(
                   color: Colors.green,
                   fontWeight: FontWeight.bold,

@@ -18,6 +18,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'models/compteRessource.dart';
+import 'package:get/get.dart';
 
 class statistique extends StatefulWidget {
   //const statistique({Key? key}) : super(key: key);
@@ -167,9 +168,9 @@ class _statistiqueState extends State<statistique> {
     return uniquerevenu;
   }
 
-  String nomRessource = "Specifie un compte";
+  String nomRessource = "72".tr;
   updateCategories(String nomRess) async {
-    if (nomRess != "Specifie un compte") {
+    if (nomRess != "72".tr) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
       compte? cmp = await helper.getSpecifyCompte(idres);
@@ -213,7 +214,7 @@ class _statistiqueState extends State<statistique> {
   }
 
   getAllRevenusCats(String nomRess) async {
-    if (nomRess != "Specifie un compte") {
+    if (nomRess != "72".tr) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
       compte? cmp = await helper.getSpecifyCompte(idres);
@@ -257,7 +258,7 @@ class _statistiqueState extends State<statistique> {
   }
 
   getRechercheRevenus(String debut, String fin, String nomRess) async {
-    if (nomRess == "Specifie un compte") {
+    if (nomRess == "72".tr) {
       final Future<Database>? db = helper.initialiseDataBase();
       var ourDb = db;
       if (ourDb != null) {
@@ -301,7 +302,7 @@ class _statistiqueState extends State<statistique> {
   }
 
   getRechercheDepense(String debut, String fin, String nomRess) async {
-    if (nomRess == "Specifie un compte") {
+    if (nomRess == "72".tr) {
       final Future<Database>? db = helper.initialiseDataBase();
       var ourDb = db;
       if (ourDb != null) {
@@ -429,7 +430,7 @@ class _statistiqueState extends State<statistique> {
   // }
 
   getTousArgent(String nomRess) async {
-    if (nomRess != "Specifie un compte") {
+    if (nomRess != "72".tr) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idRes = res!.id_ress!;
       int a = this.usr!.id!;
@@ -481,58 +482,23 @@ class _statistiqueState extends State<statistique> {
 
   final List<Tab> mytabs = [
     Tab(
-      text: "solde",
+      text: "69".tr,
     ),
     Tab(
-      text: "depense",
+      text: "70".tr,
     ),
     Tab(
-      text: "Rapports",
+      text: "71".tr,
     )
   ];
-  // getRechercheRevenus(DateTime debut, DateTime fin, String nomRess) async {
-  //   List<depensesCats> someRevenus = [];
-  //   if (nomRess != "Specifie un compte") {
-  //     ressource? res = await helper.getSpecifyRessource(nomRess);
-  //     int idRes = res!.id_ress!;
-  //     compte? cmp = await helper.getSpecifyCompte(idRes);
-  //     int id_compte = cmp!.id!;
-  //     List<depensesCats>? revenies =
-  //         await helper.getSpecifyRevenusCats(id_compte, this.usr!.id!);
-  //     revenies.forEach((element) {
-  //       DateTime dateBetween = DateTime.parse(element.date!);
-  //       if (dateBetween.compareTo(debut) > 0 &&
-  //           dateBetween.compareTo(fin) < 0) {
-  //         someRevenus.add(element);
-  //       }
-  //     });
-  //   } else {
-  //     List<depensesCats>? revenies =
-  //         await helper.getAllRevenusCats(this.usr!.id!);
-  //     revenies.forEach((element) {
-  //       DateTime dateBetween = DateTime.parse(element.date!);
-  //       if (dateBetween.compareTo(debut) > 0 &&
-  //           dateBetween.compareTo(fin) < 0) {
-  //         someRevenus.add(element);
-  //       }
-  //     });
-  //   }
-  //   setState(() {
-  //     this.allrevenus = someRevenus;
-  //   });
-  // }
-
+  int indexTab = 0;
   @override
   Widget build(BuildContext context) {
-    //fullListes();
-    //getAllMontant(this.usr!.id!);
-
     if (allrevenus == null) {
       getAllRevenusCats(nomRessource);
     }
     if (allDepensesCats == null) {
       updateCategories(nomRessource);
-      // getUniqueDepenses();
     } else {
       _seriedata = [];
       generatedData();
@@ -552,22 +518,12 @@ class _statistiqueState extends State<statistique> {
     total = getTotal();
     totalRevenus = getTotalRevenus();
 
-    //print(allUpdateSolde[0].montant);
-    //print(allUpdateSolde[1].montant);
-    // print(allUpdateSolde[2].montant);
-    // print(total);
-    // print(usr!.password);
-    // print(allDepensesCats!.length);
-    //printListe();
-    //print(allUpdateSolde.length);
-
-    return MaterialApp(
-        home: DefaultTabController(
+    return DefaultTabController(
       length: mytabs.length,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Text("Statistiques"),
+          title: Text("d".tr),
           bottom: TabBar(
             tabs: mytabs,
           ),
@@ -1004,7 +960,7 @@ class _statistiqueState extends State<statistique> {
           ],
         ),
       ),
-    ));
+    );
   }
 }
 

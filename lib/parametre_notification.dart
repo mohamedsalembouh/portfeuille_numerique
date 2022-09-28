@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
+import 'package:portfeuille_numerique/main.dart';
 import 'package:portfeuille_numerique/models/budgete.dart';
 import 'package:portfeuille_numerique/models/catBudget.dart';
 import 'package:portfeuille_numerique/models/emprunte_dette.dart';
@@ -53,21 +54,27 @@ class _parametre_notificationState extends State<parametre_notification> {
 
   // bool? stst;
   // bool stst = false;
-  static var status_dette;
-  static var status_budget;
-  static var status_objectif;
-
+  // bool status_dette;
+  //static var status_budget;
+  //static var status_objectif;
+  bool? status_dette = sharedpref!.getBool("statusDette") == null
+      ? true
+      : sharedpref!.getBool("statusDette");
+  bool? status_budget = sharedpref!.getBool("statusBudget") == null
+      ? true
+      : sharedpref!.getBool("statusBudget");
+  bool? status_objectif = sharedpref!.getBool("statusObjectif") == null
+      ? true
+      : sharedpref!.getBool("statusObjectif");
   @override
   Widget build(BuildContext context) {
-    if (status_dette == null) {
-      status_dette = true;
-    }
-    if (status_budget == null) {
-      status_budget = true;
-    }
-    if (status_objectif == null) {
-      status_objectif = true;
-    }
+    // if (status_dette == null) {
+    //   status_dette = true;
+    // }
+
+    // if (status_objectif == null) {
+    //   status_objectif = true;
+    // }
     return Scaffold(
       appBar: AppBar(),
       body: Column(
@@ -98,7 +105,8 @@ class _parametre_notificationState extends State<parametre_notification> {
                       } else {
                         updateStatusDettes(1);
                       }
-                      status_dette = position;
+                      //status_dette = position;
+                      sharedpref!.setBool("statusDette", position);
                     },
                   )
                 ],
@@ -131,7 +139,7 @@ class _parametre_notificationState extends State<parametre_notification> {
                       } else {
                         updateStatusBudget(1);
                       }
-                      status_budget = position;
+                      sharedpref!.setBool("statusBudget", position);
                     },
                   )
                 ],
@@ -164,7 +172,7 @@ class _parametre_notificationState extends State<parametre_notification> {
                       } else {
                         updateStatusObjectif(1);
                       }
-                      status_objectif = position;
+                      sharedpref!.setBool("statusObjectif", position);
                     },
                   )
                 ],

@@ -58,27 +58,31 @@ class parametre_profile extends StatelessWidget {
                       padding: EdgeInsets.only(top: 40),
                       child: ListView(
                         children: [
-                          ListTile(
-                            title: Text("Changer votre nom"),
-                            leading: Icon(Icons.account_balance),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          form_updateNom(usr)));
-                            },
+                          Card(
+                            child: ListTile(
+                              title: Text("Changer votre nom"),
+                              //leading: Icon(Icons.),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            form_updateNom(usr)));
+                              },
+                            ),
                           ),
-                          ListTile(
-                            title: Text("Changer votre Mot de passe"),
-                            leading: Icon(Icons.password),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          form_updatePass(usr)));
-                            },
+                          Card(
+                            child: ListTile(
+                              title: Text("Changer votre Mot de passe"),
+                              //leading: Icon(Icons.password),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            form_updatePass(usr)));
+                              },
+                            ),
                           ),
                         ],
                       ),

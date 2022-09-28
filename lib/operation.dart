@@ -14,6 +14,7 @@ import 'package:portfeuille_numerique/services/local_notification_service.dart';
 import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
+import 'package:get/get.dart';
 
 import 'budget.dart';
 import 'models/catBudget.dart';
@@ -59,43 +60,16 @@ class _operationState extends State<operation> {
   int? count;
   final List<Tab> mytabs = [
     Tab(
-      text: "Revenus",
+      text: "18".tr,
     ),
     Tab(
-      text: "Depenses",
+      text: "19".tr,
     )
   ];
 
   SQL_Helper helper = new SQL_Helper();
-  String currentNomCat = "Choisir une categorie";
-  String TypeCompte = "Choisissez le type de solde";
-  // updatedepenses() async {
-  //   utilisateur? user =
-  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
-  //   int a = user!.id!;
-  //   final Future<Database>? db = helper.initialiseDataBase();
-  //   var our_db = db;
-  //   if (our_db != null) {
-  //     our_db.then((database) {
-  //       Future<List<operation_sortir>> depenses = helper.getAllDepenses(a);
-  //       depenses.then((theList) {
-  //         setState(() {
-  //           this.alldepenses = theList;
-  //           count = theList.length;
-  //         });
-  //       });
-  //     });
-  //   }
-  // }
-  // int getTypeCompte(String typeCmp) {
-  //   if (typeCmp == "Compte") {
-  //     return 0;
-  //   } else if (typeCmp == "Bankily") {
-  //     return 1;
-  //   } else {
-  //     return 2;
-  //   }
-  // }
+  String currentNomCat = "21".tr;
+  String TypeCompte = "25".tr;
 
   insertRevenus(
       String value, String description, String date, String typeCmp) async {
@@ -105,9 +79,9 @@ class _operationState extends State<operation> {
     // if (montant == 0) {
     //   Toast.show("entrer montant");
     // }
-    if (currentNomCat != "Choisir une categorie") {
+    if (currentNomCat != "21".tr) {
       if (form.validate()) {
-        if (typeCmp != "Choisissez le type de solde") {
+        if (typeCmp != "25".tr) {
           int montant = int.parse(value);
           categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
           int idCat = cat!.id!;
@@ -132,20 +106,20 @@ class _operationState extends State<operation> {
             print("not inserted");
           }
         } else {
-          Toast.show("Choisissez le type de solde");
+          Toast.show("t2".tr);
         }
       }
     } else {
-      Toast.show("Choisir une categorie");
+      Toast.show("t1".tr);
     }
   }
 
   insertDepense(
       String value, String description, String date, String typeCmp) async {
     final form = _formKey2.currentState!;
-    if (currentNomCat != "Choisir une categorie") {
+    if (currentNomCat != "21".tr) {
       if (form.validate()) {
-        if (typeCmp != "Choisissez le type de solde") {
+        if (typeCmp != "25".tr) {
           ressource? res = await helper.getSpecifyRessource(typeCmp);
           int id_res = res!.id_ress!;
           compte? cmp = await helper.getSpecifyCompte(id_res);
@@ -182,11 +156,11 @@ class _operationState extends State<operation> {
                 context, "désolé", "vous n'avez pas de solde dans $typeCmp");
           }
         } else {
-          Toast.show("Choisissez le type de solde");
+          Toast.show("t2".tr);
         }
       }
     } else {
-      Toast.show("Choisir une categorie SVP");
+      Toast.show("t1".tr);
     }
 
     // updatedepenses();
@@ -194,444 +168,408 @@ class _operationState extends State<operation> {
   }
 
   Future<List<categorie>> achatsCategorie() async {
-    List<categorie> achatCategorieList = await helper.getAllcategories();
+    List<categorie> achatCategorieList =
+        await helper.getAllcategories(this.usr!.id!);
     return achatCategorieList;
   }
 
-  // modifySoldemoins(String value) async {
-  //   int montant = int.parse(value);
-  //   utilisateur? user =
-  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
-  //   int a = user!.id!;
-  //   compte? cmp = await helper.getCompteUser(a);
-
-  //   // if (cmp != null) {
-  //   //   int solde = cmp.solde!;
-  //   //   int newMontant = solde + montant;
-  //   //   //print(newMontant);
-  //   //   compte updateComp = compte(newMontant, a);
-  //   //   helper.update_compte(updateComp);
-  //   // } else {
-  //   //   compte newCompte = compte(montant, a);
-  //   //   helper.insert_compte(newCompte);
-  //   // }
-
-  //   if (cmp != null) {
-  //     int solde = cmp.solde!;
-  //     int newMontant = solde - montant;
-  //     //print(newMontant);
-  //     compte updateComp = compte(newMontant, a);
-  //     helper.update_compte(updateComp);
-  //     if (currentNomCat == "Choisir une categorie") {
-  //       Toast.show("choisir une categorie SVP");
-  //     } else {
-  //       insertDepense(sortirMontant.text, sortirDesc.text);
-  //       // Navigator.of(context).pop(montant);
-  //     }
-  //   } else {
-  //     showText(context, "désolé", "vous n'avez pas de solde");
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "",
-      home: DefaultTabController(
-        // initialIndex: selectedPage!,
-        length: mytabs.length,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
+    return DefaultTabController(
+      // initialIndex: selectedPage!,
+      length: mytabs.length,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
 
-          drawer: drowerfunction(context, usr),
-          appBar: AppBar(
-              toolbarHeight: 100,
-              bottom: TabBar(tabs: mytabs),
-              title: Text("Operations")),
-          // drawer: drowerfunction(context),
-          body: TabBarView(
-            children: [
-              Column(
-                children: [
-                  Card(
-                    margin: EdgeInsets.only(top: 40),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width - 50,
-                      color: Colors.white70,
-                      child: Form(
-                        key: _formKey1,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Ajoutez un nouveaux Revenu",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 30, left: 10),
-                              child: FutureBuilder(
-                                  future: achatsCategorie(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<List<categorie>> snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return CircularProgressIndicator();
-                                    } else {
-                                      return DropdownButton<String>(
-                                        items: snapshot.data!
-                                            .map((cat) =>
-                                                DropdownMenuItem<String>(
-                                                  child: Text(cat.nomcat!),
-                                                  value: cat.nomcat,
-                                                ))
-                                            .toList(),
-                                        onChanged: (String? value) {
-                                          setState(() {
-                                            currentNomCat = value!;
-                                          });
-                                        },
-                                        isExpanded: true,
-                                        //value: currentNomCat,
-                                        hint: Text(
-                                          '$currentNomCat',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            //fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, left: 10),
-                              // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                              child: TextFormField(
-                                controller: entreeMontant,
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "entree un montant";
-                                  }
-                                  return null;
-                                },
-                                decoration: const InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  labelText: "Montant",
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, left: 10),
-
-                              //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                              child: TextFormField(
-                                controller: entreeDesc,
-                                decoration: const InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  labelText: "Description",
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10, bottom: 10),
-                              //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                              child: TextFormField(
-                                controller: date1,
-                                // validator: (value) {
-                                //   if (value == null || value.isEmpty) {
-                                //     return "entrer la date de debut";
-                                //   }
-                                //   return null;
-                                // },
-                                //keyboardType: TextInputType.datetime,
-                                decoration: InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  labelText: "Date",
-                                  icon: Icon(Icons.calendar_today_outlined),
-                                ),
-                                onTap: () async {
-                                  DateTime? pickeddate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2050));
-
-                                  if (pickeddate == null) {
-                                    pickeddate = DateTime.now();
-                                  }
-                                  setState(() {
-                                    date1.text = DateFormat("yyyy-MM-dd")
-                                        .format(pickeddate!);
-                                  });
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 30, left: 10),
-                              child: FutureBuilder(
-                                  future: getComptesRessource(this.usr!.id!),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<List<compteRessource>>
-                                          snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return CircularProgressIndicator();
-                                    } else {
-                                      return DropdownButton<String>(
-                                        items: snapshot.data!
-                                            .map((cmpRes) =>
-                                                DropdownMenuItem<String>(
-                                                  child: Text(cmpRes.nom_ress!),
-                                                  value: cmpRes.nom_ress,
-                                                ))
-                                            .toList(),
-                                        onChanged: (String? value) {
-                                          setState(() {
-                                            TypeCompte = value!;
-                                          });
-                                        },
-                                        isExpanded: true,
-                                        //value: currentNomCat,
-                                        hint: Text(
-                                          '$TypeCompte',
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            //fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 40, left: 100),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 30),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
+        drawer: drowerfunction(context, usr),
+        appBar: AppBar(
+            toolbarHeight: 100,
+            bottom: TabBar(tabs: mytabs),
+            title: Text("17".tr)),
+        // drawer: drowerfunction(context),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Card(
+                  margin: EdgeInsets.only(top: 40),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 50,
+                    color: Colors.white70,
+                    child: Form(
+                      key: _formKey1,
+                      child: Column(
+                        children: [
+                          Text(
+                            "20".tr,
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 30, left: 10),
+                            child: FutureBuilder(
+                                future: achatsCategorie(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<categorie>> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return CircularProgressIndicator();
+                                  } else {
+                                    return DropdownButton<String>(
+                                      items: snapshot.data!
+                                          .map(
+                                              (cat) => DropdownMenuItem<String>(
+                                                    child: Text(cat.nomcat!),
+                                                    value: cat.nomcat,
+                                                  ))
+                                          .toList(),
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          currentNomCat = value!;
+                                        });
                                       },
-                                      child: Text('Annuler'),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        insertRevenus(
-                                            entreeMontant.text,
-                                            entreeDesc.text,
-                                            date1.text,
-                                            TypeCompte);
-
-                                        // Navigator.pop(context, myData);
-                                      },
-                                      child: Text('Enregistrer'),
-                                    ),
-                                  ),
-                                ],
+                                      isExpanded: true,
+                                      //value: currentNomCat,
+                                      hint: Text(
+                                        '$currentNomCat',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          //fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10, left: 10),
+                            // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                            child: TextFormField(
+                              controller: entreeMontant,
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "entree un montant";
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: "22".tr,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10, left: 10),
+
+                            //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                            child: TextFormField(
+                              controller: entreeDesc,
+                              decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: "23".tr,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10, bottom: 10),
+                            //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                            child: TextFormField(
+                              controller: date1,
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return "entrer la date de debut";
+                              //   }
+                              //   return null;
+                              // },
+                              //keyboardType: TextInputType.datetime,
+                              decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: "24".tr,
+                                icon: Icon(Icons.calendar_today_outlined),
+                              ),
+                              onTap: () async {
+                                DateTime? pickeddate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2050));
+
+                                if (pickeddate == null) {
+                                  pickeddate = DateTime.now();
+                                }
+                                setState(() {
+                                  date1.text = DateFormat("yyyy-MM-dd")
+                                      .format(pickeddate!);
+                                });
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 30, left: 10),
+                            child: FutureBuilder(
+                                future: getComptesRessource(this.usr!.id!),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<compteRessource>>
+                                        snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return CircularProgressIndicator();
+                                  } else {
+                                    return DropdownButton<String>(
+                                      items: snapshot.data!
+                                          .map((cmpRes) =>
+                                              DropdownMenuItem<String>(
+                                                child: Text(cmpRes.nom_ress!),
+                                                value: cmpRes.nom_ress,
+                                              ))
+                                          .toList(),
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          TypeCompte = value!;
+                                        });
+                                      },
+                                      isExpanded: true,
+                                      //value: currentNomCat,
+                                      hint: Text(
+                                        '$TypeCompte',
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          //fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 40, left: 100),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("26".tr),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      insertRevenus(
+                                          entreeMontant.text,
+                                          entreeDesc.text,
+                                          date1.text,
+                                          TypeCompte);
+
+                                      // Navigator.pop(context, myData);
+                                    },
+                                    child: Text("27".tr),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
-              //le deuscieme tab
-              Column(
-                children: [
-                  Card(
-                    margin: EdgeInsets.only(top: 40),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width - 50,
-                      color: Colors.white70,
-                      child: Form(
-                        key: _formKey2,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Ajoutez un nouveaux Depense",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 30, left: 10),
-                              child: FutureBuilder(
-                                  future: achatsCategorie(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<List<categorie>> snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return CircularProgressIndicator();
-                                    } else {
-                                      return DropdownButton<String>(
-                                        items: snapshot.data!
-                                            .map((cat) =>
-                                                DropdownMenuItem<String>(
-                                                  child: Text(cat.nomcat!),
-                                                  value: cat.nomcat,
-                                                ))
-                                            .toList(),
-                                        onChanged: (String? value) {
-                                          setState(() {
-                                            currentNomCat = value!;
-                                          });
-                                        },
-                                        isExpanded: true,
-                                        //value: currentNomCat,
-                                        hint: Text(
-                                          '$currentNomCat',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            //fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, left: 10),
-                              // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                              child: TextFormField(
-                                controller: sortirMontant,
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "entree une montant";
-                                  }
-                                  return null;
-                                },
-                                decoration: const InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  labelText: "Montant",
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, left: 10),
-
-                              //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                              child: TextFormField(
-                                controller: sortirDesc,
-                                decoration: const InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  labelText: "Description",
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10, bottom: 10),
-                              //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                              child: TextFormField(
-                                controller: date2,
-                                // validator: (value) {
-                                //   if (value == null || value.isEmpty) {
-                                //     return "entrer la date de debut";
-                                //   }
-                                //   return null;
-                                // },
-                                //keyboardType: TextInputType.datetime,
-                                decoration: InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  labelText: "Date",
-                                  icon: Icon(Icons.calendar_today_outlined),
-                                ),
-                                onTap: () async {
-                                  DateTime? pickeddate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2050));
-
-                                  if (pickeddate == null) {
-                                    pickeddate = DateTime.now();
-                                  }
-                                  setState(() {
-                                    date2.text = DateFormat("yyyy-MM-dd")
-                                        .format(pickeddate!);
-                                  });
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 30, left: 10),
-                              child: FutureBuilder(
-                                  future: getComptesRessource(this.usr!.id!),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<List<compteRessource>>
-                                          snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return CircularProgressIndicator();
-                                    } else {
-                                      return DropdownButton<String>(
-                                        items: snapshot.data!
-                                            .map((cmpRes) =>
-                                                DropdownMenuItem<String>(
-                                                  child: Text(cmpRes.nom_ress!),
-                                                  value: cmpRes.nom_ress,
-                                                ))
-                                            .toList(),
-                                        onChanged: (String? value) {
-                                          setState(() {
-                                            TypeCompte = value!;
-                                          });
-                                        },
-                                        isExpanded: true,
-                                        //value: currentNomCat,
-                                        hint: Text(
-                                          '$TypeCompte',
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            //fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 40, left: 100),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 30),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
+                ),
+              ],
+            ),
+            //le deuscieme tab
+            Column(
+              children: [
+                Card(
+                  margin: EdgeInsets.only(top: 40),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 50,
+                    color: Colors.white70,
+                    child: Form(
+                      key: _formKey2,
+                      child: Column(
+                        children: [
+                          Text(
+                            "28".tr,
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 30, left: 10),
+                            child: FutureBuilder(
+                                future: achatsCategorie(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<categorie>> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return CircularProgressIndicator();
+                                  } else {
+                                    return DropdownButton<String>(
+                                      items: snapshot.data!
+                                          .map(
+                                              (cat) => DropdownMenuItem<String>(
+                                                    child: Text(cat.nomcat!),
+                                                    value: cat.nomcat,
+                                                  ))
+                                          .toList(),
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          currentNomCat = value!;
+                                        });
                                       },
-                                      child: Text('Annuler'),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        insertDepense(
-                                            sortirMontant.text,
-                                            sortirDesc.text,
-                                            date2.text,
-                                            TypeCompte);
-
-                                        // Navigator.pop(context, myData);
-                                      },
-                                      child: Text('Enregistrer'),
-                                    ),
-                                  ),
-                                ],
+                                      isExpanded: true,
+                                      //value: currentNomCat,
+                                      hint: Text(
+                                        '$currentNomCat',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          //fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10, left: 10),
+                            // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                            child: TextFormField(
+                              controller: sortirMontant,
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "entree une montant";
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: "22".tr,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10, left: 10),
+
+                            //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                            child: TextFormField(
+                              controller: sortirDesc,
+                              decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: "23".tr,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10, bottom: 10),
+                            //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                            child: TextFormField(
+                              controller: date2,
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return "entrer la date de debut";
+                              //   }
+                              //   return null;
+                              // },
+                              //keyboardType: TextInputType.datetime,
+                              decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: "24".tr,
+                                icon: Icon(Icons.calendar_today_outlined),
+                              ),
+                              onTap: () async {
+                                DateTime? pickeddate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2050));
+
+                                if (pickeddate == null) {
+                                  pickeddate = DateTime.now();
+                                }
+                                setState(() {
+                                  date2.text = DateFormat("yyyy-MM-dd")
+                                      .format(pickeddate!);
+                                });
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 30, left: 10),
+                            child: FutureBuilder(
+                                future: getComptesRessource(this.usr!.id!),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<compteRessource>>
+                                        snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return CircularProgressIndicator();
+                                  } else {
+                                    return DropdownButton<String>(
+                                      items: snapshot.data!
+                                          .map((cmpRes) =>
+                                              DropdownMenuItem<String>(
+                                                child: Text(cmpRes.nom_ress!),
+                                                value: cmpRes.nom_ress,
+                                              ))
+                                          .toList(),
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          TypeCompte = value!;
+                                        });
+                                      },
+                                      isExpanded: true,
+                                      //value: currentNomCat,
+                                      hint: Text(
+                                        '$TypeCompte',
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          //fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 40, left: 100),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(right: 30),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                    },
+                                    child: Text("26".tr),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      insertDepense(
+                                          sortirMontant.text,
+                                          sortirDesc.text,
+                                          date2.text,
+                                          TypeCompte);
+
+                                      // Navigator.pop(context, myData);
+                                    },
+                                    child: Text("27".tr),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              )
-            ],
-          ),
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );

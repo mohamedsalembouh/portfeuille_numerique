@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/dettes.dart';
+import 'package:portfeuille_numerique/main.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/prette_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:intl/intl.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
-
-import 'models/argent.dart';
 import 'models/compte.dart';
 import 'models/compteRessource.dart';
 import 'models/ressource.dart';
+import 'package:get/get.dart';
 
 class form_prette extends StatefulWidget {
   // const form_prette({Key? key}) : super(key: key);
@@ -47,8 +46,14 @@ class _form_pretteState extends State<form_prette> {
     int id_compte = cmp!.id!;
 
     if (form!.validate()) {
-      prette_dette pretteDette = prette_dette(nom, objectif, int.parse(montant),
-          date_maintenant, dateDebut, dateEcheance, 0, 0, id_compte, a);
+      prette_dette pretteDette;
+      if (sharedpref!.getBool("statusDette") == true) {
+        pretteDette = prette_dette(nom, objectif, int.parse(montant),
+            date_maintenant, dateDebut, dateEcheance, 0, 0, id_compte, a);
+      } else {
+        pretteDette = prette_dette(nom, objectif, int.parse(montant),
+            date_maintenant, dateDebut, dateEcheance, 0, 1, id_compte, a);
+      }
       int x = await helper.insert_pretteDatte(pretteDette);
       if (x > 0) {
         print("inserted ");
@@ -60,13 +65,13 @@ class _form_pretteState extends State<form_prette> {
     }
   }
 
-  String typeCmp = "Choisissez le type de solde";
+  String typeCmp = "25".tr;
   minsSolde(String value, String typecomp) async {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     final form = _formKey.currentState;
     if (form!.validate()) {
-      if (typeCmp != "Choisissez le type de solde") {
+      if (typeCmp != "25".tr) {
         ressource? res = await helper.getSpecifyRessource(typeCmp);
         int id_res = res!.id_ress!;
         int mnt = int.parse(value);
@@ -91,7 +96,7 @@ class _form_pretteState extends State<form_prette> {
           showText(context, "désolé", "Vous n'avez pas de solde dans $typeCmp");
         }
       } else {
-        Toast.show("Choisissez le type de solde");
+        Toast.show("t2".tr);
       }
     }
   }
@@ -122,7 +127,7 @@ class _form_pretteState extends State<form_prette> {
                             Padding(
                                 padding: EdgeInsets.only(bottom: 20),
                                 child: Text(
-                                  "Nouveaux Prette Dette",
+                                  "44".tr,
                                   style: TextStyle(fontSize: 25),
                                 )),
                             Padding(
@@ -136,9 +141,9 @@ class _form_pretteState extends State<form_prette> {
                                   }
                                   return null;
                                 },
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "A qui avez vous prette",
+                                  labelText: "45".tr,
                                 ),
                               ),
                             ),
@@ -147,9 +152,9 @@ class _form_pretteState extends State<form_prette> {
                               // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                               child: TextFormField(
                                 controller: objet,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "L'objet de cette dette",
+                                  labelText: "46".tr,
                                 ),
                               ),
                             ),
@@ -166,9 +171,9 @@ class _form_pretteState extends State<form_prette> {
                                   }
                                   return null;
                                 },
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "Montant",
+                                  labelText: "22".tr,
                                 ),
                               ),
                             ),
@@ -186,7 +191,7 @@ class _form_pretteState extends State<form_prette> {
                                 //keyboardType: TextInputType.datetime,
                                 decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "Date debut ",
+                                  labelText: "47".tr,
                                   icon: Icon(Icons.calendar_today_outlined),
                                 ),
                                 onTap: () async {
@@ -218,9 +223,9 @@ class _form_pretteState extends State<form_prette> {
                                   return null;
                                 },
                                 //keyboardType: TextInputType.datetime,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "Date d'echeance ",
+                                  labelText: "48".tr,
                                   icon: Icon(Icons.calendar_today_outlined),
                                 ),
                                 onTap: () async {
@@ -279,6 +284,8 @@ class _form_pretteState extends State<form_prette> {
                             Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),
                               child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(right: 30),
@@ -286,7 +293,7 @@ class _form_pretteState extends State<form_prette> {
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: Text('Annuler'),
+                                      child: Text('26'.tr),
                                     ),
                                   ),
                                   Padding(
@@ -295,7 +302,7 @@ class _form_pretteState extends State<form_prette> {
                                       onPressed: () {
                                         minsSolde(montant.text, typeCmp);
                                       },
-                                      child: Text('Enregistrer'),
+                                      child: Text('27'.tr),
                                     ),
                                   ),
                                 ],

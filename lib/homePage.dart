@@ -12,20 +12,22 @@ import 'package:portfeuille_numerique/models/depensesCats.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/prette_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
+import 'package:portfeuille_numerique/notification.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:portfeuille_numerique/operation.dart';
 import 'package:portfeuille_numerique/parametres.dart';
 import 'package:portfeuille_numerique/partageGroupe.dart';
 import 'package:portfeuille_numerique/services/local_notification_service.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 import 'db/sql_helper.dart';
-import 'models/argent.dart';
+
 import 'models/catBudget.dart';
 import 'models/emprunte_dette.dart';
 import 'models/ressource.dart';
-import 'profileUser.dart';
+
+import 'package:get/get.dart';
 
 class homepage extends StatefulWidget {
   homepage.withNull({Key? key}) : super(key: key);
@@ -62,7 +64,7 @@ class _homepageState extends State<homepage> {
   TextEditingController f_solde = TextEditingController();
   // _homepageState(this.email, this.pass);
 
-  String TypeCompte = "Choisissez le type de solde";
+  String TypeCompte = "25".tr;
   SQL_Helper helper = new SQL_Helper();
   List<charts.Series<diagram, String>?>? _seriedata;
   List<depensesCats>? allDepenses;
@@ -129,10 +131,10 @@ class _homepageState extends State<homepage> {
 
   final List<Tab> mytabs = [
     Tab(
-      text: "Comptes",
+      text: "11".tr,
     ),
     Tab(
-      text: "Depenses",
+      text: "12".tr,
     )
   ];
   late final LocalNotificationService service;
@@ -152,7 +154,7 @@ class _homepageState extends State<homepage> {
     // utilisateur? user =
     //     await helper.getUser(this.user!.email!, this.user!.password!);
     // a = user!.id;
-    if (TypeCompte != "Choisissez le type de solde") {
+    if (TypeCompte != "25".tr) {
       ressource? res = await helper.getSpecifyRessource(typeCmp);
       int id_res = res!.id_ress!;
       DateTime maintenant = DateTime.now();
@@ -175,7 +177,7 @@ class _homepageState extends State<homepage> {
       updateEverySolde();
       Navigator.pop(context);
     } else {
-      Toast.show("Choisissez le type de solde");
+      Toast.show("t2".tr);
     }
     // this.allUpdateSolde =
     //     getListSoldes(allUpdateSolde!, typeCmp, this.user!.id!);
@@ -402,6 +404,8 @@ class _homepageState extends State<homepage> {
 
   TextEditingController dateDebut = TextEditingController();
 
+  int indexTab = 0;
+
   @override
   Widget build(BuildContext context) {
     if (allSolde == null) {
@@ -430,263 +434,119 @@ class _homepageState extends State<homepage> {
     //faireNotificationDettes2();
     //print(allDepenses![0].date);
     // print("alldepenses = ${allDepenses!.length}");
-    return MaterialApp(
-      home: DefaultTabController(
-        length: mytabs.length,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: appbarfunction(context, mytabs, "Accueil", this.user!),
-          drawer: drowerfunction(context, this.user),
-          body: TabBarView(
-            children: [
-              Container(
-                //height: MediaQuery.of(context).size.height ,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return DefaultTabController(
+      length: mytabs.length,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          // backgroundColor: Colors.blue,
+          bottom: TabBar(
+              onTap: (value) {
+                setState(() {
+                  indexTab = value;
+                });
+              },
+              tabs: mytabs),
+          title: Text("10".tr),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => notification(user, 0)));
+                },
+                child: Icon(Icons.notifications),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => parametrage(user)));
+                },
+                child: Icon(Icons.settings),
+              ),
+            ),
+          ],
+        ),
+        drawer: drowerfunction(context, this.user),
+        body: TabBarView(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //add column for solde et button
+                Column(
                   children: [
-                    //add column for solde et button
-                    Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              // Title(color: Colors.red, child: Text("hi")),
-                              Text(
-                                "Votre Solde est ",
-                                style: TextStyle(fontSize: 25),
-                              ),
-                              Container(
-                                width: 200,
-                                height: 50,
-                                child: TextField(
-                                  enabled: false,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                      hintText: '$allSolde',
-                                      border: OutlineInputBorder()),
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                  ),
-                                ),
-
-                                // width: 200,
-                                // height: 50,
-                                // child: Padding(
-                                //   padding: EdgeInsets.only(),
-                                //   child: ListTile(
-                                //     title: Card(
-                                //       //margin: EdgeInsets.only(left: 20),
-                                //       child: Center(
-                                //         child: Text(
-                                //           "$allSolde",
-                                //           style: TextStyle(fontSize: 30),
-                                //         ),
-                                //       ),
-                                //     ),
-                                //     onTap: () {
-                                //       print(allSolde);
-                                //       print(m1);
-                                //       print(m2);
-                                //       print(m3);
-                                //       AlertDialog alertDialog = AlertDialog(
-                                //         title: Text(""),
-                                //         content: Container(
-                                //           height: 200,
-                                //           child: Column(
-                                //             children: [
-                                //               Card(
-                                //                   child:
-                                //                       Text("Bankily :  $m1")),
-                                //               Text("$m2"),
-                                //               Text("$m3"),
-                                //             ],
-                                //           ),
-                                //         ),
-                                //       );
-                                //       showDialog(
-                                //           context: context,
-                                //           builder: (BuildContext context) {
-                                //             return alertDialog;
-                                //           });
-                                //     },
-                                //   ),
-                                // ),
-                              ),
-                            ],
+                    Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            "13".tr,
+                            style: TextStyle(fontSize: 25),
                           ),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  // Text(" "),
-                                  RaisedButton(
-                                    onPressed: () {
-                                      print(allSolde);
-
-                                      AlertDialog alertDialog = AlertDialog(
-                                        title: Text(""),
-                                        content: Container(
-                                          width: 100,
-                                          height: 200,
-                                          child: Column(
-                                            children: [
-                                              Expanded(
-                                                child: ListView.builder(
-                                                    itemCount: monliste.length,
-                                                    itemBuilder:
-                                                        (context, pos) {
-                                                      print(monliste[pos].nom);
-                                                      print(
-                                                          monliste[pos].solde);
-                                                      return Card(
-                                                        child: ListTile(
-                                                          title: Text(
-                                                              "${monliste[pos].nom}"),
-                                                          subtitle: Text(
-                                                              "${monliste[pos].solde}"),
-                                                        ),
-                                                      );
-                                                    }),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return alertDialog;
-                                          });
-                                    },
-                                    padding: EdgeInsets.all(5),
-                                    // color: Colors.red,
-                                    //textColor: Colors.white,
-                                    child:
-                                        Text("Afficher Les Details de solde"),
-                                  )
-                                ])),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Row(
+                          Container(
+                            width: 200,
+                            height: 50,
+                            child: TextField(
+                              enabled: false,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  hintText: '$allSolde',
+                                  border: OutlineInputBorder()),
+                              style: TextStyle(
+                                fontSize: 30,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               // Text(" "),
                               RaisedButton(
                                 onPressed: () {
+                                  print(allSolde);
+
                                   AlertDialog alertDialog = AlertDialog(
-                                      title: Text("Ajouter un nouveaux solde"),
-                                      content: StatefulBuilder(builder:
-                                          (BuildContext context,
-                                              StateSetter setState) {
-                                        return Container(
-                                          height: 300,
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10),
-                                                child: SizedBox(
-                                                  //width: 200,
-                                                  child: TextField(
-                                                    controller: f_solde,
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    decoration: InputDecoration(
-                                                        hintText: '0',
-                                                        border:
-                                                            OutlineInputBorder()),
-                                                    style:
-                                                        TextStyle(fontSize: 20),
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 30, left: 10),
-                                                child: FutureBuilder(
-                                                    future: getRessources(
-                                                        this.user!.id!),
-                                                    builder: (BuildContext
-                                                            context,
-                                                        AsyncSnapshot<
-                                                                List<ressource>>
-                                                            snapshot) {
-                                                      if (!snapshot.hasData) {
-                                                        return CircularProgressIndicator();
-                                                      } else {
-                                                        return DropdownButton<
-                                                            String>(
-                                                          items: snapshot.data!
-                                                              .map((res) =>
-                                                                  DropdownMenuItem<
-                                                                      String>(
-                                                                    child: Text(
-                                                                        res.nom_ress!),
-                                                                    value: res
-                                                                        .nom_ress,
-                                                                  ))
-                                                              .toList(),
-                                                          onChanged:
-                                                              (String? value) {
-                                                            setState(() {
-                                                              TypeCompte =
-                                                                  value!;
-                                                            });
-                                                          },
-                                                          isExpanded: true,
-                                                          //value: currentNomCat,
-                                                          hint: Text(
-                                                            '$TypeCompte',
-                                                            style: TextStyle(
-                                                              fontSize: 15,
-                                                              //fontWeight: FontWeight.bold
-                                                            ),
-                                                          ),
-                                                        );
-                                                      }
-                                                    }),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  children: [
-                                                    ElevatedButton(
-                                                      child: Text(
-                                                        "Annuler",
-                                                        // style: TextStyle(
-                                                        //     color: Colors.red),
-                                                      ),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
+                                    title: Text(""),
+                                    content: Container(
+                                      width: 100,
+                                      height: 200,
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                            child: ListView.builder(
+                                                itemCount: monliste.length,
+                                                itemBuilder: (context, pos) {
+                                                  print(monliste[pos].nom);
+                                                  print(monliste[pos].solde);
+                                                  return Card(
+                                                    child: ListTile(
+                                                      title: Text(
+                                                          "${monliste[pos].nom}"),
+                                                      subtitle: Text(
+                                                          "${monliste[pos].solde}"),
                                                     ),
-                                                    ElevatedButton(
-                                                      child:
-                                                          Text("Enregistrer"),
-                                                      onPressed: () {
-                                                        insertSolde(
-                                                            f_solde.text,
-                                                            TypeCompte);
-                                                        f_solde.clear();
-                                                        TypeCompte =
-                                                            "Choisissez le type de solde";
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
+                                                  );
+                                                }),
                                           ),
-                                        );
-                                      }));
+                                        ],
+                                      ),
+                                    ),
+                                  );
                                   showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
@@ -694,148 +554,293 @@ class _homepageState extends State<homepage> {
                                       });
                                 },
                                 padding: EdgeInsets.all(5),
-                                color: Colors.red,
-                                textColor: Colors.white,
-                                child: Text("Alimenter le solde"),
+                                // color: Colors.red,
+                                //textColor: Colors.white,
+                                child: Text("14".tr),
                               )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    //fermer column solde et botton
-
-                    //add new column for statistiques
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Statistiques sur les depenses",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ],
-                          ),
-                        ),
-                        //ajouter ici le diagramme circulaire
-                        Padding(
-                          padding: EdgeInsets.only(top: 5),
-                          child: Container(
-                            width: 400,
-                            height: 400,
-                            child: charts.PieChart(
-                              _seriedata,
-                              animate: true,
-                              animationDuration: Duration(seconds: 3),
-                              defaultRenderer: new charts.ArcRendererConfig(
-                                  // customRendererId: 'novoId',
-                                  arcWidth: 100,
-                                  arcRendererDecorators: [
-                                    // new charts.ArcLabelDecorator(
-                                    //     labelPosition:
-                                    //         charts.ArcLabelPosition.inside)
-                                  ]),
-                              behaviors: [
-                                new charts.DatumLegend(
-                                  outsideJustification:
-                                      charts.OutsideJustification.endDrawArea,
-                                  horizontalFirst: false,
-                                  desiredMaxRows: 2,
-                                  cellPadding: EdgeInsets.only(
-                                    right: 4,
-                                    bottom: 4,
-                                  ),
-                                  entryTextStyle: charts.TextStyleSpec(
-                                    color: charts
-                                        .MaterialPalette.purple.shadeDefault,
-                                    fontSize: 11,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    //fermer column statistiques
-                    //add column vue
-                    //fermer column vue
-
-                    Container(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 350,
-                        ),
-                        child: FloatingActionButton(
-                          child: Icon(
-                            Icons.add,
-                            size: 20,
-                          ),
-                          onPressed: () async {
-                            myresult = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        operation(this.user, this.user!.id!)));
-
-                            if (myresult != null) {
-                              // updateSolde();
-                              updateCategories();
-                              modifySolde(
-                                  myresult![0], myresult![1], myresult![2]);
-                            }
-                          },
-                        ),
+                            ])),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // Text(" "),
+                          RaisedButton(
+                            onPressed: () {
+                              AlertDialog alertDialog = AlertDialog(
+                                  title: Text("29".tr),
+                                  content: StatefulBuilder(builder:
+                                      (BuildContext context,
+                                          StateSetter setState) {
+                                    return Container(
+                                      height: 300,
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: SizedBox(
+                                              //width: 200,
+                                              child: TextField(
+                                                controller: f_solde,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                decoration: InputDecoration(
+                                                    hintText: '0',
+                                                    border:
+                                                        OutlineInputBorder()),
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 30, left: 10),
+                                            child: FutureBuilder(
+                                                future: getRessources(
+                                                    this.user!.id!),
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<
+                                                            List<ressource>>
+                                                        snapshot) {
+                                                  if (!snapshot.hasData) {
+                                                    return CircularProgressIndicator();
+                                                  } else {
+                                                    return DropdownButton<
+                                                        String>(
+                                                      items: snapshot.data!
+                                                          .map((res) =>
+                                                              DropdownMenuItem<
+                                                                  String>(
+                                                                child: Text(res
+                                                                    .nom_ress!),
+                                                                value: res
+                                                                    .nom_ress,
+                                                              ))
+                                                          .toList(),
+                                                      onChanged:
+                                                          (String? value) {
+                                                        setState(() {
+                                                          TypeCompte = value!;
+                                                        });
+                                                      },
+                                                      isExpanded: true,
+                                                      //value: currentNomCat,
+                                                      hint: Text(
+                                                        '$TypeCompte',
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          //fontWeight: FontWeight.bold
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                }),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                ElevatedButton(
+                                                  child: Text(
+                                                    "26".tr,
+                                                    // style: TextStyle(
+                                                    //     color: Colors.red),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                ElevatedButton(
+                                                  child: Text("27".tr),
+                                                  onPressed: () {
+                                                    insertSolde(f_solde.text,
+                                                        TypeCompte);
+                                                    f_solde.clear();
+                                                    TypeCompte = "25".tr;
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }));
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return alertDialog;
+                                  });
+                            },
+                            padding: EdgeInsets.all(5),
+                            color: Colors.red,
+                            textColor: Colors.white,
+                            child: Text("15".tr),
+                          )
+                        ],
                       ),
-                    )
+                    ),
                   ],
                 ),
-              ),
-              //la page budgets et objectifs
-              Column(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Expanded(
-                            child: ListView.builder(
-                                itemCount: count,
-                                itemBuilder: (context, pos) {
-                                  return Card(
-                                    child: ListTile(
-                                        isThreeLine: true,
-                                        title: Text("${depenses[pos].nomcat}"),
-                                        subtitle:
-                                            Text("${depenses[pos].montant}"),
-                                        trailing: Column(
-                                          children: [
-                                            Text("${depenses[pos].date}"),
-                                            // Text(
-                                            //     "${depenses[pos].type_compte}"),
-                                          ],
-                                        )),
-                                  );
-                                })),
-                      ],
+                //fermer column solde et botton
+
+                //add new column for statistiques
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //Text(AppLocalizations.of(context)!.myComptes),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: Row(
+                        children: [
+                          Text(
+                            "16".tr,
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
                     ),
-                  )
-                ],
-              )
-            ],
-          ),
-          //bottomNavigationBar: myBottomNavBar(),
+                    //ajouter ici le diagramme circulaire
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Container(
+                        width: 400,
+                        height: 400,
+                        child: charts.PieChart(
+                          _seriedata,
+                          animate: true,
+                          animationDuration: Duration(seconds: 3),
+                          defaultRenderer: new charts.ArcRendererConfig(
+                              // customRendererId: 'novoId',
+                              arcWidth: 100,
+                              arcRendererDecorators: [
+                                // new charts.ArcLabelDecorator(
+                                //     labelPosition:
+                                //         charts.ArcLabelPosition.inside)
+                              ]),
+                          behaviors: [
+                            new charts.DatumLegend(
+                              outsideJustification:
+                                  charts.OutsideJustification.endDrawArea,
+                              horizontalFirst: false,
+                              desiredMaxRows: 2,
+                              cellPadding: EdgeInsets.only(
+                                right: 4,
+                                bottom: 4,
+                              ),
+                              entryTextStyle: charts.TextStyleSpec(
+                                color:
+                                    charts.MaterialPalette.purple.shadeDefault,
+                                fontSize: 11,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                //fermer column statistiques
+                //add column vue
+                //fermer column vue
+
+                // Container(
+                //   // child: Padding(
+                //   //   padding: EdgeInsets.only(
+                //   //     left: 350,
+                //   //   ),
+                //   child:
+                // FloatingActionButton(
+                //   child: Icon(
+                //     Icons.add,
+                //     size: 20,
+                //   ),
+                //   onPressed: () async {
+                //     myresult = await Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //             builder: (context) =>
+                //                 operation(this.user, this.user!.id!)));
+
+                //     if (myresult != null) {
+                //       // updateSolde();
+                //       updateCategories();
+                //       modifySolde(myresult![0], myresult![1], myresult![2]);
+                //     }
+                //   },
+                // ),
+
+                //)
+              ],
+            ),
+
+            //la page des depenses
+            Column(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Expanded(
+                          child: ListView.builder(
+                              itemCount: count,
+                              itemBuilder: (context, pos) {
+                                return Card(
+                                  child: ListTile(
+                                      isThreeLine: true,
+                                      title: Text("${depenses[pos].nomcat}"),
+                                      subtitle:
+                                          Text("${depenses[pos].montant}"),
+                                      trailing: Column(
+                                        children: [
+                                          Text("${depenses[pos].date}"),
+                                          // Text(
+                                          //     "${depenses[pos].type_compte}"),
+                                        ],
+                                      )),
+                                );
+                              })),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ],
         ),
+        floatingActionButton: indexTab == 0
+            ? FloatingActionButton(
+                child: Icon(
+                  Icons.add,
+                  size: 20,
+                ),
+                onPressed: () async {
+                  myresult = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              operation(this.user, this.user!.id!)));
+
+                  if (myresult != null) {
+                    // updateSolde();
+                    updateCategories();
+                    modifySolde(myresult![0], myresult![1], myresult![2]);
+                  }
+                },
+              )
+            : null,
+
+        //bottomNavigationBar: myBottomNavBar(),
       ),
     );
   }
 
   faireNotifications() async {
     SQL_Helper helper = SQL_Helper();
-    List<categorie> allcategories = await helper.getAllcategories();
+    List<categorie> allcategories =
+        await helper.getAllcategories(this.user!.id!);
     allcategories.forEach((cat) async {
       List<depensesCats> depenses =
           await helper.getSpecifiedDepenses(this.user!.id!, cat.nomcat!);

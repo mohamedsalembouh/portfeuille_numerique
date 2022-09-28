@@ -9,6 +9,7 @@ import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'models/partag.dart';
+import 'package:get/get.dart';
 
 class partage extends StatefulWidget {
   // const partage({Key? key}) : super(key: key);
@@ -84,14 +85,14 @@ class _partageState extends State<partage> {
     partages2 = this.allOntPartagemoi;
     return Scaffold(
         appBar: AppBar(
-          title: Text("Partage votre compte"),
+          title: Text("e".tr),
         ),
         drawer: drowerfunction(context, usr),
         body: Column(children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: ListTile(
-              title: Text("Les Personnes avec quelles je partage mon compte "),
+              title: Text("65".tr),
             ),
           ),
           Expanded(
@@ -107,8 +108,7 @@ class _partageState extends State<partage> {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: ListTile(
-              title:
-                  Text("Les Personnes qui partagent leurs comptes avec moi "),
+              title: Text("66".tr),
             ),
           ),
           Expanded(
@@ -128,22 +128,17 @@ class _partageState extends State<partage> {
                       ),
                     );
                   })),
-          Padding(
-            padding: EdgeInsets.only(left: 350, bottom: 20),
-            child: FloatingActionButton(
-              child: Icon(
-                Icons.add,
-                size: 20,
-              ),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => formPartage(this.usr)));
-              },
-            ),
+        ]),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(
+            Icons.add,
+            size: 20,
           ),
-        ]));
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => formPartage(this.usr)));
+          },
+        ));
   }
 
   // void listenToNotification() =>

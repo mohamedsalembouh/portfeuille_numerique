@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/dettes.dart';
+import 'package:portfeuille_numerique/main.dart';
 import 'package:portfeuille_numerique/models/emprunte_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
-
 import 'methodes.dart';
-import 'models/argent.dart';
 import 'models/compte.dart';
 import 'models/compteRessource.dart';
 import 'models/ressource.dart';
+import 'package:get/get.dart';
 
 class formemprunte extends StatefulWidget {
   utilisateur? usr;
@@ -35,6 +34,7 @@ class _formemprunteState extends State<formemprunte> {
   TextEditingController dateEcheance = TextEditingController();
   SQL_Helper helper = SQL_Helper();
   //String defaultDateDebut = DateFormat("yyy-MM-dd").format(DateTime.now());
+  String TypeCompte = "25".tr;
 
   insertEmprunteDette(String nom, String objectif, String montant,
       String dateDebut, String dateEcheance) async {
@@ -46,22 +46,37 @@ class _formemprunteState extends State<formemprunte> {
     // String dateDebut = now.toString();
 
     if (form!.validate()) {
-      if (TypeCompte != "Choisissez le type de solde") {
+      if (TypeCompte != "25".tr) {
         ressource? res = await helper.getSpecifyRessource(TypeCompte);
         int id_res = res!.id_ress!;
         compte? cmp = await helper.getSpecifyCompte(id_res);
         int id_compte = cmp!.id!;
-        emprunte_dette emprunteDette = emprunte_dette(
-            nom,
-            objectif,
-            int.parse(montant),
-            date_maintenant,
-            dateDebut,
-            dateEcheance,
-            0,
-            0,
-            id_compte,
-            this.usr!.id);
+        emprunte_dette emprunteDette;
+        if (sharedpref!.getBool("statusDette") == true) {
+          emprunteDette = emprunte_dette(
+              nom,
+              objectif,
+              int.parse(montant),
+              date_maintenant,
+              dateDebut,
+              dateEcheance,
+              0,
+              0,
+              id_compte,
+              this.usr!.id);
+        } else {
+          emprunteDette = emprunte_dette(
+              nom,
+              objectif,
+              int.parse(montant),
+              date_maintenant,
+              dateDebut,
+              dateEcheance,
+              0,
+              1,
+              id_compte,
+              this.usr!.id);
+        }
         int x = await helper.insert_EmprunteDatte(emprunteDette);
         if (x > 0) {
           print("inserted ");
@@ -72,12 +87,11 @@ class _formemprunteState extends State<formemprunte> {
           print("not inserted");
         }
       } else {
-        Toast.show("Choisissez le type de solde");
+        Toast.show("t2".tr);
       }
     }
   }
 
-  String TypeCompte = "Choisissez le type de solde";
   PlusSolde(int mnt, String typeCmp) async {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
@@ -130,7 +144,7 @@ class _formemprunteState extends State<formemprunte> {
                             Padding(
                                 padding: EdgeInsets.only(bottom: 20),
                                 child: Text(
-                                  "Nouveaux Emprunte Dette",
+                                  "49".tr,
                                   style: TextStyle(fontSize: 25),
                                 )),
                             Padding(
@@ -144,9 +158,9 @@ class _formemprunteState extends State<formemprunte> {
                                   }
                                   return null;
                                 },
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "A qui avez vous emprunte",
+                                  labelText: "50".tr,
                                 ),
                               ),
                             ),
@@ -155,9 +169,9 @@ class _formemprunteState extends State<formemprunte> {
                               // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                               child: TextFormField(
                                 controller: objet,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "L'objet de cette dette",
+                                  labelText: "46".tr,
                                 ),
                               ),
                             ),
@@ -174,9 +188,9 @@ class _formemprunteState extends State<formemprunte> {
                                   }
                                   return null;
                                 },
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "Montant",
+                                  labelText: "22".tr,
                                 ),
                               ),
                             ),
@@ -194,7 +208,7 @@ class _formemprunteState extends State<formemprunte> {
                                 //keyboardType: TextInputType.datetime,
                                 decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "Date debut ",
+                                  labelText: "47".tr,
                                   icon: Icon(Icons.calendar_today_outlined),
                                 ),
                                 onTap: () async {
@@ -226,9 +240,9 @@ class _formemprunteState extends State<formemprunte> {
                                   return null;
                                 },
                                 //keyboardType: TextInputType.datetime,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: UnderlineInputBorder(),
-                                  labelText: "Date d'echeance ",
+                                  labelText: "48".tr,
                                   icon: Icon(Icons.calendar_today_outlined),
                                 ),
                                 onTap: () async {
@@ -287,6 +301,8 @@ class _formemprunteState extends State<formemprunte> {
                             Padding(
                               padding: EdgeInsets.only(top: 40, left: 100),
                               child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(right: 30),
@@ -294,7 +310,7 @@ class _formemprunteState extends State<formemprunte> {
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: Text('Annuler'),
+                                      child: Text('26'.tr),
                                     ),
                                   ),
                                   Padding(
@@ -308,7 +324,7 @@ class _formemprunteState extends State<formemprunte> {
                                             dateDebut.text,
                                             dateEcheance.text);
                                       },
-                                      child: Text('Enregistrer'),
+                                      child: Text('27'.tr),
                                     ),
                                   ),
                                 ],

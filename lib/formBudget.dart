@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
+import 'package:portfeuille_numerique/main.dart';
 import 'package:portfeuille_numerique/models/budgete.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
-
 import 'models/categorie.dart';
+import 'package:get/get.dart';
 
 class formbudget extends StatefulWidget {
   //const formbudget({Key? key}) : super(key: key);
@@ -28,9 +28,10 @@ class _formbudgetState extends State<formbudget> {
   TextEditingController dateFin = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   SQL_Helper helper = SQL_Helper();
-  String currentNomCat = "Choisir une categorie";
+  String currentNomCat = "21".tr;
   Future<List<categorie>> achatsCategorie() async {
-    List<categorie> achatCategorieList = await helper.getAllcategories();
+    List<categorie> achatCategorieList =
+        await helper.getAllcategories(this.usr!.id!);
     return achatCategorieList;
   }
 
@@ -44,7 +45,12 @@ class _formbudgetState extends State<formbudget> {
       int montant = int.parse(value);
       categorie? cat = await helper.getSpecifyCategorie(CatNom);
       int idCat = cat!.id!;
-      budgete bdg = budgete(nom, montant, dateDebut, dateFin, 0, 0, idCat, a);
+      budgete bdg;
+      if (sharedpref!.getBool("statusBudget") == true) {
+        bdg = budgete(nom, montant, dateDebut, dateFin, 0, 0, idCat, a);
+      } else {
+        bdg = budgete(nom, montant, dateDebut, dateFin, 0, 1, idCat, a);
+      }
       int x = await helper.insert_Budget(bdg);
       if (x > 0) {
         print("ok inserted");
@@ -81,7 +87,7 @@ class _formbudgetState extends State<formbudget> {
                               Padding(
                                   padding: EdgeInsets.only(bottom: 20),
                                   child: Text(
-                                    "Nouveaux Budget",
+                                    "55".tr,
                                     style: TextStyle(fontSize: 25),
                                   )),
                               Padding(
@@ -95,9 +101,9 @@ class _formbudgetState extends State<formbudget> {
                                     }
                                     return null;
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    labelText: "Nom du budget",
+                                    labelText: "56".tr,
                                   ),
                                 ),
                               ),
@@ -114,9 +120,9 @@ class _formbudgetState extends State<formbudget> {
                                     }
                                     return null;
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    labelText: "Montant",
+                                    labelText: "22".tr,
                                   ),
                                 ),
                               ),
@@ -134,7 +140,7 @@ class _formbudgetState extends State<formbudget> {
                                   //keyboardType: TextInputType.datetime,
                                   decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    labelText: "Date debut ",
+                                    labelText: "47".tr,
                                     icon: Icon(Icons.calendar_today_outlined),
                                   ),
                                   onTap: () async {
@@ -166,9 +172,9 @@ class _formbudgetState extends State<formbudget> {
                                     return null;
                                   },
                                   //keyboardType: TextInputType.datetime,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    labelText: "Date de Fin ",
+                                    labelText: "57".tr,
                                     icon: Icon(Icons.calendar_today_outlined),
                                   ),
                                   onTap: () async {
@@ -226,6 +232,8 @@ class _formbudgetState extends State<formbudget> {
                               Padding(
                                 padding: EdgeInsets.only(top: 40, left: 100),
                                 child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(right: 30),
@@ -233,15 +241,14 @@ class _formbudgetState extends State<formbudget> {
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
-                                        child: Text('Annuler'),
+                                        child: Text('26'.tr),
                                       ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(),
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          if (currentNomCat !=
-                                              "Choisir une categorie") {
+                                          if (currentNomCat != "21".tr) {
                                             insrererBudget(
                                                 nom.text,
                                                 montant.text,
@@ -249,10 +256,10 @@ class _formbudgetState extends State<formbudget> {
                                                 dateFin.text,
                                                 currentNomCat);
                                           } else {
-                                            Toast.show("Choisir une categorie");
+                                            Toast.show("t1".tr);
                                           }
                                         },
-                                        child: Text('Enregistrer'),
+                                        child: Text('27'.tr),
                                       ),
                                     ),
                                   ],

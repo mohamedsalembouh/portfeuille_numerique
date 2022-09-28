@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
+import 'package:portfeuille_numerique/main.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/objective.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
-
 import 'methodes.dart';
 import 'models/argent.dart';
 import 'models/compteRessource.dart';
 import 'models/ressource.dart';
+import 'package:get/get.dart';
 
 class form_objectif extends StatefulWidget {
   //const form_objectif({Key? key}) : super(key: key);
@@ -32,13 +32,14 @@ class _form_objectifState extends State<form_objectif> {
   TextEditingController montantCible = TextEditingController();
   TextEditingController montantEnregistree = TextEditingController();
   SQL_Helper helper = SQL_Helper();
+  String TypeCompte = "25".tr;
 
   insertObjectif(String nomobj, String value1, String value2) async {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     final form = _formKey.currentState!;
     if (form.validate()) {
-      if (TypeCompte != "Choisissez le type de solde") {
+      if (TypeCompte != "25".tr) {
         ressource? res = await helper.getSpecifyRessource(TypeCompte);
         int id_res = res!.id_ress!;
         compte? cmpe = await helper.getSpecifyCompte(id_res);
@@ -52,8 +53,14 @@ class _form_objectifState extends State<form_objectif> {
         if (cmp != null) {
           int solde = cmp.solde!;
           if (mntEnregistree < solde) {
-            objective obj = objective(nomobj, mntCible, mntEnregistree,
-                date_maintenant, 0, id_cmpe, a);
+            objective obj;
+            if (sharedpref!.getBool("statusObjectif") == true) {
+              obj = objective(nomobj, mntCible, mntEnregistree, date_maintenant,
+                  0, id_cmpe, a);
+            } else {
+              obj = objective(nomobj, mntCible, mntEnregistree, date_maintenant,
+                  1, id_cmpe, a);
+            }
             int result = await helper.insert_objectif(obj);
             int newSolde = solde - mntEnregistree;
             compte updateCompte = compte(newSolde, date_maintenant, id_res, a);
@@ -74,14 +81,13 @@ class _form_objectifState extends State<form_objectif> {
           }
         }
       } else {
-        Toast.show("Choisissez le type de solde");
+        Toast.show("t2".tr);
       }
     }
     // this.allUpdateSolde =
     //     getListSoldes(this.allUpdateSolde!, TypeCompte, this.usr!.id!);
   }
 
-  String TypeCompte = "Choisissez le type de solde";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +114,7 @@ class _form_objectifState extends State<form_objectif> {
                               Padding(
                                   padding: EdgeInsets.only(bottom: 20),
                                   child: Text(
-                                    "Nouveaux Objectif",
+                                    "60".tr,
                                     style: TextStyle(fontSize: 25),
                                   )),
                               Padding(
@@ -122,9 +128,9 @@ class _form_objectifState extends State<form_objectif> {
                                     }
                                     return null;
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    labelText: "Nom de l'objectif",
+                                    labelText: "61".tr,
                                   ),
                                 ),
                               ),
@@ -141,9 +147,9 @@ class _form_objectifState extends State<form_objectif> {
                                     }
                                     return null;
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    labelText: "Montant cible",
+                                    labelText: "62".tr,
                                   ),
                                 ),
                               ),
@@ -160,9 +166,9 @@ class _form_objectifState extends State<form_objectif> {
                                     }
                                     return null;
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    labelText: "Montant enregistre",
+                                    labelText: "63".tr,
                                   ),
                                 ),
                               ),
@@ -206,6 +212,8 @@ class _form_objectifState extends State<form_objectif> {
                               Padding(
                                 padding: EdgeInsets.only(top: 40, left: 100),
                                 child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(right: 30),
@@ -213,7 +221,7 @@ class _form_objectifState extends State<form_objectif> {
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
-                                        child: Text('Annuler'),
+                                        child: Text('26'.tr),
                                       ),
                                     ),
                                     Padding(
@@ -226,7 +234,7 @@ class _form_objectifState extends State<form_objectif> {
                                             montantEnregistree.text,
                                           );
                                         },
-                                        child: Text('Enregistrer'),
+                                        child: Text('27'.tr),
                                       ),
                                     ),
                                   ],

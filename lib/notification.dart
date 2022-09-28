@@ -48,6 +48,7 @@ class _notificationState extends State<notification> {
   int long = 0;
   static var depenses;
   List<objective>? someobjectif;
+  int count4 = 0;
   static var someobjectives;
 
   getAllPretteDette() async {
@@ -92,8 +93,9 @@ class _notificationState extends State<notification> {
     var ourDb = db;
     if (ourDb != null) {
       ourDb.then((database) {
-        Future<List<catBudget>> empDettes = helper.getAllBudgets(id);
-        empDettes.then((theList) {
+        Future<List<catBudget>> bdgs = helper.getsomesBudgets(
+            id, DateFormat("yyyy-MM-dd").format(DateTime.now()));
+        bdgs.then((theList) {
           setState(() {
             this.allbudgets = theList;
             this.count3 = theList.length;
@@ -104,15 +106,12 @@ class _notificationState extends State<notification> {
   }
 
   getDepenses(String nomCat) async {
-    utilisateur? user =
-        await helper.getUser(this.usr!.email!, this.usr!.password!);
-    int id = user!.id!;
     final Future<Database>? db = helper.initialiseDataBase();
     var ourDb = db;
     if (ourDb != null) {
       ourDb.then((database) {
         Future<List<depensesCats>> dep =
-            helper.getAllSpecifyDepense(nomCat, id);
+            helper.getAllSpecifyDepense(nomCat, this.usr!.id!);
         dep.then((theList) {
           setState(() {
             this.mesDepenses = theList;
@@ -128,6 +127,7 @@ class _notificationState extends State<notification> {
       getDepenses(nomCat);
     }
     depenses = this.mesDepenses;
+
     int k = this.long;
     int allMontant = 0;
     for (int i = 0; i < k; i++) {
@@ -135,6 +135,12 @@ class _notificationState extends State<notification> {
     }
     return allMontant;
   }
+
+  // someMontant2(String nomcat) async {
+  //   List<depensesCats> depen =
+  //       await helper.getAllSpecifyDepense(nomcat, this.usr!.id!);
+  //   int h = depen.length;
+  // }
 
   getObjectifs() async {
     final Future<Database>? db = helper.initialiseDataBase();
@@ -145,7 +151,7 @@ class _notificationState extends State<notification> {
         objs.then((theList) {
           setState(() {
             this.someobjectif = theList;
-            this.count3 = theList.length;
+            this.count4 = theList.length;
           });
         });
       });
@@ -354,16 +360,15 @@ class _notificationState extends State<notification> {
                     child: ListView.builder(
                         itemCount: count3,
                         itemBuilder: (context, pos) {
-                          DateTime debut =
-                              DateTime.parse(budgets[pos].date_debut!);
-                          DateTime fin = DateTime.parse(budgets[pos].date_fin!);
-                          DateTime now = DateTime.parse(
-                              DateFormat("yyyy-MM-dd").format(DateTime.now()));
+                          // DateTime debut =
+                          //     DateTime.parse(budgets[pos].date_debut!);
+                          // DateTime fin = DateTime.parse(budgets[pos].date_fin!);
+                          // DateTime now = DateTime.parse(
+                          //     DateFormat("yyyy-MM-dd").format(DateTime.now()));
                           if (budgets[pos].status == 0) {
-                            int allmnt = someMontant(budgets[pos].nomcat);
-                            if (budgets[pos].montant < allmnt &&
-                                now.compareTo(debut) > 0 &&
-                                now.compareTo(fin) < 0) {
+                            //int allmnt = someMontant(budgets[pos].nomcat);
+                            if (budgets[pos].montant <
+                                someMontant(budgets[pos].nomcat)) {
                               return Card(
                                   child: Text(
                                       "Vous avez depasez le budget : ${budgets[pos].nombdg} "));
@@ -383,7 +388,7 @@ class _notificationState extends State<notification> {
                   ),
                   Expanded(
                       child: ListView.builder(
-                          itemCount: count,
+                          itemCount: count4,
                           itemBuilder: (context, pos) {
                             return Card(
                               child: Text(

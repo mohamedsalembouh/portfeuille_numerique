@@ -4,8 +4,8 @@ import 'package:portfeuille_numerique/homePage.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/signup.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:toast/toast.dart';
+import 'package:get/get.dart';
 
 class signinPage extends StatefulWidget {
   const signinPage({Key? key}) : super(key: key);
@@ -50,7 +50,7 @@ class _signinPageState extends State<signinPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Tesyir",
+          "1".tr,
           style: TextStyle(fontSize: 25),
         ),
       ),
@@ -70,7 +70,7 @@ class _signinPageState extends State<signinPage> {
                     height: 20,
                   ),
                   Image.asset(
-                    "assets/images/img_tesyir.jpg",
+                    "assets/images/imageApp.jpg",
                     height: 100,
                     width: 150,
                   ),
@@ -102,7 +102,7 @@ class _signinPageState extends State<signinPage> {
                           borderSide: BorderSide(color: Colors.blue),
                         ),
                         prefixIcon: Icon(Icons.mail),
-                        hintText: 'Email adresse',
+                        hintText: '2'.tr,
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -130,7 +130,7 @@ class _signinPageState extends State<signinPage> {
                           borderSide: BorderSide(color: Colors.blue),
                         ),
                         prefixIcon: Icon(Icons.lock),
-                        hintText: 'Mot de passe',
+                        hintText: '3'.tr,
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -144,7 +144,7 @@ class _signinPageState extends State<signinPage> {
                         signin(f_email.text, f_pass.text);
                       },
                       child: Text(
-                        "Login",
+                        "4".tr,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -158,7 +158,7 @@ class _signinPageState extends State<signinPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Vous n'avez pas de compte  ?",
+                          "5".tr,
                           style: TextStyle(fontSize: 16),
                         ),
                         FlatButton(
@@ -168,7 +168,7 @@ class _signinPageState extends State<signinPage> {
                                 MaterialPageRoute(
                                     builder: (context) => SignUpPage()));
                           },
-                          child: Text("Signup"),
+                          child: Text("6".tr),
                           textColor: Colors.blue,
                         )
                       ],

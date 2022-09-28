@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/form_emprunteDatte.dart';
 import 'package:portfeuille_numerique/form_pretteDate.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
+import 'package:get/get.dart';
 
 class operdatte extends StatefulWidget {
   utilisateur? usr;
@@ -28,7 +28,7 @@ class _operdatteState extends State<operdatte> {
             child: Row(
               children: [
                 Text(
-                  "Choisir une operation : ",
+                  "41".tr,
                   style: TextStyle(fontSize: 25),
                 )
               ],
@@ -65,7 +65,7 @@ class _operdatteState extends State<operdatte> {
                                   builder: (context) => form_prette(this.usr)));
                         },
                         child: Text(
-                          "Prette Dette",
+                          "42".tr,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -91,7 +91,7 @@ class _operdatteState extends State<operdatte> {
                                       formemprunte(this.usr)));
                         },
                         child: Text(
-                          "Emprunte dette",
+                          "43".tr,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

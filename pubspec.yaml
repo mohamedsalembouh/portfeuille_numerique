@@ -33,6 +33,12 @@ dependencies:
   rxdart: ^0.27.5
   syncfusion_flutter_charts: ^19.2.62
   lite_rolling_switch: ^0.1.1
+  shared_preferences: ^2.0.7
+  get: 4.3.8
+ 
+
+  
+
   
 
    
@@ -52,7 +58,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-  uses-material-design: true  
+  uses-material-design: true 
+  generate: true 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -63,6 +70,7 @@ flutter:
     - assets/images/img_tesyir.jpg
     - assets/images/img_profile.jpg
     - assets/images/image_portfeuille.jpg
+    - assets/images/imageApp.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

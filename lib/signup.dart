@@ -4,6 +4,7 @@ import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/signin.dart';
 import 'package:toast/toast.dart';
+import 'package:get/get.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -49,7 +50,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Rachad",
+          "1".tr,
           style: TextStyle(fontSize: 25),
         ),
       ),
@@ -76,7 +77,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     height: 20,
                   ),
                   Image.asset(
-                    "assets/images/img_tesyir.jpg",
+                    // "assets/images/img_tesyir.jpg",
+                    "assets/images/imageApp.jpg",
                     height: 100,
                     width: 150,
                   ),
@@ -104,7 +106,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           borderSide: BorderSide(color: Colors.blue),
                         ),
                         prefixIcon: Icon(Icons.person),
-                        hintText: 'Votre nom',
+                        hintText: '7'.tr,
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -135,7 +137,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           borderSide: BorderSide(color: Colors.blue),
                         ),
                         prefixIcon: Icon(Icons.mail),
-                        hintText: 'Email adresse',
+                        hintText: '2'.tr,
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -163,7 +165,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           borderSide: BorderSide(color: Colors.blue),
                         ),
                         prefixIcon: Icon(Icons.lock),
-                        hintText: 'Mot de passe',
+                        hintText: '3'.tr,
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -191,7 +193,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           borderSide: BorderSide(color: Colors.blue),
                         ),
                         prefixIcon: Icon(Icons.lock),
-                        hintText: ' confirmer Mot de passe',
+                        hintText: '8'.tr,
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -203,7 +205,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: FlatButton(
                       onPressed: signup,
                       child: Text(
-                        "Signup",
+                        "6".tr,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -217,7 +219,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Vous avez de compte  ?",
+                          "9".tr,
                           style: TextStyle(fontSize: 16),
                         ),
                         FlatButton(
@@ -227,7 +229,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 MaterialPageRoute(
                                     builder: (context) => signinPage()));
                           },
-                          child: Text("Sign In"),
+                          child: Text("4".tr),
                           textColor: Colors.blue,
                         )
                       ],

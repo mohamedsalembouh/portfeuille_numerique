@@ -70,7 +70,7 @@ class SQL_Helper {
     await db.execute(
         "create table compte(id INTEGER PRIMARY KEY AUTOINCREMENT,solde int not null,date TEXT not null ,id_ressource INTEGER not null,id_utilisateur integer ,foreign key(id_ressource) references ressource(id_ress),foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
-        "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nomcat TEXT,coleur TEXT)");
+        "create table categorie(id INTEGER PRIMARY KEY AUTOINCREMENT,nomcat TEXT,coleur TEXT,id_utilisateur INTEGER, foreign key(id_utilisateur) references utilisateur(id) )");
     await db.execute(
         "create table operation_entree(id INTEGER PRIMARY KEY AUTOINCREMENT,montant INTEGER,description TEXT,date TEXT not null,id_categorie INTEGER,id_compte INTEGER,id_utilisateur INTEGER,foreign key(id_categorie) references categorie(id),foreign key(id_compte) references compte(id),foreign key(id_utilisateur) references utilisateur(id))");
     await db.execute(
@@ -197,37 +197,38 @@ class SQL_Helper {
     return result;
   }
 
-  Future<categorie?> getCategorieeByNom(String nom) async {
+  Future<categorie?> getCategorieeByNom(String nom, int idUser) async {
     Database db = await this.database;
-    var result =
-        await db.rawQuery("SELECT * FROM categorie WHERE nomcat = '$nom'");
+    var result = await db.rawQuery(
+        "SELECT * FROM categorie WHERE nomcat = '$nom' AND id_utilisateur = '$idUser'");
     if (result.length > 0) {
       return new categorie.getmap(result.first);
     }
     return null;
   }
 
-  Future<categorie?> getCategorieeByColor(String coleur) async {
-    Database db = await this.database;
-    var result =
-        await db.rawQuery("SELECT * FROM categorie WHERE coleur = '$coleur'");
-    if (result.length > 0) {
-      return new categorie.getmap(result.first);
-    }
-    return null;
-  }
+  // Future<categorie?> getCategorieeByColor(String coleur) async {
+  //   Database db = await this.database;
+  //   var result =
+  //       await db.rawQuery("SELECT * FROM categorie WHERE coleur = '$coleur'");
+  //   if (result.length > 0) {
+  //     return new categorie.getmap(result.first);
+  //   }
+  //   return null;
+  // }
 
-  Future<List<categorie>> getAllcategories() async {
+  Future<List<categorie>> getAllcategories(int idUser) async {
     Database db = await database;
 
-    final List<Map<String, dynamic>> maps =
-        await db.rawQuery("SELECT * FROM categorie");
+    final List<Map<String, dynamic>> maps = await db
+        .rawQuery("SELECT * FROM categorie WHERE id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return categorie(
         maps[i]['nomcat'],
         maps[i]['coleur'],
+        maps[i]['id_utilisateur'],
       );
     });
   }
@@ -303,7 +304,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND operation_entree.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -323,7 +324,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND id_compte = '$idCompte'  AND id_utilisateur = '$idUser'");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND id_compte = '$idCompte'  AND operation_entree.id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -343,7 +344,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND date > '$debut' AND date < '$fin' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND date > '$debut' AND date < '$fin' AND operation_entree.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -363,7 +364,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND date > '$debut'  AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND date > '$debut'  AND operation_entree.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -382,7 +383,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND  date < '$fin' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND  date < '$fin' AND operation_entree.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -403,7 +404,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date > '$debut' AND date < '$fin' AND id_utilisateur = '$idUser'");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date > '$debut' AND date < '$fin' AND operation_entree.id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -423,7 +424,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND id_compte = '$idCompte' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id AND id_compte = '$idCompte' AND operation_entree.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -444,7 +445,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date > '$debut' AND date < '$fin' AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date > '$debut' AND date < '$fin' AND id_compte = '$idCmp' AND operation_entree.id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -464,7 +465,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date > '$debut'  AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date > '$debut'  AND id_compte = '$idCmp' AND operation_entree.id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -484,7 +485,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date < '$fin' AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
+        "SELECT * FROM operation_entree,categorie WHERE operation_entree.id_categorie = categorie.id  AND date < '$fin' AND id_compte = '$idCmp' AND operation_entree.id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -503,7 +504,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND operation_sortir.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -524,7 +525,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND date < '$fin'AND id_compte = '$idCmp' AND id_utilisateur = '$idUser'");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND date < '$fin'AND id_compte = '$idCmp' AND operation_sortir.id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -544,7 +545,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND operation_sortir.id_compte = '$idCmp' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND operation_sortir.id_compte = '$idCmp' AND operation_sortir.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -564,7 +565,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND operation_sortir.id_compte = '$idCmp' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND operation_sortir.id_compte = '$idCmp' AND operation_sortir.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -584,7 +585,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date < '$fin' AND operation_sortir.id_compte = '$idCmp' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date < '$fin' AND operation_sortir.id_compte = '$idCmp' AND operation_sortir.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -604,7 +605,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND date < '$fin' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND date < '$fin' AND operation_sortir.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -624,7 +625,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND  id_utilisateur = $idUser");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND date > '$debut' AND  operation_sortir.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -644,7 +645,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id  AND date < '$fin' AND id_utilisateur = $idUser");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id  AND date < '$fin' AND operation_sortir.id_utilisateur = $idUser");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -664,7 +665,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND id_utilisateur = '$idUser' AND categorie.nomcat='$nomCat'");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND operation_sortir.id_utilisateur = '$idUser' AND categorie.nomcat='$nomCat'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -747,7 +748,27 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.date_debut,budget.date_fin,budget.id_categorie,categorie.nomcat FROM budget,categorie WHERE budget.id_categorie = categorie.id AND id_utilisateur = $id");
+        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.date_debut,budget.date_fin,budget.id_categorie,categorie.nomcat FROM budget,categorie WHERE budget.id_categorie = categorie.id AND budget.id_utilisateur = $id");
+    return List.generate(maps.length, (i) {
+      return catBudget(
+        maps[i]['id'],
+        maps[i]['nombdg'],
+        maps[i]['montant'],
+        maps[i]['status'],
+        maps[i]['status_notification'],
+        maps[i]['date_debut'],
+        maps[i]['date_fin'],
+        maps[i]['id_categorie'],
+        maps[i]['nomcat'],
+      );
+    });
+  }
+
+  Future<List<catBudget>> getsomesBudgets(int id, String date) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.date_debut,budget.date_fin,budget.id_categorie,categorie.nomcat FROM budget,categorie WHERE budget.id_categorie = categorie.id AND date_debut < '$date' AND date_fin > '$date' AND id_utilisateur = $id");
     return List.generate(maps.length, (i) {
       return catBudget(
         maps[i]['id'],
@@ -768,7 +789,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.status_notification,budget.date_debut,budget.date_fin FROM budget,categorie WHERE budget.id_categorie = categorie.id AND id_utilisateur = '$idUser' AND categorie.nomcat='$nomCat'");
+        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.status_notification,budget.date_debut,budget.date_fin FROM budget,categorie WHERE budget.id_categorie = categorie.id AND budget.id_utilisateur = '$idUser' AND categorie.nomcat='$nomCat'");
     return List.generate(maps.length, (i) {
       return catBudget.second(
         maps[i]['id'],

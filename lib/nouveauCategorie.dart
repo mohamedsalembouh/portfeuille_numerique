@@ -2,41 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
+import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:toast/toast.dart';
 
 class nouveauCategorie extends StatefulWidget {
-  const nouveauCategorie({Key? key}) : super(key: key);
-
+  //const nouveauCategorie({Key? key}) : super(key: key);
+  utilisateur? usr;
+  nouveauCategorie(this.usr);
   @override
-  State<nouveauCategorie> createState() => _nouveauCategorieState();
+  State<nouveauCategorie> createState() => _nouveauCategorieState(this.usr);
 }
 
 class _nouveauCategorieState extends State<nouveauCategorie> {
+  utilisateur? usr;
+  _nouveauCategorieState(this.usr);
   TextEditingController catnom = TextEditingController();
   TextEditingController cattype = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
 
   insertCategorie(String name, String coleur) async {
     String nom = name.toUpperCase();
-    categorie cat = new categorie(nom, coleur);
+    categorie cat = new categorie(nom, coleur, this.usr!.id!);
     SQL_Helper helper = new SQL_Helper();
     final form = _formKey.currentState!;
     if (form.validate()) {
-      categorie? cate = await helper.getCategorieeByNom(nom);
+      categorie? cate = await helper.getCategorieeByNom(nom, this.usr!.id!);
       if (cate == null) {
-        categorie? cate_col = await helper.getCategorieeByColor(coleur);
-        if (cate_col == null) {
-          int result = await helper.insert_categorie(cat);
-          if (result == 0) {
-            print("not inserted");
-          } else {
-            print("inserted");
-            showText(context, "", "La categorie est ajouté");
-            catnom.clear();
-            colorValue = "Coleur";
-          }
+        int result = await helper.insert_categorie(cat);
+        if (result == 0) {
+          print("not inserted");
         } else {
-          showText(context, "SVP", "cette coleur existe deja");
+          print("inserted");
+          showText(context, "", "La categorie est ajouté");
+          catnom.clear();
+          colorValue = "Coleur";
         }
       } else {
         showText(context, "SVP", "cette nom existe deja ");

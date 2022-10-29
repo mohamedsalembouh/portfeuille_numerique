@@ -34,77 +34,110 @@ class form_updatePass extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        children: [
-          Card(
-            child: Container(
-              width: MediaQuery.of(context).size.width - 50,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
               child: Form(
                 key: _formKey2,
                 child: Column(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Center(
                       child: Text(
                         "Changer votre Mot de passe",
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
+                    SizedBox(
+                      height: 30,
+                    ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10, left: 20, top: 10),
-                      // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                      padding: const EdgeInsets.only(right: 10, left: 10),
                       child: TextFormField(
                         controller: newpass,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            labelText: "Nouveaux mot de passe",
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "entree le nouveaux Mot de pass";
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: "Nouveaux Mot de passe",
-                        ),
                       ),
                     ),
+                    SizedBox(
+                      height: 30,
+                    ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10, left: 20, top: 10),
-                      // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                      padding: const EdgeInsets.only(right: 10, left: 10),
                       child: TextFormField(
                         controller: conf_pass,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            labelText: " confirmer Nouveaux mot de passe",
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "entree le nouveaux Mot de pass";
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: "Confirmer Mot de passe",
-                        ),
                       ),
                     ),
+                    SizedBox(
+                      height: 30,
+                    ),
                     Padding(
-                      padding: EdgeInsets.only(top: 40, left: 100),
+                      padding: EdgeInsets.only(left: 100),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 30),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
                             child: ElevatedButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
                               child: Text('Annuler'),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
                             child: ElevatedButton(
                               onPressed: () {
                                 updatePassword(
                                     context, newpass.text, conf_pass.text);
                               },
-                              child: Text('Modifier'),
+                              child: Text('enregistrer'),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
                             ),
                           ),
                         ],
@@ -114,8 +147,8 @@ class form_updatePass extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

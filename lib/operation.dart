@@ -68,11 +68,12 @@ class _operationState extends State<operation> {
   ];
 
   SQL_Helper helper = new SQL_Helper();
-  String currentNomCat = "21".tr;
-  String TypeCompte = "25".tr;
+  String? currentNomCat;
+  String? currentNomCat2;
+  String? TypeCompte;
+  String? TypeCompte2;
 
-  insertRevenus(
-      String value, String description, String date, String typeCmp) async {
+  insertRevenus(String value, String description, String date) async {
     final form = _formKey1.currentState!;
     // final form = _formKey.currentState;
     // if (form!.validate()) {
@@ -81,13 +82,13 @@ class _operationState extends State<operation> {
     // }
     if (currentNomCat != "21".tr) {
       if (form.validate()) {
-        if (typeCmp != "25".tr) {
+        if (TypeCompte != "25".tr) {
           int montant = int.parse(value);
-          categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
+          categorie? cat = await helper.getSpecifyCategorie(currentNomCat!);
           int idCat = cat!.id!;
           // DateTime maintenant = DateTime.now();
           // String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
-          ressource? res = await helper.getSpecifyRessource(typeCmp);
+          ressource? res = await helper.getSpecifyRessource(TypeCompte!);
           int id_res = res!.id_ress!;
           compte? cmp = await helper.getSpecifyCompte(id_res);
           int id_compte = cmp!.id!;
@@ -114,13 +115,12 @@ class _operationState extends State<operation> {
     }
   }
 
-  insertDepense(
-      String value, String description, String date, String typeCmp) async {
+  insertDepense(String value, String description, String date) async {
     final form = _formKey2.currentState!;
     if (currentNomCat != "21".tr) {
       if (form.validate()) {
-        if (typeCmp != "25".tr) {
-          ressource? res = await helper.getSpecifyRessource(typeCmp);
+        if (TypeCompte != "25".tr) {
+          ressource? res = await helper.getSpecifyRessource(TypeCompte2!);
           int id_res = res!.id_ress!;
           compte? cmp = await helper.getSpecifyCompte(id_res);
           int id_compte = cmp!.id!;
@@ -129,7 +129,8 @@ class _operationState extends State<operation> {
           if (comp != null) {
             int solde = comp.solde!;
             if (solde > montant) {
-              categorie? cat = await helper.getSpecifyCategorie(currentNomCat);
+              categorie? cat =
+                  await helper.getSpecifyCategorie(currentNomCat2!);
               int idCat = cat!.id!;
               // DateTime maintenant = DateTime.now();
               // String date_maintenant =
@@ -149,11 +150,11 @@ class _operationState extends State<operation> {
               }
             } else {
               showText(context, "désolé",
-                  "vous n'avez pas de solde sufficant pour cette operation dans $typeCmp");
+                  "vous n'avez pas de solde sufficant pour cette operation dans $TypeCompte2");
             }
           } else {
-            showText(
-                context, "désolé", "vous n'avez pas de solde dans $typeCmp");
+            showText(context, "désolé",
+                "vous n'avez pas de solde dans $TypeCompte2");
           }
         } else {
           Toast.show("t2".tr);
@@ -179,395 +180,578 @@ class _operationState extends State<operation> {
       // initialIndex: selectedPage!,
       length: mytabs.length,
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
 
         drawer: drowerfunction(context, usr),
-        appBar: AppBar(
-            toolbarHeight: 100,
-            bottom: TabBar(tabs: mytabs),
-            title: Text("17".tr)),
+        appBar: AppBar(bottom: TabBar(tabs: mytabs), title: Text("17".tr)),
         // drawer: drowerfunction(context),
         body: TabBarView(
           children: [
-            Column(
-              children: [
-                Card(
-                  margin: EdgeInsets.only(top: 40),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 50,
-                    color: Colors.white70,
-                    child: Form(
-                      key: _formKey1,
-                      child: Column(
-                        children: [
-                          Text(
-                            "20".tr,
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 30, left: 10),
-                            child: FutureBuilder(
-                                future: achatsCategorie(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<List<categorie>> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return CircularProgressIndicator();
-                                  } else {
-                                    return DropdownButton<String>(
-                                      items: snapshot.data!
-                                          .map(
-                                              (cat) => DropdownMenuItem<String>(
-                                                    child: Text(cat.nomcat!),
-                                                    value: cat.nomcat,
-                                                  ))
-                                          .toList(),
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          currentNomCat = value!;
-                                        });
-                                      },
-                                      isExpanded: true,
-                                      //value: currentNomCat,
-                                      hint: Text(
-                                        '$currentNomCat',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          //fontWeight: FontWeight.bold
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  // Card(
+                  //   margin: EdgeInsets.only(top: 40),
+                  //   child: Container(
+                  //     width: MediaQuery.of(context).size.width - 50,
+                  //     color: Colors.white70,
+                  //     child:
+                  Form(
+                    key: _formKey1,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "20".tr,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: FutureBuilder(
+                              future: achatsCategorie(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<categorie>> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return CircularProgressIndicator();
+                                } else {
+                                  return DropdownButtonFormField(
+                                    decoration: InputDecoration(
+                                        // labelText: "Destination",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          borderSide:
+                                              BorderSide(color: Colors.white),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                }),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10, left: 10),
-                            // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                            child: TextFormField(
-                              controller: entreeMontant,
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "entree un montant";
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          borderSide:
+                                              BorderSide(color: Colors.black),
+                                        )),
+                                    isExpanded: true,
+                                    elevation: 16,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0)),
+                                    value: currentNomCat,
+                                    hint: Text("choissir une categorie"),
+                                    items: snapshot.data!
+                                        .map((cat) => DropdownMenuItem<String>(
+                                              child: Text(cat.nomcat!),
+                                              value: cat.nomcat,
+                                            ))
+                                        .toList(),
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        currentNomCat = value!;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Le champ est obligatoire";
+                                      }
+                                      return null;
+                                    },
+                                  );
                                 }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
+                              }),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                          child: TextFormField(
+                            controller: entreeMontant,
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "entree un montant";
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
                                 labelText: "22".tr,
-                              ),
-                            ),
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.black),
+                                )),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10, left: 10),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 10, left: 10),
 
-                            //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                            child: TextFormField(
-                              controller: entreeDesc,
-                              decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
+                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                          child: TextFormField(
+                            controller: entreeDesc,
+                            decoration: InputDecoration(
                                 labelText: "23".tr,
-                              ),
-                            ),
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.black),
+                                )),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10, bottom: 10),
-                            //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                            child: TextFormField(
-                              controller: date1,
-                              // validator: (value) {
-                              //   if (value == null || value.isEmpty) {
-                              //     return "entrer la date de debut";
-                              //   }
-                              //   return null;
-                              // },
-                              //keyboardType: TextInputType.datetime,
-                              decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                          child: TextFormField(
+                            controller: date1,
+                            readOnly: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "entrer la date de debut";
+                              }
+                              return null;
+                            },
+                            //keyboardType: TextInputType.datetime,
+                            decoration: InputDecoration(
                                 labelText: "24".tr,
-                                icon: Icon(Icons.calendar_today_outlined),
-                              ),
-                              onTap: () async {
-                                DateTime? pickeddate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2050));
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.black),
+                                )),
+                            onTap: () async {
+                              DateTime? pickeddate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2050));
 
-                                if (pickeddate == null) {
-                                  pickeddate = DateTime.now();
-                                }
-                                setState(() {
-                                  date1.text = DateFormat("yyyy-MM-dd")
-                                      .format(pickeddate!);
-                                });
-                              },
-                            ),
+                              if (pickeddate == null) {
+                                pickeddate = DateTime.now();
+                              }
+                              setState(() {
+                                date1.text = DateFormat("yyyy-MM-dd")
+                                    .format(pickeddate!);
+                              });
+                            },
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 30, left: 10),
-                            child: FutureBuilder(
-                                future: getComptesRessource(this.usr!.id!),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<List<compteRessource>>
-                                        snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return CircularProgressIndicator();
-                                  } else {
-                                    return DropdownButton<String>(
-                                      items: snapshot.data!
-                                          .map((cmpRes) =>
-                                              DropdownMenuItem<String>(
-                                                child: Text(cmpRes.nom_ress!),
-                                                value: cmpRes.nom_ress,
-                                              ))
-                                          .toList(),
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          TypeCompte = value!;
-                                        });
-                                      },
-                                      isExpanded: true,
-                                      //value: currentNomCat,
-                                      hint: Text(
-                                        '$TypeCompte',
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          //fontWeight: FontWeight.bold
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 10, left: 10),
+                          child: FutureBuilder(
+                              future: getComptesRessource(this.usr!.id!),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<compteRessource>>
+                                      snapshot) {
+                                if (!snapshot.hasData) {
+                                  return CircularProgressIndicator();
+                                } else {
+                                  return DropdownButtonFormField(
+                                    decoration: InputDecoration(
+                                        // labelText: "Destination",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          borderSide:
+                                              BorderSide(color: Colors.white),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                }),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 40, left: 100),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          borderSide:
+                                              BorderSide(color: Colors.black),
+                                        )),
+                                    isExpanded: true,
+                                    elevation: 16,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0)),
+                                    value: TypeCompte,
+                                    hint: Text("choissir un compte"),
+                                    items: snapshot.data!
+                                        .map((cmpRes) =>
+                                            DropdownMenuItem<String>(
+                                              child: Text(cmpRes.nom_ress!),
+                                              value: cmpRes.nom_ress,
+                                            ))
+                                        .toList(),
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        TypeCompte = value!;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Le champ est obligatoire";
+                                      }
+                                      return null;
+                                    },
+                                  );
+                                }
+                              }),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 40, left: 100),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  height:
+                                      MediaQuery.of(context).size.height / 12,
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
                                     child: Text("26".tr),
+                                    style: ElevatedButton.styleFrom(
+                                        shape: StadiumBorder()),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  height:
+                                      MediaQuery.of(context).size.height / 13,
                                   child: ElevatedButton(
                                     onPressed: () {
                                       insertRevenus(
-                                          entreeMontant.text,
-                                          entreeDesc.text,
-                                          date1.text,
-                                          TypeCompte);
+                                        entreeMontant.text,
+                                        entreeDesc.text,
+                                        date1.text,
+                                      );
 
                                       // Navigator.pop(context, myData);
                                     },
                                     child: Text("27".tr),
+                                    style: ElevatedButton.styleFrom(
+                                        shape: StadiumBorder()),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  // ),
+                  //),
+                ],
+              ),
             ),
             //le deuscieme tab
-            Column(
-              children: [
-                Card(
-                  margin: EdgeInsets.only(top: 40),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 50,
-                    color: Colors.white70,
-                    child: Form(
-                      key: _formKey2,
-                      child: Column(
-                        children: [
-                          Text(
-                            "28".tr,
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 30, left: 10),
-                            child: FutureBuilder(
-                                future: achatsCategorie(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<List<categorie>> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return CircularProgressIndicator();
-                                  } else {
-                                    return DropdownButton<String>(
-                                      items: snapshot.data!
-                                          .map(
-                                              (cat) => DropdownMenuItem<String>(
-                                                    child: Text(cat.nomcat!),
-                                                    value: cat.nomcat,
-                                                  ))
-                                          .toList(),
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          currentNomCat = value!;
-                                        });
-                                      },
-                                      isExpanded: true,
-                                      //value: currentNomCat,
-                                      hint: Text(
-                                        '$currentNomCat',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          //fontWeight: FontWeight.bold
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  // Card(
+                  //   margin: EdgeInsets.only(top: 40),
+                  //   child: Container(
+                  //     width: MediaQuery.of(context).size.width - 50,
+                  //     color: Colors.white70,
+                  //     child:
+                  Form(
+                    key: _formKey2,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "28".tr,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: FutureBuilder(
+                              future: achatsCategorie(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<categorie>> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return CircularProgressIndicator();
+                                } else {
+                                  return DropdownButtonFormField(
+                                    decoration: InputDecoration(
+                                        // labelText: "Destination",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          borderSide:
+                                              BorderSide(color: Colors.white),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                }),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10, left: 10),
-                            // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                            child: TextFormField(
-                              controller: sortirMontant,
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "entree une montant";
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          borderSide:
+                                              BorderSide(color: Colors.black),
+                                        )),
+                                    isExpanded: true,
+                                    elevation: 16,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0)),
+                                    value: currentNomCat2,
+                                    hint: Text("choissir une categorie"),
+                                    items: snapshot.data!
+                                        .map((cat) => DropdownMenuItem<String>(
+                                              child: Text(cat.nomcat!),
+                                              value: cat.nomcat,
+                                            ))
+                                        .toList(),
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        currentNomCat2 = value!;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Le champ est obligatoire";
+                                      }
+                                      return null;
+                                    },
+                                  );
                                 }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
+                              }),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 10, left: 10),
+                          // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                          child: TextFormField(
+                            controller: sortirMontant,
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "entree une montant";
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
                                 labelText: "22".tr,
-                              ),
-                            ),
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.black),
+                                )),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10, left: 10),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 10, left: 10),
 
-                            //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                            child: TextFormField(
-                              controller: sortirDesc,
-                              decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
+                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                          child: TextFormField(
+                            controller: sortirDesc,
+                            decoration: InputDecoration(
                                 labelText: "23".tr,
-                              ),
-                            ),
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.black),
+                                )),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10, bottom: 10),
-                            //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                            child: TextFormField(
-                              controller: date2,
-                              // validator: (value) {
-                              //   if (value == null || value.isEmpty) {
-                              //     return "entrer la date de debut";
-                              //   }
-                              //   return null;
-                              // },
-                              //keyboardType: TextInputType.datetime,
-                              decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                          child: TextFormField(
+                            controller: date2,
+                            readOnly: true,
+                            // validator: (value) {
+                            //   if (value == null || value.isEmpty) {
+                            //     return "entrer la date de debut";
+                            //   }
+                            //   return null;
+                            // },
+                            //keyboardType: TextInputType.datetime,
+                            decoration: InputDecoration(
                                 labelText: "24".tr,
-                                icon: Icon(Icons.calendar_today_outlined),
-                              ),
-                              onTap: () async {
-                                DateTime? pickeddate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2050));
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                  borderSide: BorderSide(color: Colors.black),
+                                )),
+                            onTap: () async {
+                              DateTime? pickeddate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2050));
 
-                                if (pickeddate == null) {
-                                  pickeddate = DateTime.now();
-                                }
-                                setState(() {
-                                  date2.text = DateFormat("yyyy-MM-dd")
-                                      .format(pickeddate!);
-                                });
-                              },
-                            ),
+                              if (pickeddate == null) {
+                                pickeddate = DateTime.now();
+                              }
+                              setState(() {
+                                date2.text = DateFormat("yyyy-MM-dd")
+                                    .format(pickeddate!);
+                              });
+                            },
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 30, left: 10),
-                            child: FutureBuilder(
-                                future: getComptesRessource(this.usr!.id!),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<List<compteRessource>>
-                                        snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return CircularProgressIndicator();
-                                  } else {
-                                    return DropdownButton<String>(
-                                      items: snapshot.data!
-                                          .map((cmpRes) =>
-                                              DropdownMenuItem<String>(
-                                                child: Text(cmpRes.nom_ress!),
-                                                value: cmpRes.nom_ress,
-                                              ))
-                                          .toList(),
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          TypeCompte = value!;
-                                        });
-                                      },
-                                      isExpanded: true,
-                                      //value: currentNomCat,
-                                      hint: Text(
-                                        '$TypeCompte',
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          //fontWeight: FontWeight.bold
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 10, left: 10),
+                          child: FutureBuilder(
+                              future: getComptesRessource(this.usr!.id!),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<compteRessource>>
+                                      snapshot) {
+                                if (!snapshot.hasData) {
+                                  return CircularProgressIndicator();
+                                } else {
+                                  return DropdownButtonFormField(
+                                    decoration: InputDecoration(
+                                        // labelText: "Destination",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          borderSide:
+                                              BorderSide(color: Colors.white),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                }),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 40, left: 100),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 30),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          borderSide:
+                                              BorderSide(color: Colors.black),
+                                        )),
+                                    isExpanded: true,
+                                    elevation: 16,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0)),
+                                    value: TypeCompte2,
+                                    hint: Text("choissir un compte"),
+                                    items: snapshot.data!
+                                        .map((cmpRes) =>
+                                            DropdownMenuItem<String>(
+                                              child: Text(cmpRes.nom_ress!),
+                                              value: cmpRes.nom_ress,
+                                            ))
+                                        .toList(),
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        TypeCompte2 = value!;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Le champ est obligatoire";
+                                      }
+                                      return null;
+                                    },
+                                  );
+                                }
+                              }),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 40, left: 100),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: 30),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  height:
+                                      MediaQuery.of(context).size.height / 12,
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.of(context, rootNavigator: true)
                                           .pop();
                                     },
                                     child: Text("26".tr),
+                                    style: ElevatedButton.styleFrom(
+                                        shape: StadiumBorder()),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  height:
+                                      MediaQuery.of(context).size.height / 13,
                                   child: ElevatedButton(
                                     onPressed: () {
                                       insertDepense(
-                                          sortirMontant.text,
-                                          sortirDesc.text,
-                                          date2.text,
-                                          TypeCompte);
+                                        sortirMontant.text,
+                                        sortirDesc.text,
+                                        date2.text,
+                                      );
 
                                       // Navigator.pop(context, myData);
                                     },
                                     child: Text("27".tr),
+                                    style: ElevatedButton.styleFrom(
+                                        shape: StadiumBorder()),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  //   ),
+                  // ),
+                ],
+              ),
             )
           ],
         ),

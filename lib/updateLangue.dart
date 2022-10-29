@@ -18,6 +18,7 @@ class _updateLangueState extends State<updateLangue> {
   @override
   Widget build(BuildContext context) {
     MyLocaleController controllerLang = Get.find();
+    String? choosen;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -42,26 +43,51 @@ class _updateLangueState extends State<updateLangue> {
           //   },
           // ),
           Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 40, bottom: 10),
             child: Center(
-              child: Text("Choisissez une Langue : "),
+              child: Text(
+                "Choisissez une Langue : ",
+                style: TextStyle(fontSize: 20),
+              ),
             ),
           ),
           Card(
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                color: Colors.white.withOpacity(1),
+              ),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
             child: ListTile(
               title: Text("Francais"),
+              //trailing: choosen == "fr" ? Icon(Icons.check) : null,
               onTap: () {
                 // widget.setLocale(Locale.fromSubtags(languageCode: 'fr'));
                 controllerLang.changeLang("fr");
+                // setState(() {
+                //   choosen = "fr";
+                // });
               },
             ),
           ),
           Card(
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                color: Colors.white.withOpacity(1),
+              ),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
             child: ListTile(
               title: Text("Arabe"),
+              // trailing: choosen == "ar" ? Icon(Icons.check) : null,
               onTap: () {
                 // widget.setLocale(Locale.fromSubtags(languageCode: 'ar'));
                 controllerLang.changeLang("ar");
+                // setState(() {
+                //   choosen = "ar";
+                // });
               },
             ),
           ),

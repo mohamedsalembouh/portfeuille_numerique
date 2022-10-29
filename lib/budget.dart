@@ -131,7 +131,6 @@ class _budgetState extends State<budget> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          toolbarHeight: 100,
           bottom: TabBar(
               onTap: (value) {
                 setState(() {
@@ -168,62 +167,79 @@ class _budgetState extends State<budget> {
 
                         if (budgets[pos].status == 0) {
                           return Card(
-                            color: Colors.white,
-                            elevation: 2.0,
-                            child: ListTile(
-                              isThreeLine: true,
-                              // leading: Icon(Icons.category),
-                              title: Text("${budgets[pos].nombdg}"),
-                              subtitle: Column(
-                                children: [
-                                  Text("22".tr + "${budgets[pos].montant}"),
-                                  Text("64".tr + "${budgets[pos].nomcat}"),
-                                ],
+                            elevation: 8,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.white.withOpacity(1),
                               ),
-                              trailing: Column(
-                                children: [
-                                  Text("47".tr + "$dateDebut"),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text("57".tr + "$dateFin")
-                                ],
-                              ),
-                              onTap: () {
-                                AlertDialog alertDialog = AlertDialog(
-                                  //title: Icon(Icons.finish),
-                                  content: Text("53".tr),
-                                  actions: [
-                                    TextButton(
-                                      child: Text(
-                                        "26".tr,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-                                      },
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: ListTile(
+                                // isThreeLine: true,
+                                // leading: Icon(Icons.category),
+                                title: Column(
+                                  children: [
+                                    Text("${budgets[pos].nombdg}"),
+                                    SizedBox(
+                                      height: 10,
                                     ),
-                                    TextButton(
-                                      child: Text(
-                                        "36".tr,
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                      onPressed: () {
-                                        termineBudget(budgets[pos].id);
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-                                      },
+                                    Text("22".tr +
+                                        " : " +
+                                        "${budgets[pos].montant}"),
+                                    SizedBox(
+                                      height: 10,
                                     ),
+                                    Text("64".tr +
+                                        " : " +
+                                        "${budgets[pos].nomcat}"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("47".tr + " : " + "$dateDebut"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("57".tr + " : " + "$dateFin")
                                   ],
-                                );
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return alertDialog;
-                                    });
-                              },
+                                ),
+                                onTap: () {
+                                  AlertDialog alertDialog = AlertDialog(
+                                    //title: Icon(Icons.finish),
+                                    content: Text("53".tr),
+                                    actions: [
+                                      TextButton(
+                                        child: Text(
+                                          "26".tr,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text(
+                                          "36".tr,
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                        onPressed: () {
+                                          termineBudget(budgets[pos].id);
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return alertDialog;
+                                      });
+                                },
+                              ),
                             ),
                           );
                         } else {
@@ -249,62 +265,78 @@ class _budgetState extends State<budget> {
 
                         if (budgets[pos].status == 1) {
                           return Card(
-                            color: Colors.white,
-                            elevation: 2.0,
-                            child: ListTile(
-                              isThreeLine: true,
-                              //leading: Icon(Icons.check),
-                              title: Text("${budgets[pos].nombdg}"),
-                              subtitle: Column(
-                                children: [
-                                  Text("22".tr + "${budgets[pos].montant}"),
-                                  Text("64".tr + "${budgets[pos].nomcat}"),
-                                ],
+                            elevation: 8,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.white.withOpacity(1),
                               ),
-                              trailing: Column(
-                                children: [
-                                  Text("47".tr + "$dateDebut"),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text("57".tr + "$dateFin")
-                                ],
-                              ),
-                              onTap: () {
-                                AlertDialog alertDialog = AlertDialog(
-                                  title: Icon(Icons.delete),
-                                  content: Text("54".tr),
-                                  actions: [
-                                    TextButton(
-                                      child: Text(
-                                        "26".tr,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-                                      },
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: ListTile(
+                                leading: Icon(Icons.check),
+                                title: Column(
+                                  children: [
+                                    Text("${budgets[pos].nombdg}"),
+                                    SizedBox(
+                                      height: 10,
                                     ),
-                                    TextButton(
-                                      child: Text(
-                                        "38".tr,
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                      onPressed: () {
-                                        SuprimezBudget(budgets[pos].id);
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-                                      },
+                                    Text("22".tr +
+                                        " : " +
+                                        "${budgets[pos].montant}"),
+                                    SizedBox(
+                                      height: 10,
                                     ),
+                                    Text("64".tr +
+                                        " : " +
+                                        "${budgets[pos].nomcat}"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("47".tr + " : " + "$dateDebut"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("57".tr + " : " + "$dateFin")
                                   ],
-                                );
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return alertDialog;
-                                    });
-                              },
+                                ),
+                                onTap: () {
+                                  AlertDialog alertDialog = AlertDialog(
+                                    title: Icon(Icons.delete),
+                                    content: Text("54".tr),
+                                    actions: [
+                                      TextButton(
+                                        child: Text(
+                                          "26".tr,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text(
+                                          "38".tr,
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                        onPressed: () {
+                                          SuprimezBudget(budgets[pos].id);
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return alertDialog;
+                                      });
+                                },
+                              ),
                             ),
                           );
                         } else {

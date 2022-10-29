@@ -112,43 +112,57 @@ class _detailCompteState extends State<detailCompte> {
               padding: EdgeInsets.only(top: 10),
               child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 // Text(" "),
-                RaisedButton(
-                  onPressed: () {
-                    print(alsolde);
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 150,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print(alsolde);
 
-                    AlertDialog alertDialog = AlertDialog(
-                      title: Text(""),
-                      content: Container(
-                        width: 100,
-                        height: 200,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: ListView.builder(
-                                  itemCount: len_comptes,
-                                  itemBuilder: (context, pos) {
-                                    return Card(
-                                      child: ListTile(
-                                        title: Text("${liste1[pos].nom_ress}"),
-                                        subtitle: Text("${liste1[pos].solde}"),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          ],
+                      AlertDialog alertDialog = AlertDialog(
+                        title: Text(""),
+                        content: Container(
+                          width: 100,
+                          height: 200,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                    itemCount: len_comptes,
+                                    itemBuilder: (context, pos) {
+                                      return Card(
+                                        elevation: 8,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                            color: Colors.white.withOpacity(1),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                        child: ListTile(
+                                          title:
+                                              Text("${liste1[pos].nom_ress}"),
+                                          subtitle:
+                                              Text("${liste1[pos].solde}"),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return alertDialog;
-                        });
-                  },
-                  padding: EdgeInsets.all(5),
-                  // color: Colors.red,
-                  //textColor: Colors.white,
-                  child: Text("Afficher Les Details de solde"),
+                      );
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return alertDialog;
+                          });
+                    },
+                    // padding: EdgeInsets.all(5),
+                    // color: Colors.red,
+                    //textColor: Colors.white,
+                    child: Text("Afficher Les Details de solde"),
+                    style: ElevatedButton.styleFrom(shape: StadiumBorder()),
+                  ),
                 )
               ])),
           Padding(
@@ -168,105 +182,126 @@ class _detailCompteState extends State<detailCompte> {
                 //       },
                 //       child: Text("Voir les dettes")),
                 // ),
-                Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      width: MediaQuery.of(context).size.width,
-                      child: FlatButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      detailDettes(this.id_utilisateur)));
-                        },
-                        child: Text(
-                          "Voir Les Dettes ",
-                          style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 30),
+                        width: MediaQuery.of(context).size.width - 50,
+                        // height: MediaQuery.of(context).size.width / 6,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        detailDettes(this.id_utilisateur)));
+                          },
+                          child: Text(
+                            "Voir Les Dettes ",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style:
+                              ElevatedButton.styleFrom(shape: StadiumBorder()),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      width: MediaQuery.of(context).size.width,
-                      child: FlatButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      detailBudget(this.id_utilisateur)));
-                        },
-                        child: Text(
-                          "Voir Les Budgets ",
-                          style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 30),
+                        width: MediaQuery.of(context).size.width - 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        detailBudget(this.id_utilisateur)));
+                          },
+                          child: Text(
+                            "Voir Les Budgets ",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style:
+                              ElevatedButton.styleFrom(shape: StadiumBorder()),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      width: MediaQuery.of(context).size.width,
-                      child: FlatButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      detailObjectif(this.id_utilisateur)));
-                        },
-                        child: Text(
-                          "Voir Les Objectifs ",
-                          style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 30),
+                        width: MediaQuery.of(context).size.width - 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        detailObjectif(this.id_utilisateur)));
+                          },
+                          child: Text(
+                            "Voir Les Objectifs ",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style:
+                              ElevatedButton.styleFrom(shape: StadiumBorder()),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      width: MediaQuery.of(context).size.width,
-                      child: FlatButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      detailStatistique(this.id_utilisateur)));
-                        },
-                        child: Text(
-                          "Voir Les Statistiques ",
-                          style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 30),
+                        width: MediaQuery.of(context).size.width - 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => detailStatistique(
+                                        this.id_utilisateur)));
+                          },
+                          child: Text(
+                            "Voir Les Statistiques ",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style:
+                              ElevatedButton.styleFrom(shape: StadiumBorder()),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

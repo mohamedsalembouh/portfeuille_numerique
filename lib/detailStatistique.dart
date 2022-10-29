@@ -93,10 +93,10 @@ class _detailStatistiqueState extends State<detailStatistique> {
     _seriedata!.add(
       charts.Series(
           data: piedata,
-          domainFn: (diagram task, _) => task.nomCat,
+          domainFn: (diagram task, _) => task.nomCat!,
           measureFn: (diagram task, _) => task.montant,
           colorFn: (diagram task, _) =>
-              charts.ColorUtil.fromDartColor(task.colorval),
+              charts.ColorUtil.fromDartColor(task.colorval!),
           id: 'Daily task',
           labelAccessorFn: (diagram row, _) => '${row.montant}'),
     );
@@ -543,7 +543,7 @@ class _detailStatistiqueState extends State<detailStatistique> {
                       width: 400,
                       height: 400,
                       child: charts.PieChart(
-                        _seriedata,
+                        List.from(_seriedata!),
                         animate: true,
                         animationDuration: Duration(seconds: 5),
                         defaultRenderer: new charts.ArcRendererConfig(

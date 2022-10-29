@@ -202,7 +202,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Container(
                     margin: EdgeInsets.all(30),
                     width: double.infinity,
-                    child: FlatButton(
+                    child: ElevatedButton(
                       onPressed: signup,
                       child: Text(
                         "6".tr,
@@ -222,7 +222,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           "9".tr,
                           style: TextStyle(fontSize: 16),
                         ),
-                        FlatButton(
+                        ElevatedButton(
                           onPressed: () {
                             Navigator.push(
                                 context,
@@ -230,7 +230,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     builder: (context) => signinPage()));
                           },
                           child: Text("4".tr),
-                          textColor: Colors.blue,
+                          //textColor: Colors.blue,
                         )
                       ],
                     ),

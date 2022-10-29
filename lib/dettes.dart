@@ -215,7 +215,6 @@ class _alldettesState extends State<alldettes> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          toolbarHeight: 100,
           bottom: TabBar(
               onTap: (value) {
                 setState(() {
@@ -262,51 +261,59 @@ class _alldettesState extends State<alldettes> {
                           // if (dateMaintenant.compareTo(fin) < 0) {
                           if (prettes[pos].status == 0) {
                             return Card(
-                              color: Colors.white,
-                              //elevation: 2.0,
-                              child: ListTile(
-                                title: Text("${prettes[pos].nom}"),
-                                subtitle: Text("${prettes[pos].montant}"),
-                                trailing: Text("48".tr + "$dateFin"),
-                                onTap: () {
-                                  AlertDialog alertDialog = AlertDialog(
-                                    // title: Icon(Icons.home),
-                                    content: Text("35".tr),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(
-                                          "26".tr,
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  title: Text("${prettes[pos].nom}"),
+                                  subtitle: Text("${prettes[pos].montant}"),
+                                  trailing: Text("48".tr + " : " + "$dateFin"),
+                                  onTap: () {
+                                    AlertDialog alertDialog = AlertDialog(
+                                      // title: Icon(Icons.home),
+                                      content: Text("35".tr),
+                                      actions: [
+                                        TextButton(
+                                          child: Text(
+                                            "26".tr,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                          },
                                         ),
-                                        onPressed: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text(
-                                          "36".tr,
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                        onPressed: () {
-                                          PlusSolde(
-                                              prettes[pos].montant,
-                                              prettes[pos].id,
-                                              prettes[pos].id_compte);
+                                        TextButton(
+                                          child: Text(
+                                            "36".tr,
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          onPressed: () {
+                                            PlusSolde(
+                                                prettes[pos].montant,
+                                                prettes[pos].id,
+                                                prettes[pos].id_compte);
 
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return alertDialog;
-                                      });
-                                },
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return alertDialog;
+                                        });
+                                  },
+                                ),
                               ),
                             );
                           } else {
@@ -336,51 +343,59 @@ class _alldettesState extends State<alldettes> {
 
                           if (empruntes[pos].status == 0) {
                             return Card(
-                              color: Colors.white,
-                              //elevation: 2.0,
-                              child: ListTile(
-                                title: Text("${empruntes[pos].nom}"),
-                                subtitle: Text("${empruntes[pos].montant}"),
-                                trailing: Text("date d'echeance : $dateFin"),
-                                onTap: () {
-                                  AlertDialog alertDialog = AlertDialog(
-                                    //title: Icon(Icons.home),
-                                    content: Text("35".tr),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(
-                                          "26".tr,
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  title: Text("${empruntes[pos].nom}"),
+                                  subtitle: Text("${empruntes[pos].montant}"),
+                                  trailing: Text("48".tr + " : " + "$dateFin"),
+                                  onTap: () {
+                                    AlertDialog alertDialog = AlertDialog(
+                                      //title: Icon(Icons.home),
+                                      content: Text("35".tr),
+                                      actions: [
+                                        TextButton(
+                                          child: Text(
+                                            "26".tr,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                          },
                                         ),
-                                        onPressed: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text(
-                                          "36".tr,
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                        onPressed: () {
-                                          minsSolde(
-                                              empruntes[pos].montant,
-                                              empruntes[pos].id,
-                                              empruntes[pos].id_compte);
+                                        TextButton(
+                                          child: Text(
+                                            "36".tr,
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          onPressed: () {
+                                            minsSolde(
+                                                empruntes[pos].montant,
+                                                empruntes[pos].id,
+                                                empruntes[pos].id_compte);
 
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return alertDialog;
-                                      });
-                                },
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return alertDialog;
+                                        });
+                                  },
+                                ),
                               ),
                             );
                           } else {
@@ -416,48 +431,56 @@ class _alldettesState extends State<alldettes> {
                           if (prettes[pos].status == 1) {
                             //PlusSolde(prettes[pos].montant);
                             return Card(
-                              color: Colors.white,
-                              //elevation: 2.0,
-                              child: ListTile(
-                                leading: Icon(Icons.check),
-                                title: Text("${prettes[pos].nom}"),
-                                subtitle: Text("${prettes[pos].montant}"),
-                                trailing: Text("date d'echeance : $dateFin"),
-                                onTap: () {
-                                  AlertDialog alertDialog = AlertDialog(
-                                    title: Icon(Icons.delete),
-                                    content: Text("37".tr),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(
-                                          "26".tr,
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  leading: Icon(Icons.check),
+                                  title: Text("${prettes[pos].nom}"),
+                                  subtitle: Text("${prettes[pos].montant}"),
+                                  trailing: Text("48".tr + " : " + "$dateFin"),
+                                  onTap: () {
+                                    AlertDialog alertDialog = AlertDialog(
+                                      title: Icon(Icons.delete),
+                                      content: Text("37".tr),
+                                      actions: [
+                                        TextButton(
+                                          child: Text(
+                                            "26".tr,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                          },
                                         ),
-                                        onPressed: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text(
-                                          "38".tr,
-                                          style: TextStyle(color: Colors.red),
+                                        TextButton(
+                                          child: Text(
+                                            "38".tr,
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          onPressed: () {
+                                            deletePrete(prettes[pos].id);
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                          },
                                         ),
-                                        onPressed: () {
-                                          deletePrete(prettes[pos].id);
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return alertDialog;
-                                      });
-                                },
+                                      ],
+                                    );
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return alertDialog;
+                                        });
+                                  },
+                                ),
                               ),
                             );
                           } else {
@@ -487,48 +510,56 @@ class _alldettesState extends State<alldettes> {
                           if (empruntes[pos].status == 1) {
                             // minsSolde(empruntes[pos].montant);
                             return Card(
-                              color: Colors.white,
-                              //elevation: 2.0,
-                              child: ListTile(
-                                leading: Icon(Icons.check),
-                                title: Text("${empruntes[pos].nom}"),
-                                subtitle: Text("${empruntes[pos].montant}"),
-                                trailing: Text("date d'echeance : $dateFin"),
-                                onTap: () {
-                                  AlertDialog alertDialog = AlertDialog(
-                                    title: Icon(Icons.delete),
-                                    content: Text("37".tr),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(
-                                          "26".tr,
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  leading: Icon(Icons.check),
+                                  title: Text("${empruntes[pos].nom}"),
+                                  subtitle: Text("${empruntes[pos].montant}"),
+                                  trailing: Text("48".tr + " : " + "$dateFin"),
+                                  onTap: () {
+                                    AlertDialog alertDialog = AlertDialog(
+                                      title: Icon(Icons.delete),
+                                      content: Text("37".tr),
+                                      actions: [
+                                        TextButton(
+                                          child: Text(
+                                            "26".tr,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                          },
                                         ),
-                                        onPressed: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text(
-                                          "38".tr,
-                                          style: TextStyle(color: Colors.red),
+                                        TextButton(
+                                          child: Text(
+                                            "38".tr,
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          onPressed: () {
+                                            deleteEmprunte(empruntes[pos].id);
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                          },
                                         ),
-                                        onPressed: () {
-                                          deleteEmprunte(empruntes[pos].id);
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return alertDialog;
-                                      });
-                                },
+                                      ],
+                                    );
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return alertDialog;
+                                        });
+                                  },
+                                ),
                               ),
                             );
                           } else {

@@ -79,9 +79,19 @@ class _parametre_notificationState extends State<parametre_notification> {
       appBar: AppBar(),
       body: Column(
         children: [
+          SizedBox(
+            height: 30,
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 15),
             child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: Colors.white.withOpacity(1),
+                ),
+                borderRadius: BorderRadius.circular(20.0),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -116,6 +126,13 @@ class _parametre_notificationState extends State<parametre_notification> {
           Padding(
             padding: const EdgeInsets.only(top: 15),
             child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: Colors.white.withOpacity(1),
+                ),
+                borderRadius: BorderRadius.circular(20.0),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -149,6 +166,13 @@ class _parametre_notificationState extends State<parametre_notification> {
           Padding(
             padding: const EdgeInsets.only(top: 15),
             child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: Colors.white.withOpacity(1),
+                ),
+                borderRadius: BorderRadius.circular(20.0),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [

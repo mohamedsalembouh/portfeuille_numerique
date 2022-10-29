@@ -45,75 +45,93 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Padding(
-          padding: EdgeInsets.only(top: 40, left: 20),
-          child: Column(
-            children: [
-              Card(
-                child: Container(
-                  width: MediaQuery.of(context).size.width - 50,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 20),
-                          child: Text(
-                            "Nouveaux Ressource",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(bottom: 10, left: 20, top: 10),
-                          // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                          child: TextFormField(
-                            controller: resnom,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "entree le nom de la ressource";
-                              }
-                              return null;
-                            },
-                            decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
-                              labelText: "Nom Ressource",
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: Text(
+                        "Ajouter nouveaux Ressource",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: resnom,
+                        decoration: InputDecoration(
+                            labelText: "Nom Ressource",
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 100),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Annuler'),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 40, left: 100),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 30),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Annuler'),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    insrtRessource(resnom.text, this.usr!.id!);
-                                    resnom.clear();
-                                  },
-                                  child: Text('Enregistrer'),
-                                ),
-                              ),
-                            ],
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                insrtRessource(resnom.text, this.usr!.id!);
+                                resnom.clear();
+                              },
+                              child: Text('enregistrer'),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

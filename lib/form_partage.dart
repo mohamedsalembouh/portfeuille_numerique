@@ -45,78 +45,93 @@ class _formPartageState extends State<formPartage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Padding(
-          padding: EdgeInsets.only(top: 40, left: 20),
-          child: Column(
-            children: [
-              Card(
-                child: Container(
-                  width: MediaQuery.of(context).size.width - 50,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 20),
-                          child: Text(
-                            "67".tr,
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(bottom: 10, left: 20, top: 10),
-                          // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                          child: TextFormField(
-                            controller: email,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "entree email";
-                              }
-                              if (!validateEmail(value)) {
-                                return 'SVP entrer valide email';
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              border: UnderlineInputBorder(),
-                              labelText: "2".tr,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: Text(
+                        "67".tr,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 10, left: 10),
+                      // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                      child: TextFormField(
+                        controller: email,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                            labelText: "2".tr,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 100),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('26'.tr),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 40, left: 100),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 30),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('26'.tr),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    inseretPartage(email.text);
-                                  },
-                                  child: Text('68'.tr),
-                                ),
-                              ),
-                            ],
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                inseretPartage(email.text);
+                              },
+                              child: Text('68'.tr),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -100,8 +100,18 @@ class _partageState extends State<partage> {
                   itemCount: count1,
                   itemBuilder: (context, pos) {
                     return Card(
-                      child: ListTile(
-                        title: Text("${partages1[pos].email_personne}"),
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.white.withOpacity(1),
+                        ),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: ListTile(
+                          title: Text("${partages1[pos].email_personne}"),
+                        ),
                       ),
                     );
                   })),
@@ -116,15 +126,25 @@ class _partageState extends State<partage> {
                   itemCount: count2,
                   itemBuilder: (context, pos) {
                     return Card(
-                      child: ListTile(
-                        title: Text("${partages2[pos].email_utilisateur}"),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => detailCompte(
-                                      partages2[pos].id_utilisateur)));
-                        },
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.white.withOpacity(1),
+                        ),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: ListTile(
+                          title: Text("${partages2[pos].email_utilisateur}"),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => detailCompte(
+                                        partages2[pos].id_utilisateur)));
+                          },
+                        ),
                       ),
                     );
                   })),

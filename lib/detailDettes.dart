@@ -135,12 +135,21 @@ class _detailDettesState extends State<detailDettes> {
                             // if (dateMaintenant.compareTo(fin) < 0) {
                             if (prettees[pos].status == 0) {
                               return Card(
-                                color: Colors.white,
-                                //elevation: 2.0,
-                                child: ListTile(
-                                  title: Text("${prettees[pos].nom}"),
-                                  subtitle: Text("${prettees[pos].montant}"),
-                                  trailing: Text("date d'echeance : $dateFin"),
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: Colors.white.withOpacity(1),
+                                  ),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: ListTile(
+                                    title: Text("${prettees[pos].nom}"),
+                                    subtitle: Text("${prettees[pos].montant}"),
+                                    trailing:
+                                        Text("date d'echeance : $dateFin"),
+                                  ),
                                 ),
                               );
                             } else {
@@ -172,12 +181,22 @@ class _detailDettesState extends State<detailDettes> {
 
                             if (empruntees[pos].status == 0) {
                               return Card(
-                                color: Colors.white,
-                                //elevation: 2.0,
-                                child: ListTile(
-                                  title: Text("${empruntees[pos].nom}"),
-                                  subtitle: Text("${empruntees[pos].montant}"),
-                                  trailing: Text("date d'echeance : $dateFin"),
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: Colors.white.withOpacity(1),
+                                  ),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: ListTile(
+                                    title: Text("${empruntees[pos].nom}"),
+                                    subtitle:
+                                        Text("${empruntees[pos].montant}"),
+                                    trailing:
+                                        Text("date d'echeance : $dateFin"),
+                                  ),
                                 ),
                               );
                             } else {
@@ -215,13 +234,22 @@ class _detailDettesState extends State<detailDettes> {
                             if (prettees[pos].status == 1) {
                               //PlusSolde(prettes[pos].montant);
                               return Card(
-                                color: Colors.white,
-                                //elevation: 2.0,
-                                child: ListTile(
-                                  leading: Icon(Icons.check),
-                                  title: Text("${prettees[pos].nom}"),
-                                  subtitle: Text("${prettees[pos].montant}"),
-                                  trailing: Text("date d'echeance : $dateFin"),
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: Colors.white.withOpacity(1),
+                                  ),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: ListTile(
+                                    leading: Icon(Icons.check),
+                                    title: Text("${prettees[pos].nom}"),
+                                    subtitle: Text("${prettees[pos].montant}"),
+                                    trailing:
+                                        Text("date d'echeance : $dateFin"),
+                                  ),
                                 ),
                               );
                             } else {
@@ -253,13 +281,23 @@ class _detailDettesState extends State<detailDettes> {
                             if (empruntees[pos].status == 1) {
                               // minsSolde(empruntes[pos].montant);
                               return Card(
-                                color: Colors.white,
-                                //elevation: 2.0,
-                                child: ListTile(
-                                  leading: Icon(Icons.check),
-                                  title: Text("${empruntees[pos].nom}"),
-                                  subtitle: Text("${empruntees[pos].montant}"),
-                                  trailing: Text("date d'echeance : $dateFin"),
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: Colors.white.withOpacity(1),
+                                  ),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: ListTile(
+                                    leading: Icon(Icons.check),
+                                    title: Text("${empruntees[pos].nom}"),
+                                    subtitle:
+                                        Text("${empruntees[pos].montant}"),
+                                    trailing:
+                                        Text("date d'echeance : $dateFin"),
+                                  ),
                                 ),
                               );
                             } else {

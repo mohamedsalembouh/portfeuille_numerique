@@ -139,7 +139,7 @@ class _signinPageState extends State<signinPage> {
                   Container(
                     margin: EdgeInsets.all(30),
                     width: double.infinity,
-                    child: FlatButton(
+                    child: ElevatedButton(
                       onPressed: () {
                         signin(f_email.text, f_pass.text);
                       },
@@ -161,7 +161,7 @@ class _signinPageState extends State<signinPage> {
                           "5".tr,
                           style: TextStyle(fontSize: 16),
                         ),
-                        FlatButton(
+                        ElevatedButton(
                           onPressed: () {
                             Navigator.push(
                                 context,
@@ -169,7 +169,7 @@ class _signinPageState extends State<signinPage> {
                                     builder: (context) => SignUpPage()));
                           },
                           child: Text("6".tr),
-                          textColor: Colors.blue,
+                          // textColor: Colors.blue,
                         )
                       ],
                     ),

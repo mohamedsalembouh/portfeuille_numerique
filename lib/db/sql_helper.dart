@@ -768,7 +768,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.date_debut,budget.date_fin,budget.id_categorie,categorie.nomcat FROM budget,categorie WHERE budget.id_categorie = categorie.id AND date_debut < '$date' AND date_fin > '$date' AND id_utilisateur = $id");
+        "SELECT budget.id,budget.nombdg,budget.montant,budget.status,budget.date_debut,budget.date_fin,budget.id_categorie,categorie.nomcat FROM budget,categorie WHERE budget.id_categorie = categorie.id AND date_debut < '$date' AND date_fin > '$date' AND budget.id_utilisateur = $id");
     return List.generate(maps.length, (i) {
       return catBudget(
         maps[i]['id'],

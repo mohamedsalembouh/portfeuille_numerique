@@ -32,7 +32,7 @@ class _form_objectifState extends State<form_objectif> {
   TextEditingController montantCible = TextEditingController();
   TextEditingController montantEnregistree = TextEditingController();
   SQL_Helper helper = SQL_Helper();
-  String TypeCompte = "25".tr;
+  String? TypeCompte;
 
   insertObjectif(String nomobj, String value1, String value2) async {
     DateTime maintenant = DateTime.now();
@@ -40,7 +40,7 @@ class _form_objectifState extends State<form_objectif> {
     final form = _formKey.currentState!;
     if (form.validate()) {
       if (TypeCompte != "25".tr) {
-        ressource? res = await helper.getSpecifyRessource(TypeCompte);
+        ressource? res = await helper.getSpecifyRessource(TypeCompte!);
         int id_res = res!.id_ress!;
         compte? cmpe = await helper.getSpecifyCompte(id_res);
         int id_cmpe = cmpe!.id!;
@@ -91,165 +91,204 @@ class _form_objectifState extends State<form_objectif> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-            //title: Text("Nouveaux objectif"),
-            ),
-        body: Column(children: [
-          Padding(
-            padding: EdgeInsets.only(top: 40),
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Center(
-                    child: Card(
-                      child: Container(
-                        color: Colors.white70,
-                        width: MediaQuery.of(context).size.width - 50,
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: Text(
-                                    "60".tr,
-                                    style: TextStyle(fontSize: 25),
-                                  )),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 10, left: 10),
-                                // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: nomObj,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "entrer le nom de l'objectif";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    labelText: "61".tr,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 10, left: 10),
-
-                                //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: montantCible,
-                                  keyboardType: TextInputType.number,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "entrer le montant cible";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    labelText: "62".tr,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 10, left: 10),
-
-                                //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: montantEnregistree,
-                                  keyboardType: TextInputType.number,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "entrer le montant enregistre";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    labelText: "63".tr,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 30, left: 10),
-                                child: FutureBuilder(
-                                    future: getComptesRessource(this.usr!.id!),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<List<compteRessource>>
-                                            snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return CircularProgressIndicator();
-                                      } else {
-                                        return DropdownButton<String>(
-                                          items: snapshot.data!
-                                              .map((cmpRes) =>
-                                                  DropdownMenuItem<String>(
-                                                    child:
-                                                        Text(cmpRes.nom_ress!),
-                                                    value: cmpRes.nom_ress,
-                                                  ))
-                                              .toList(),
-                                          onChanged: (String? value) {
-                                            setState(() {
-                                              TypeCompte = value!;
-                                            });
-                                          },
-                                          isExpanded: true,
-                                          //value: currentNomCat,
-                                          hint: Text(
-                                            '$TypeCompte',
-                                            style: TextStyle(
-                                              fontSize: 17,
-                                              //fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    }),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 40, left: 100),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 30),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('26'.tr),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          insertObjectif(
-                                            nomObj.text,
-                                            montantCible.text,
-                                            montantEnregistree.text,
-                                          );
-                                        },
-                                        child: Text('27'.tr),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+        appBar: AppBar(),
+        body: SingleChildScrollView(
+          child: Column(children: [
+            Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: Text(
+                        "60".tr,
+                        style: TextStyle(fontSize: 25),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: nomObj,
+                        decoration: InputDecoration(
+                            labelText: "61".tr,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: montantCible,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            labelText: "62".tr,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: montantEnregistree,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            labelText: "63".tr,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 10, left: 10),
+                      child: FutureBuilder(
+                          future: getComptesRessource(this.usr!.id!),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<compteRessource>> snapshot) {
+                            if (!snapshot.hasData) {
+                              return CircularProgressIndicator();
+                            } else {
+                              return DropdownButtonFormField(
+                                decoration: InputDecoration(
+                                    // labelText: "Destination",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.black),
+                                    )),
+                                isExpanded: true,
+                                elevation: 16,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0)),
+                                value: TypeCompte,
+                                hint: Text("25".tr),
+                                items: snapshot.data!
+                                    .map((cmpRes) => DropdownMenuItem<String>(
+                                          child: Text(cmpRes.nom_ress!),
+                                          value: cmpRes.nom_ress,
+                                        ))
+                                    .toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    TypeCompte = value!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Le champ est obligatoire";
+                                  }
+                                  return null;
+                                },
+                              );
+                            }
+                          }),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 100),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('26'.tr),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                            ),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                insertObjectif(
+                                  nomObj.text,
+                                  montantCible.text,
+                                  montantEnregistree.text,
+                                );
+                              },
+                              child: Text('27'.tr),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          )
-        ]));
+          ]),
+        ));
   }
 }

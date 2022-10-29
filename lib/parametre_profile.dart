@@ -59,6 +59,13 @@ class parametre_profile extends StatelessWidget {
                       child: ListView(
                         children: [
                           Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.white.withOpacity(1),
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                             child: ListTile(
                               title: Text("Changer votre nom"),
                               //leading: Icon(Icons.),
@@ -72,6 +79,13 @@ class parametre_profile extends StatelessWidget {
                             ),
                           ),
                           Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.white.withOpacity(1),
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                             child: ListTile(
                               title: Text("Changer votre Mot de passe"),
                               //leading: Icon(Icons.password),

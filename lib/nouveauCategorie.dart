@@ -43,112 +43,140 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
     }
   }
 
-  String colorValue = 'Coleur';
+  String? colorValue;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Padding(
-          padding: EdgeInsets.only(top: 40, left: 20),
-          child: Column(
-            children: [
-              Card(
-                child: Container(
-                  width: MediaQuery.of(context).size.width - 50,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 20),
-                          child: Text(
-                            "Nouveaux Categorie",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(bottom: 10, left: 20, top: 10),
-                          // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                          child: TextFormField(
-                            controller: catnom,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "entree le nom de categorie";
-                              }
-                              return null;
-                            },
-                            decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
-                              labelText: "Nom Categorie",
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: Text(
+                        "Nouveaux Categorie",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: catnom,
+                        decoration: InputDecoration(
+                            labelText: "Nom categorie",
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: DropdownButtonFormField(
+                        decoration: InputDecoration(
+                            // labelText: "Destination",
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        isExpanded: true,
+                        elevation: 16,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        value: colorValue,
+                        hint: Text("choissir un couleur"),
+                        items: <String>['Vert', 'Rouge', 'Jaune', 'Rose']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            colorValue = value!;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 100),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Annuler'),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
                             ),
                           ),
-                        ),
-                        Container(
-                          width: 300,
-                          height: 50,
-                          margin: EdgeInsets.only(top: 20),
-                          child: DropdownButton<String>(
-                            items: <String>['Vert', 'Rouge', 'Jaune', 'Rose']
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {
-                              setState(() {
-                                colorValue = value!;
-                              });
-                            },
-                            isExpanded: true,
-                            //value: currentNomCat,
-                            hint: Text('$colorValue'),
-                            //style: TextStyle(fontSize: 18),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                insertCategorie(catnom.text, colorValue!);
+                              },
+                              child: Text('enregistrer'),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                            ),
                           ),
-                          // TextField(
-                          //   controller: cattype,
-                          //   decoration: InputDecoration(
-                          //       hintText: 'type categorie', border: OutlineInputBorder()),
-                          //   style: TextStyle(fontSize: 20),
-                          // ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 40, left: 100),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 30),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Annuler'),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    if (colorValue != "Coleur") {
-                                      insertCategorie(catnom.text, colorValue);
-                                    } else {
-                                      Toast.show("Choisir un coleur");
-                                    }
-                                  },
-                                  child: Text('Enregistrer'),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

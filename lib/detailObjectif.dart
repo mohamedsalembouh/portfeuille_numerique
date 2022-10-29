@@ -80,16 +80,24 @@ class _detailObjectifState extends State<detailObjectif> {
                             if (allobjective[pos].montant_donnee !=
                                 allobjective[pos].montant_cible) {
                               return Card(
-                                margin: EdgeInsets.only(top: 5),
-                                color: Colors.white,
-                                child: ListTile(
-                                  title: Text(
-                                      "${allobjective[pos].nom_objective}"),
-                                  subtitle: Text(
-                                    "montant donnee : ${allobjective[pos].montant_donnee}",
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: Colors.white.withOpacity(1),
                                   ),
-                                  trailing: Text(
-                                    "montant cible : ${allobjective[pos].montant_cible}",
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: ListTile(
+                                    title: Text(
+                                        "${allobjective[pos].nom_objective}"),
+                                    subtitle: Text(
+                                      "montant donnee : ${allobjective[pos].montant_donnee}",
+                                    ),
+                                    trailing: Text(
+                                      "montant cible : ${allobjective[pos].montant_cible}",
+                                    ),
                                   ),
                                 ),
                               );
@@ -109,18 +117,27 @@ class _detailObjectifState extends State<detailObjectif> {
                             if (allobjective[pos].montant_donnee ==
                                 allobjective[pos].montant_cible) {
                               return Card(
-                                color: Colors.white,
-                                child: ListTile(
-                                  leading: Icon(Icons.check),
-                                  title: Text(
-                                      "${allobjective[pos].nom_objective}"),
-                                  subtitle: Text(
-                                    "montant donnee : ${allobjective[pos].montant_donnee}",
-                                    // style: TextStyle(color: Colors.amberAccent),
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: Colors.white.withOpacity(1),
                                   ),
-                                  trailing: Text(
-                                    "montant cible : ${allobjective[pos].montant_cible}",
-                                    //style: TextStyle(color: Colors.green),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: ListTile(
+                                    leading: Icon(Icons.check),
+                                    title: Text(
+                                        "${allobjective[pos].nom_objective}"),
+                                    subtitle: Text(
+                                      "montant donnee : ${allobjective[pos].montant_donnee}",
+                                      // style: TextStyle(color: Colors.amberAccent),
+                                    ),
+                                    trailing: Text(
+                                      "montant cible : ${allobjective[pos].montant_cible}",
+                                      //style: TextStyle(color: Colors.green),
+                                    ),
                                   ),
                                 ),
                               );

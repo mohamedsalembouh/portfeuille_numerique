@@ -294,18 +294,18 @@ void showText(BuildContext context, String title, String msg) {
   showDialog(context: context, builder: (_) => alterdialogue);
 }
 
-Widget myBottomNavBar() {
-  return BottomNavigationBar(
-    items: [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        title: Text("Acceuil"),
-      ),
-      BottomNavigationBarItem(icon: Icon(Icons.help), title: Text("Aide")),
-    ],
-    //backgroundColor: Colors.purpleAccent,
-  );
-}
+// Widget myBottomNavBar() {
+//   return BottomNavigationBar(
+//     items: [
+//       BottomNavigationBarItem(
+//         icon: Icon(Icons.home),
+//         title: Text("Acceuil"),
+//       ),
+//       BottomNavigationBarItem(icon: Icon(Icons.help), title: Text("Aide")),
+//     ],
+//     //backgroundColor: Colors.purpleAccent,
+//   );
+// }
 
 getRessources(int idUser) {
   Future<List<ressource>> allRessources = helper.getAllRessource(idUser);

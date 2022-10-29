@@ -90,10 +90,10 @@ class _statistiqueState extends State<statistique> {
     _seriedata!.add(
       charts.Series(
           data: piedata,
-          domainFn: (diagram task, _) => task.nomCat,
+          domainFn: (diagram task, _) => task.nomCat!,
           measureFn: (diagram task, _) => task.montant,
           colorFn: (diagram task, _) =>
-              charts.ColorUtil.fromDartColor(task.colorval),
+              charts.ColorUtil.fromDartColor(task.colorval!),
           id: 'Daily task',
           labelAccessorFn: (diagram row, _) => '${row.montant}'),
     );
@@ -658,7 +658,7 @@ class _statistiqueState extends State<statistique> {
                       width: 400,
                       height: 400,
                       child: charts.PieChart(
-                        _seriedata,
+                        List.from(_seriedata!),
                         animate: true,
                         animationDuration: Duration(seconds: 5),
                         defaultRenderer: new charts.ArcRendererConfig(
@@ -783,6 +783,7 @@ class _statistiqueState extends State<statistique> {
                           Text('Rechercher')
                         ],
                       ),
+                      style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                     ),
                   ),
                   // Padding(
@@ -835,14 +836,20 @@ class _statistiqueState extends State<statistique> {
                       child: Card(
                         child: Text(
                           "Registre des revenus et depense ",
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(fontSize: 20),
                         ),
                       )),
                   Padding(
                     padding: EdgeInsets.only(top: 10),
                     child: ListTile(
-                      title: Text("Revenus"),
-                      trailing: Text("$totalRevenus"),
+                      title: Text(
+                        "Revenus",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      trailing: Text(
+                        "$totalRevenus",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                   Expanded(
@@ -851,8 +858,13 @@ class _statistiqueState extends State<statistique> {
                       itemCount: rvenusCount,
                       itemBuilder: (context, pos) {
                         return Card(
-                          color: Colors.white,
-                          //elevation: 2.0,
+                          elevation: 8,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: Colors.white.withOpacity(1),
+                            ),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
                           child: ListTile(
                             title: Text("${revenus[pos].nomcat}"),
                             trailing: Text("${revenus[pos].montant}"),
@@ -894,14 +906,27 @@ class _statistiqueState extends State<statistique> {
                     ),
                   ),
                   ListTile(
-                    title: Text("depenses"),
-                    trailing: Text("$total"),
+                    title: Text(
+                      "depenses",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    trailing: Text(
+                      "$total",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Expanded(
                       child: ListView.builder(
                           itemCount: depensesCount,
                           itemBuilder: (context, pos) {
                             return Card(
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
                               child: ListTile(
                                 title: Text("${depenses[pos].nomcat}"),
                                 trailing: Text("${depenses[pos].montant}"),

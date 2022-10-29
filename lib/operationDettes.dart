@@ -57,7 +57,7 @@ class _operdatteState extends State<operdatte> {
                     Container(
                       // margin: EdgeInsets.all(30),
                       width: MediaQuery.of(context).size.width,
-                      child: FlatButton(
+                      child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -82,7 +82,7 @@ class _operdatteState extends State<operdatte> {
                     Container(
                       margin: EdgeInsets.only(top: 30),
                       width: MediaQuery.of(context).size.width,
-                      child: FlatButton(
+                      child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                               context,

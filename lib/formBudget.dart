@@ -28,22 +28,26 @@ class _formbudgetState extends State<formbudget> {
   TextEditingController dateFin = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   SQL_Helper helper = SQL_Helper();
-  String currentNomCat = "21".tr;
+  String? currentNomCat;
   Future<List<categorie>> achatsCategorie() async {
     List<categorie> achatCategorieList =
         await helper.getAllcategories(this.usr!.id!);
     return achatCategorieList;
   }
 
-  insrererBudget(String nom, String value, String dateDebut, String dateFin,
-      String CatNom) async {
+  insrererBudget(
+    String nom,
+    String value,
+    String dateDebut,
+    String dateFin,
+  ) async {
     final form = _formKey.currentState!;
     if (form.validate()) {
       utilisateur? user =
           await helper.getUser(this.usr!.email!, this.usr!.password!);
       int a = user!.id!;
       int montant = int.parse(value);
-      categorie? cat = await helper.getSpecifyCategorie(CatNom);
+      categorie? cat = await helper.getSpecifyCategorie(currentNomCat!);
       int idCat = cat!.id!;
       budgete bdg;
       if (sharedpref!.getBool("statusBudget") == true) {
@@ -63,219 +67,257 @@ class _formbudgetState extends State<formbudget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-          //title: Text("Nouveaux budget"),
-          ),
-      body: Column(
-        children: [
-          Container(
-            child: Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Center(
-                    child: Card(
-                      child: Container(
-                        color: Colors.white70,
-                        width: MediaQuery.of(context).size.width - 50,
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: Text(
-                                    "55".tr,
-                                    style: TextStyle(fontSize: 25),
-                                  )),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 10, left: 10),
-                                // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: nom,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "entrer le nom du budget";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    labelText: "56".tr,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 10, left: 10),
-
-                                //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: montant,
-                                  keyboardType: TextInputType.number,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "entrer le montant que vous voulez specifiez";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    labelText: "22".tr,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 10, bottom: 10),
-                                //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: dateDebut,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "entrer la date de debut";
-                                    }
-                                    return null;
-                                  },
-                                  //keyboardType: TextInputType.datetime,
-                                  decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    labelText: "47".tr,
-                                    icon: Icon(Icons.calendar_today_outlined),
-                                  ),
-                                  onTap: () async {
-                                    DateTime? pickeddate = await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2050));
-
-                                    if (pickeddate == null) {
-                                      pickeddate = DateTime.now();
-                                    }
-                                    setState(() {
-                                      dateDebut.text = DateFormat("yyyy-MM-dd")
-                                          .format(pickeddate!);
-                                    });
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: dateFin,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "entrer la date de Fin";
-                                    }
-                                    return null;
-                                  },
-                                  //keyboardType: TextInputType.datetime,
-                                  decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    labelText: "57".tr,
-                                    icon: Icon(Icons.calendar_today_outlined),
-                                  ),
-                                  onTap: () async {
-                                    DateTime? pickeddate = await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2050));
-
-                                    if (pickeddate != null) {
-                                      setState(() {
-                                        dateFin.text = DateFormat("yyyy-MM-dd")
-                                            .format(pickeddate);
-                                      });
-                                    }
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 30, left: 10),
-                                child: FutureBuilder(
-                                    future: achatsCategorie(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<List<categorie>>
-                                            snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return CircularProgressIndicator();
-                                      } else {
-                                        return DropdownButton<String>(
-                                          items: snapshot.data!
-                                              .map((cat) =>
-                                                  DropdownMenuItem<String>(
-                                                    child: Text(cat.nomcat!),
-                                                    value: cat.nomcat,
-                                                  ))
-                                              .toList(),
-                                          onChanged: (String? value) {
-                                            setState(() {
-                                              currentNomCat = value!;
-                                            });
-                                          },
-                                          isExpanded: true,
-                                          //value: currentNomCat,
-                                          hint: Text(
-                                            '$currentNomCat',
-                                            style: TextStyle(
-                                                //fontSize: 20,
-                                                //fontWeight: FontWeight.bold
-                                                ),
-                                          ),
-                                        );
-                                      }
-                                    }),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 40, left: 100),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 30),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('26'.tr),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          if (currentNomCat != "21".tr) {
-                                            insrererBudget(
-                                                nom.text,
-                                                montant.text,
-                                                dateDebut.text,
-                                                dateFin.text,
-                                                currentNomCat);
-                                          } else {
-                                            Toast.show("t1".tr);
-                                          }
-                                        },
-                                        child: Text('27'.tr),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+      appBar: AppBar(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: Text(
+                        "55".tr,
+                        style: TextStyle(fontSize: 25),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: nom,
+                        decoration: InputDecoration(
+                            labelText: "56".tr,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: montant,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            labelText: "22".tr,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: dateDebut,
+                        readOnly: true,
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1950),
+                              lastDate: DateTime(2050));
+
+                          if (pickedDate != null) {
+                            dateDebut.text =
+                                DateFormat('yyyy-MM-dd').format(pickedDate);
+                          }
+                        },
+                        decoration: InputDecoration(
+                            labelText: "47".tr,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10, left: 10),
+                      child: TextFormField(
+                        controller: dateFin,
+                        readOnly: true,
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1950),
+                              lastDate: DateTime(2050));
+
+                          if (pickedDate != null) {
+                            dateFin.text =
+                                DateFormat('yyyy-MM-dd').format(pickedDate);
+                          }
+                        },
+                        decoration: InputDecoration(
+                            labelText: "57".tr,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.black),
+                            )),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Le champ est obligatoire";
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: FutureBuilder(
+                          future: achatsCategorie(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<categorie>> snapshot) {
+                            if (!snapshot.hasData) {
+                              return CircularProgressIndicator();
+                            } else {
+                              return DropdownButtonFormField(
+                                decoration: InputDecoration(
+                                    // labelText: "Destination",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.black),
+                                    )),
+                                isExpanded: true,
+                                elevation: 16,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0)),
+                                value: currentNomCat,
+                                hint: Text("21".tr),
+                                items: snapshot.data!
+                                    .map((cat) => DropdownMenuItem<String>(
+                                          child: Text(cat.nomcat!),
+                                          value: cat.nomcat,
+                                        ))
+                                    .toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    currentNomCat = value!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Le champ est obligatoire";
+                                  }
+                                  return null;
+                                },
+                              );
+                            }
+                          }),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 100),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('26'.tr),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                            ),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: MediaQuery.of(context).size.height / 13,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                insrererBudget(
+                                  nom.text,
+                                  montant.text,
+                                  dateDebut.text,
+                                  dateFin.text,
+                                );
+                              },
+                              child: Text('27'.tr),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

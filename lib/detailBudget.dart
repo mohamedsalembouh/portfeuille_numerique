@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:sqflite/sqflite.dart';
-
+import 'package:get/get.dart';
 import 'models/catBudget.dart';
 
 class detailBudget extends StatefulWidget {
@@ -87,27 +87,41 @@ class _detailBudgetState extends State<detailBudget> {
 
                           if (budgeets[pos].status == 0) {
                             return Card(
-                              color: Colors.white,
-                              elevation: 2.0,
-                              child: ListTile(
-                                isThreeLine: true,
-
-                                // leading: Icon(Icons.category),
-                                title: Text("${budgeets[pos].nombdg}"),
-                                subtitle: Column(
-                                  children: [
-                                    Text("montant : ${budgeets[pos].montant}"),
-                                    Text("categorie : ${budgeets[pos].nomcat}"),
-                                  ],
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
                                 ),
-                                trailing: Column(
-                                  children: [
-                                    Text(" Date debut : $dateDebut"),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("Date Fin : $dateFin")
-                                  ],
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  title: Column(
+                                    children: [
+                                      Text("${budgeets[pos].nombdg}"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("22".tr +
+                                          " : " +
+                                          "${budgeets[pos].montant}"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("64".tr +
+                                          " : " +
+                                          "${budgeets[pos].nomcat}"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("47".tr + " : " + "$dateDebut"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("57".tr + " : " + "$dateFin")
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -135,26 +149,43 @@ class _detailBudgetState extends State<detailBudget> {
 
                           if (budgeets[pos].status == 1) {
                             return Card(
-                              color: Colors.white,
-                              elevation: 2.0,
-                              child: ListTile(
-                                isThreeLine: true,
-                                //leading: Icon(Icons.check),
-                                title: Text("${budgeets[pos].nombdg}"),
-                                subtitle: Column(
-                                  children: [
-                                    Text("montant : ${budgeets[pos].montant}"),
-                                    Text("categorie : ${budgeets[pos].nomcat}"),
-                                  ],
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
                                 ),
-                                trailing: Column(
-                                  children: [
-                                    Text(" Date debut : $dateDebut"),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("Date Fin : $dateFin")
-                                  ],
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  isThreeLine: true,
+                                  //leading: Icon(Icons.check),
+                                  title: Column(
+                                    children: [
+                                      Text("${budgeets[pos].nombdg}"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("22".tr +
+                                          " : " +
+                                          "${budgeets[pos].montant}"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("64".tr +
+                                          " : " +
+                                          "${budgeets[pos].nomcat}"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("47".tr + " : " + "$dateDebut"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("57".tr + " : " + "$dateFin")
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

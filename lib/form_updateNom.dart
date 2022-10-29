@@ -30,73 +30,86 @@ class form_updateNom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 40),
-            child: Card(
-              child: Container(
-                width: MediaQuery.of(context).size.width - 50,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
+      body: SingleChildScrollView(
+        child: Column(children: [
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 30,
+                ),
+                Center(
+                  child: Text(
+                    "Changer votre nom",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 10, left: 10),
+                  // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: TextFormField(
+                    controller: newnom,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "entree le nouveaux nom";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        labelText: "Nouveaux nom",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                          borderSide: BorderSide(color: Colors.black),
+                        )),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 100),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 20),
-                        child: Text(
-                          "Changer votre nom",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 10, left: 20, top: 10),
-                        // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                        child: TextFormField(
-                          controller: newnom,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "entree le nouveaux nom";
-                            }
-                            return null;
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                        height: MediaQuery.of(context).size.height / 13,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
                           },
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelText: "Nouveau nom",
-                          ),
+                          child: Text('Annuler'),
+                          style:
+                              ElevatedButton.styleFrom(shape: StadiumBorder()),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 40, left: 100),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(right: 30),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Annuler'),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  updateNom(context, newnom.text);
-                                },
-                                child: Text('Modifier'),
-                              ),
-                            ),
-                          ],
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                        height: MediaQuery.of(context).size.height / 13,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            updateNom(context, newnom.text);
+                          },
+                          child: Text('enregistrer'),
+                          style:
+                              ElevatedButton.styleFrom(shape: StadiumBorder()),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
+              ],
             ),
           ),
-        ],
+        ]),
       ),
     );
   }

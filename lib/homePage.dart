@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+//import 'package:flutter_charts/flutter_charts.dart' as charts;
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/categories.dart';
@@ -64,7 +65,7 @@ class _homepageState extends State<homepage> {
   TextEditingController f_solde = TextEditingController();
   // _homepageState(this.email, this.pass);
 
-  String TypeCompte = "25".tr;
+  String? TypeCompte;
   SQL_Helper helper = new SQL_Helper();
   List<charts.Series<diagram, String>?>? _seriedata;
   List<depensesCats>? allDepenses;
@@ -110,10 +111,10 @@ class _homepageState extends State<homepage> {
     _seriedata!.add(
       charts.Series(
         data: piedata,
-        domainFn: (diagram task, _) => task.nomCat,
+        domainFn: (diagram task, _) => task.nomCat!,
         measureFn: (diagram task, _) => task.montant,
         colorFn: (diagram task, _) =>
-            charts.ColorUtil.fromDartColor(task.colorval),
+            charts.ColorUtil.fromDartColor(task.colorval!),
         id: 'Daily task',
         //labelAccessorFn: (diagram row, _) => '${row.montant}'
       ),
@@ -138,6 +139,7 @@ class _homepageState extends State<homepage> {
     )
   ];
   late final LocalNotificationService service;
+  final _formKey = new GlobalKey<FormState>();
   @override
   void initState() {
     // TODO: implement initState
@@ -150,12 +152,12 @@ class _homepageState extends State<homepage> {
     listenToNotification();
   }
 
-  insertSolde(String fSolde, String typeCmp) async {
+  insertSolde(String fSolde) async {
     // utilisateur? user =
     //     await helper.getUser(this.user!.email!, this.user!.password!);
     // a = user!.id;
     if (TypeCompte != "25".tr) {
-      ressource? res = await helper.getSpecifyRessource(typeCmp);
+      ressource? res = await helper.getSpecifyRessource(TypeCompte!);
       int id_res = res!.id_ress!;
       DateTime maintenant = DateTime.now();
       String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
@@ -516,7 +518,7 @@ class _homepageState extends State<homepage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               // Text(" "),
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: () {
                                   print(allSolde);
 
@@ -534,6 +536,17 @@ class _homepageState extends State<homepage> {
                                                   print(monliste[pos].nom);
                                                   print(monliste[pos].solde);
                                                   return Card(
+                                                    elevation: 8,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                        color: Colors.white
+                                                            .withOpacity(1),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20.0),
+                                                    ),
                                                     child: ListTile(
                                                       title: Text(
                                                           "${monliste[pos].nom}"),
@@ -553,10 +566,12 @@ class _homepageState extends State<homepage> {
                                         return alertDialog;
                                       });
                                 },
-                                padding: EdgeInsets.all(5),
+                                // padding: EdgeInsets.all(5),
                                 // color: Colors.red,
                                 //textColor: Colors.white,
                                 child: Text("14".tr),
+                                style: ElevatedButton.styleFrom(
+                                    shape: StadiumBorder()),
                               )
                             ])),
                     Padding(
@@ -565,120 +580,216 @@ class _homepageState extends State<homepage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           // Text(" "),
-                          RaisedButton(
+                          ElevatedButton(
                             onPressed: () {
                               AlertDialog alertDialog = AlertDialog(
                                   title: Text("29".tr),
-                                  content: StatefulBuilder(builder:
-                                      (BuildContext context,
-                                          StateSetter setState) {
-                                    return Container(
-                                      height: 300,
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 10),
-                                            child: SizedBox(
-                                              //width: 200,
-                                              child: TextField(
-                                                controller: f_solde,
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                decoration: InputDecoration(
-                                                    hintText: '0',
-                                                    border:
-                                                        OutlineInputBorder()),
-                                                style: TextStyle(fontSize: 20),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 30, left: 10),
-                                            child: FutureBuilder(
-                                                future: getRessources(
-                                                    this.user!.id!),
-                                                builder: (BuildContext context,
-                                                    AsyncSnapshot<
-                                                            List<ressource>>
-                                                        snapshot) {
-                                                  if (!snapshot.hasData) {
-                                                    return CircularProgressIndicator();
-                                                  } else {
-                                                    return DropdownButton<
-                                                        String>(
-                                                      items: snapshot.data!
-                                                          .map((res) =>
-                                                              DropdownMenuItem<
-                                                                  String>(
-                                                                child: Text(res
-                                                                    .nom_ress!),
-                                                                value: res
-                                                                    .nom_ress,
-                                                              ))
-                                                          .toList(),
-                                                      onChanged:
-                                                          (String? value) {
-                                                        setState(() {
-                                                          TypeCompte = value!;
-                                                        });
-                                                      },
-                                                      isExpanded: true,
-                                                      //value: currentNomCat,
-                                                      hint: Text(
-                                                        '$TypeCompte',
-                                                        style: TextStyle(
-                                                          fontSize: 15,
-                                                          //fontWeight: FontWeight.bold
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                }),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
+                                  content: SingleChildScrollView(
+                                    child: StatefulBuilder(builder:
+                                        (BuildContext context,
+                                            StateSetter setState) {
+                                      return Container(
+                                          child: Column(children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(),
+                                          child: Form(
+                                            key: _formKey,
+                                            child: Column(
                                               children: [
-                                                ElevatedButton(
-                                                  child: Text(
-                                                    "26".tr,
-                                                    // style: TextStyle(
-                                                    //     color: Colors.red),
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                TextFormField(
+                                                  controller: f_solde,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  decoration: InputDecoration(
+                                                      labelText: "solde",
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    20.0)),
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    20.0)),
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.black),
+                                                      )),
+                                                  validator: (value) {
+                                                    if (value!.isEmpty) {
+                                                      return "Le champ est obligatoire";
+                                                    }
+                                                    return null;
                                                   },
                                                 ),
-                                                ElevatedButton(
-                                                  child: Text("27".tr),
-                                                  onPressed: () {
-                                                    insertSolde(f_solde.text,
-                                                        TypeCompte);
-                                                    f_solde.clear();
-                                                    TypeCompte = "25".tr;
-                                                  },
+                                                SizedBox(
+                                                  height: 30,
+                                                ),
+                                                FutureBuilder(
+                                                    future: getRessources(
+                                                        this.user!.id!),
+                                                    builder: (BuildContext
+                                                            context,
+                                                        AsyncSnapshot<
+                                                                List<ressource>>
+                                                            snapshot) {
+                                                      if (!snapshot.hasData) {
+                                                        return CircularProgressIndicator();
+                                                      } else {
+                                                        return DropdownButtonFormField(
+                                                          decoration:
+                                                              InputDecoration(
+                                                                  // labelText: "Destination",
+                                                                  border:
+                                                                      OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(20.0)),
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                            color:
+                                                                                Colors.white),
+                                                                  ),
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(20.0)),
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                            color:
+                                                                                Colors.black),
+                                                                  )),
+                                                          isExpanded: true,
+                                                          elevation: 16,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5.0)),
+                                                          value: TypeCompte,
+                                                          hint: Text("25".tr),
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              TypeCompte = value
+                                                                  as String;
+                                                            });
+                                                          },
+                                                          items: snapshot.data!
+                                                              .map((res) =>
+                                                                  DropdownMenuItem<
+                                                                      String>(
+                                                                    child: Text(
+                                                                        res.nom_ress!),
+                                                                    value: res
+                                                                        .nom_ress,
+                                                                  ))
+                                                              .toList(),
+                                                          validator: (value) {
+                                                            if (value == null) {
+                                                              return "le champ est obligatoire";
+                                                            }
+                                                            return null;
+                                                          },
+                                                        );
+                                                      }
+                                                    }),
+                                                SizedBox(
+                                                  height: 30,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    // SizedBox(
+                                                    //   width:
+                                                    //       MediaQuery.of(context)
+                                                    //               .size
+                                                    //               .width /
+                                                    //           3,
+                                                    //   height:
+                                                    //       MediaQuery.of(context)
+                                                    //               .size
+                                                    //               .height /
+                                                    //           13,
+                                                    //   child: ElevatedButton(
+                                                    //     child: Text(
+                                                    //       "26".tr,
+                                                    //     ),
+                                                    //     style: ElevatedButton
+                                                    //         .styleFrom(
+                                                    //             shape:
+                                                    //                 StadiumBorder()),
+                                                    //     onPressed: () {
+                                                    //       Navigator.pop(
+                                                    //           context);
+                                                    //     },
+                                                    //   ),
+                                                    // ),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              2,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              13,
+                                                      child: ElevatedButton(
+                                                        child: Text("27".tr),
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                shape:
+                                                                    StadiumBorder()),
+                                                        onPressed: () {
+                                                          final form = _formKey
+                                                              .currentState!;
+                                                          if (form.validate()) {
+                                                            insertSolde(
+                                                              f_solde.text,
+                                                            );
+                                                            f_solde.clear();
+                                                          }
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                  }));
+                                        )
+                                      ]));
+                                    }),
+                                  ));
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return alertDialog;
                                   });
                             },
-                            padding: EdgeInsets.all(5),
-                            color: Colors.red,
-                            textColor: Colors.white,
-                            child: Text("15".tr),
+                            // padding: EdgeInsets.all(5),
+                            // color: Colors.red,
+                            // textColor: Colors.white,
+                            child: Text(
+                              "15".tr,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                                shape: StadiumBorder()),
                           )
                         ],
                       ),
@@ -711,7 +822,7 @@ class _homepageState extends State<homepage> {
                         width: 400,
                         height: 400,
                         child: charts.PieChart(
-                          _seriedata,
+                          List.from(_seriedata!),
                           animate: true,
                           animationDuration: Duration(seconds: 3),
                           defaultRenderer: new charts.ArcRendererConfig(
@@ -789,6 +900,13 @@ class _homepageState extends State<homepage> {
                               itemCount: count,
                               itemBuilder: (context, pos) {
                                 return Card(
+                                  elevation: 8,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                      color: Colors.white.withOpacity(1),
+                                    ),
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
                                   child: ListTile(
                                       isThreeLine: true,
                                       title: Text("${depenses[pos].nomcat}"),

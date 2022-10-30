@@ -55,7 +55,7 @@ class form_updateNom extends StatelessWidget {
                     controller: newnom,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "entree le nouveaux nom";
+                        return "Le champ est obligatoire";
                       }
                       return null;
                     },

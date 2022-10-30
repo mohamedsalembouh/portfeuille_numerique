@@ -136,21 +136,25 @@ class _signinPageState extends State<signinPage> {
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.all(30),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        signin(f_email.text, f_pass.text);
-                      },
-                      child: Text(
-                        "4".tr,
-                        style: TextStyle(color: Colors.white),
+                  Padding(
+                    padding: const EdgeInsets.only(),
+                    child: Container(
+                      margin: EdgeInsets.all(30),
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          signin(f_email.text, f_pass.text);
+                        },
+                        child: Text(
+                          "4".tr,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                       ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(30),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
                   ),
                   Container(
@@ -161,15 +165,23 @@ class _signinPageState extends State<signinPage> {
                           "5".tr,
                           style: TextStyle(fontSize: 16),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignUpPage()));
-                          },
-                          child: Text("6".tr),
-                          // textColor: Colors.blue,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: SizedBox(
+                            width: 100,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignUpPage()));
+                              },
+                              child: Text("6".tr),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                              // textColor: Colors.blue,
+                            ),
+                          ),
                         )
                       ],
                     ),

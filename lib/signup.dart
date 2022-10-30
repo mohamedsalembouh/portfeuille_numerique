@@ -208,6 +208,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         "6".tr,
                         style: TextStyle(color: Colors.white),
                       ),
+                      style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                     ),
                     decoration: BoxDecoration(
                       color: Colors.blue,
@@ -222,15 +223,22 @@ class _SignUpPageState extends State<SignUpPage> {
                           "9".tr,
                           style: TextStyle(fontSize: 16),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => signinPage()));
-                          },
-                          child: Text("4".tr),
-                          //textColor: Colors.blue,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: SizedBox(
+                            width: 100,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => signinPage()));
+                              },
+                              child: Text("4".tr),
+                              style: ElevatedButton.styleFrom(
+                                  shape: StadiumBorder()),
+                            ),
+                          ),
                         )
                       ],
                     ),

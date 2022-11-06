@@ -6,7 +6,7 @@ import 'package:portfeuille_numerique/detailObjectif.dart';
 import 'package:portfeuille_numerique/detailStatistique.dart';
 import 'package:portfeuille_numerique/models/compteRessource.dart';
 import 'package:sqflite/sqflite.dart';
-
+import 'package:get/get.dart';
 import 'models/compte.dart';
 
 class detailCompte extends StatefulWidget {
@@ -89,7 +89,7 @@ class _detailCompteState extends State<detailCompte> {
               children: [
                 // Title(color: Colors.red, child: Text("hi")),
                 Text(
-                  "Le Solde est ",
+                  "86".tr,
                   style: TextStyle(fontSize: 25),
                 ),
                 Container(
@@ -160,7 +160,7 @@ class _detailCompteState extends State<detailCompte> {
                     // padding: EdgeInsets.all(5),
                     // color: Colors.red,
                     //textColor: Colors.white,
-                    child: Text("Afficher Les Details de solde"),
+                    child: Text("14".tr),
                     style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                   ),
                 )
@@ -199,7 +199,7 @@ class _detailCompteState extends State<detailCompte> {
                                         detailDettes(this.id_utilisateur)));
                           },
                           child: Text(
-                            "Voir Les Dettes ",
+                            "87".tr,
                             style: TextStyle(color: Colors.white),
                           ),
                           style:
@@ -229,7 +229,7 @@ class _detailCompteState extends State<detailCompte> {
                                         detailBudget(this.id_utilisateur)));
                           },
                           child: Text(
-                            "Voir Les Budgets ",
+                            "88".tr,
                             style: TextStyle(color: Colors.white),
                           ),
                           style:
@@ -259,7 +259,7 @@ class _detailCompteState extends State<detailCompte> {
                                         detailObjectif(this.id_utilisateur)));
                           },
                           child: Text(
-                            "Voir Les Objectifs ",
+                            "89".tr,
                             style: TextStyle(color: Colors.white),
                           ),
                           style:
@@ -289,7 +289,7 @@ class _detailCompteState extends State<detailCompte> {
                                         this.id_utilisateur)));
                           },
                           child: Text(
-                            "Voir Les Statistiques ",
+                            "90".tr,
                             style: TextStyle(color: Colors.white),
                           ),
                           style:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/main.dart';
@@ -97,12 +98,11 @@ class _parametre_notificationState extends State<parametre_notification> {
                 children: [
                   Container(
                       width: MediaQuery.of(context).size.width / 2,
-                      child: Text(
-                          "Activer ou desactiver les notifications des dettes")),
+                      child: Text("103".tr)),
                   LiteRollingSwitch(
                     value: status_dette,
-                    textOn: "Active",
-                    textOff: "Desactive",
+                    textOn: "104".tr,
+                    textOff: "105".tr,
                     colorOn: Colors.greenAccent,
                     colorOff: Colors.redAccent,
                     iconOn: Icons.done,
@@ -138,12 +138,11 @@ class _parametre_notificationState extends State<parametre_notification> {
                 children: [
                   Container(
                       width: MediaQuery.of(context).size.width / 2,
-                      child: Text(
-                          "Activer ou desactiver les notifications des Budgets")),
+                      child: Text("106".tr)),
                   LiteRollingSwitch(
                     value: status_budget,
-                    textOn: "Active",
-                    textOff: "Desactive",
+                    textOn: "104".tr,
+                    textOff: "105".tr,
                     colorOn: Colors.greenAccent,
                     colorOff: Colors.redAccent,
                     iconOn: Icons.done,
@@ -178,12 +177,11 @@ class _parametre_notificationState extends State<parametre_notification> {
                 children: [
                   Container(
                       width: MediaQuery.of(context).size.width / 2,
-                      child: Text(
-                          "Activer ou desactiver les notifications des Objectifs")),
+                      child: Text("107".tr)),
                   LiteRollingSwitch(
                     value: status_objectif,
-                    textOn: "Active",
-                    textOff: "Desactive",
+                    textOn: "104".tr,
+                    textOff: "105".tr,
                     colorOn: Colors.greenAccent,
                     colorOff: Colors.redAccent,
                     iconOn: Icons.done,

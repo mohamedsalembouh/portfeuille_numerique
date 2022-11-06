@@ -145,7 +145,7 @@ class _form_pretteState extends State<form_prette> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                         },
                       ),
@@ -193,7 +193,7 @@ class _form_pretteState extends State<form_prette> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                         },
                       ),
@@ -232,7 +232,7 @@ class _form_pretteState extends State<form_prette> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                         },
                       ),
@@ -271,7 +271,7 @@ class _form_pretteState extends State<form_prette> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                         },
                       ),
@@ -322,7 +322,7 @@ class _form_pretteState extends State<form_prette> {
                                 },
                                 validator: (value) {
                                   if (value == null) {
-                                    return "Le champ est obligatoire";
+                                    return "va".tr;
                                   }
                                   return null;
                                 },

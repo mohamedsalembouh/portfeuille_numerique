@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:sqflite/sqflite.dart';
@@ -26,10 +27,10 @@ class _detailDettesState extends State<detailDettes> {
   static var empruntees;
   final List<Tab> mytabs = [
     Tab(
-      text: "Actif",
+      text: "30".tr,
     ),
     Tab(
-      text: "Termine",
+      text: "31".tr,
     ),
   ];
   SQL_Helper helper = SQL_Helper();
@@ -81,234 +82,218 @@ class _detailDettesState extends State<detailDettes> {
 
     prettees = this.pretesdettes;
     empruntees = this.empruntesdettes;
-    return MaterialApp(
-      home: DefaultTabController(
-        length: mytabs.length,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            leading: IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: BackButtonIcon(),
-            ),
-            toolbarHeight: 100,
-            bottom: TabBar(tabs: mytabs),
-            title: Text("Les Dettes "),
-            // actions: [
-            //   Padding(
-            //     padding: EdgeInsets.only(),
-            //     child: GestureDetector(
-            //       onTap: () {},
-            //       child: Icon(Icons.backup),
-            //     ),
-            //   )
-            // ],
+    return DefaultTabController(
+      length: mytabs.length,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: BackButtonIcon(),
           ),
-          body: TabBarView(
-            children: [
-              Column(
-                children: [
-                  Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Text(
-                        "prettes dettes",
-                        style: TextStyle(color: Colors.red, fontSize: 20),
-                      )),
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count1,
-                          itemBuilder: (context, pos) {
-                            DateTime debut =
-                                DateTime.parse(prettees[pos].date_debut!);
-                            String dateDebut =
-                                DateFormat("dd-MM-yyyy").format(debut);
-                            DateTime fin =
-                                DateTime.parse(prettees[pos].date_echeance!);
-                            String dateFin =
-                                DateFormat("dd-MM-yyyy").format(fin);
-                            String maintenant =
-                                DateFormat("yyyy-MM-dd").format(DateTime.now());
-                            DateTime dateMaintenant =
-                                DateTime.parse(maintenant);
-                            // if (dateMaintenant.compareTo(fin) < 0) {
-                            if (prettees[pos].status == 0) {
-                              return Card(
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.white.withOpacity(1),
-                                  ),
-                                  borderRadius: BorderRadius.circular(20.0),
+          //toolbarHeight: 100,
+          bottom: TabBar(tabs: mytabs),
+          title: Text("a".tr),
+          // actions: [
+          //   Padding(
+          //     padding: EdgeInsets.only(),
+          //     child: GestureDetector(
+          //       onTap: () {},
+          //       child: Icon(Icons.backup),
+          //     ),
+          //   )
+          // ],
+        ),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      "33".tr,
+                      style: TextStyle(color: Colors.red, fontSize: 20),
+                    )),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: count1,
+                        itemBuilder: (context, pos) {
+                          DateTime debut =
+                              DateTime.parse(prettees[pos].date_debut!);
+                          String dateDebut =
+                              DateFormat("dd-MM-yyyy").format(debut);
+                          DateTime fin =
+                              DateTime.parse(prettees[pos].date_echeance!);
+                          String dateFin = DateFormat("dd-MM-yyyy").format(fin);
+                          String maintenant =
+                              DateFormat("yyyy-MM-dd").format(DateTime.now());
+                          DateTime dateMaintenant = DateTime.parse(maintenant);
+                          // if (dateMaintenant.compareTo(fin) < 0) {
+                          if (prettees[pos].status == 0) {
+                            return Card(
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: ListTile(
-                                    title: Text("${prettees[pos].nom}"),
-                                    subtitle: Text("${prettees[pos].montant}"),
-                                    trailing:
-                                        Text("date d'echeance : $dateFin"),
-                                  ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  title: Text("${prettees[pos].nom}"),
+                                  subtitle: Text("${prettees[pos].montant}"),
+                                  trailing: Text("48".tr + "$dateFin"),
                                 ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          })),
-                  Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Text(
-                        "Emprunte dettes",
-                        style: TextStyle(color: Colors.green, fontSize: 20),
-                      )),
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count2,
-                          itemBuilder: (context, pos) {
-                            DateTime debut =
-                                DateTime.parse(empruntees[pos].date_debut!);
-                            String dateDebut =
-                                DateFormat("dd-MM-yyyy").format(debut);
-                            DateTime fin =
-                                DateTime.parse(empruntees[pos].date_echeance!);
-                            String dateFin =
-                                DateFormat("dd-MM-yyyy").format(fin);
-                            String maintenant =
-                                DateFormat("yyyy-MM-dd").format(DateTime.now());
-                            DateTime dateMaintenant =
-                                DateTime.parse(maintenant);
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        })),
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      "34".tr,
+                      style: TextStyle(color: Colors.green, fontSize: 20),
+                    )),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: count2,
+                        itemBuilder: (context, pos) {
+                          DateTime debut =
+                              DateTime.parse(empruntees[pos].date_debut!);
+                          String dateDebut =
+                              DateFormat("dd-MM-yyyy").format(debut);
+                          DateTime fin =
+                              DateTime.parse(empruntees[pos].date_echeance!);
+                          String dateFin = DateFormat("dd-MM-yyyy").format(fin);
+                          String maintenant =
+                              DateFormat("yyyy-MM-dd").format(DateTime.now());
+                          DateTime dateMaintenant = DateTime.parse(maintenant);
 
-                            if (empruntees[pos].status == 0) {
-                              return Card(
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.white.withOpacity(1),
-                                  ),
-                                  borderRadius: BorderRadius.circular(20.0),
+                          if (empruntees[pos].status == 0) {
+                            return Card(
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: ListTile(
-                                    title: Text("${empruntees[pos].nom}"),
-                                    subtitle:
-                                        Text("${empruntees[pos].montant}"),
-                                    trailing:
-                                        Text("date d'echeance : $dateFin"),
-                                  ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  title: Text("${empruntees[pos].nom}"),
+                                  subtitle: Text("${empruntees[pos].montant}"),
+                                  trailing: Text("48".tr + "$dateFin"),
                                 ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          })),
-                ],
-              ),
-              //les dettes termine
-              Column(
-                children: [
-                  Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Text(
-                        "prettes dettes",
-                        style: TextStyle(color: Colors.red, fontSize: 20),
-                      )),
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count1,
-                          itemBuilder: (context, pos) {
-                            DateTime debut =
-                                DateTime.parse(prettees[pos].date_debut!);
-                            String dateDebut =
-                                DateFormat("dd-MM-yyyy").format(debut);
-                            DateTime fin =
-                                DateTime.parse(prettees[pos].date_echeance!);
-                            String dateFin =
-                                DateFormat("dd-MM-yyyy").format(fin);
-                            String maintenant =
-                                DateFormat("yyyy-MM-dd").format(DateTime.now());
-                            DateTime dateMaintenant =
-                                DateTime.parse(maintenant);
-                            // if (dateMaintenant.compareTo(fin) >= 0) {
-                            if (prettees[pos].status == 1) {
-                              //PlusSolde(prettes[pos].montant);
-                              return Card(
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.white.withOpacity(1),
-                                  ),
-                                  borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        })),
+              ],
+            ),
+            //les dettes termine
+            Column(
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      "33".tr,
+                      style: TextStyle(color: Colors.red, fontSize: 20),
+                    )),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: count1,
+                        itemBuilder: (context, pos) {
+                          DateTime debut =
+                              DateTime.parse(prettees[pos].date_debut!);
+                          String dateDebut =
+                              DateFormat("dd-MM-yyyy").format(debut);
+                          DateTime fin =
+                              DateTime.parse(prettees[pos].date_echeance!);
+                          String dateFin = DateFormat("dd-MM-yyyy").format(fin);
+                          String maintenant =
+                              DateFormat("yyyy-MM-dd").format(DateTime.now());
+                          DateTime dateMaintenant = DateTime.parse(maintenant);
+                          // if (dateMaintenant.compareTo(fin) >= 0) {
+                          if (prettees[pos].status == 1) {
+                            //PlusSolde(prettes[pos].montant);
+                            return Card(
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: ListTile(
-                                    leading: Icon(Icons.check),
-                                    title: Text("${prettees[pos].nom}"),
-                                    subtitle: Text("${prettees[pos].montant}"),
-                                    trailing:
-                                        Text("date d'echeance : $dateFin"),
-                                  ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  leading: Icon(Icons.check),
+                                  title: Text("${prettees[pos].nom}"),
+                                  subtitle: Text("${prettees[pos].montant}"),
+                                  trailing: Text("48".tr + "$dateFin"),
                                 ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          })),
-                  Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Text(
-                        "Emprunte dettes",
-                        style: TextStyle(color: Colors.green, fontSize: 20),
-                      )),
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count2,
-                          itemBuilder: (context, pos) {
-                            DateTime debut =
-                                DateTime.parse(empruntees[pos].date_debut!);
-                            String dateDebut =
-                                DateFormat("dd-MM-yyyy").format(debut);
-                            DateTime fin =
-                                DateTime.parse(empruntees[pos].date_echeance!);
-                            String dateFin =
-                                DateFormat("dd-MM-yyyy").format(fin);
-                            String maintenant =
-                                DateFormat("yyyy-MM-dd").format(DateTime.now());
-                            DateTime dateMaintenant =
-                                DateTime.parse(maintenant);
-                            if (empruntees[pos].status == 1) {
-                              // minsSolde(empruntes[pos].montant);
-                              return Card(
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.white.withOpacity(1),
-                                  ),
-                                  borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        })),
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      "34".tr,
+                      style: TextStyle(color: Colors.green, fontSize: 20),
+                    )),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: count2,
+                        itemBuilder: (context, pos) {
+                          DateTime debut =
+                              DateTime.parse(empruntees[pos].date_debut!);
+                          String dateDebut =
+                              DateFormat("dd-MM-yyyy").format(debut);
+                          DateTime fin =
+                              DateTime.parse(empruntees[pos].date_echeance!);
+                          String dateFin = DateFormat("dd-MM-yyyy").format(fin);
+                          String maintenant =
+                              DateFormat("yyyy-MM-dd").format(DateTime.now());
+                          DateTime dateMaintenant = DateTime.parse(maintenant);
+                          if (empruntees[pos].status == 1) {
+                            // minsSolde(empruntes[pos].montant);
+                            return Card(
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: ListTile(
-                                    leading: Icon(Icons.check),
-                                    title: Text("${empruntees[pos].nom}"),
-                                    subtitle:
-                                        Text("${empruntees[pos].montant}"),
-                                    trailing:
-                                        Text("date d'echeance : $dateFin"),
-                                  ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  leading: Icon(Icons.check),
+                                  title: Text("${empruntees[pos].nom}"),
+                                  subtitle: Text("${empruntees[pos].montant}"),
+                                  trailing: Text("48".tr + "$dateFin"),
                                 ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          })),
-                ],
-              ),
-              //Notifications
-            ],
-          ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        })),
+              ],
+            ),
+            //Notifications
+          ],
         ),
       ),
     );

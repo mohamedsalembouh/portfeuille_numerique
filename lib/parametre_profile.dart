@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:portfeuille_numerique/form_updateNom.dart';
 import 'package:portfeuille_numerique/form_updatePass.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
@@ -67,7 +68,7 @@ class parametre_profile extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: ListTile(
-                              title: Text("Changer votre nom"),
+                              title: Text("101".tr),
                               //leading: Icon(Icons.),
                               onTap: () {
                                 Navigator.push(
@@ -87,7 +88,7 @@ class parametre_profile extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: ListTile(
-                              title: Text("Changer votre Mot de passe"),
+                              title: Text("102".tr),
                               //leading: Icon(Icons.password),
                               onTap: () {
                                 Navigator.push(

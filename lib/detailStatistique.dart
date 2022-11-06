@@ -27,9 +27,9 @@ class _detailStatistiqueState extends State<detailStatistique> {
   int? id_utilisateur;
   _detailStatistiqueState(this.id_utilisateur);
   final List<Tab> mytabs = [
-    Tab(
-      text: "solde",
-    ),
+    // Tab(
+    //   text: "solde",
+    // ),
     Tab(
       text: "depense",
     ),
@@ -389,6 +389,7 @@ class _detailStatistiqueState extends State<detailStatistique> {
 
   @override
   Widget build(BuildContext context) {
+    print(this.id_utilisateur);
     if (allrevenus == null) {
       getAllRevenusCats(nomRessource);
     }
@@ -399,10 +400,10 @@ class _detailStatistiqueState extends State<detailStatistique> {
       _seriedata = [];
       generatedData();
     }
-    if (this.allargentCompte == null) {
-      getTousArgent(nomRessource);
-    }
-    diagramdata = this.allargentCompte;
+    // if (this.allargentCompte == null) {
+    //   getTousArgent(nomRessource);
+    // }
+    // diagramdata = this.allargentCompte;
     print(diagramdata);
     // print(allDepensesCats!.length);
     // print(allrevenus!.length);
@@ -433,67 +434,67 @@ class _detailStatistiqueState extends State<detailStatistique> {
         body: TabBarView(
           children: [
             //first container
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 30, left: 10),
-                  child: FutureBuilder(
-                      future: getComptesRessource(this.id_utilisateur!),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<compteRessource>> snapshot) {
-                        if (!snapshot.hasData) {
-                          return CircularProgressIndicator();
-                        } else {
-                          return DropdownButton<String>(
-                            items: snapshot.data!
-                                .map((cmpRes) => DropdownMenuItem<String>(
-                                      child: Text(cmpRes.nom_ress!),
-                                      value: cmpRes.nom_ress,
-                                    ))
-                                .toList(),
-                            onChanged: (String? value) {
-                              setState(() {
-                                nomRessource = value!;
-                              });
-                              getTousArgent(nomRessource);
-                            },
-                            isExpanded: true,
-                            //value: currentNomCat,
-                            hint: Text(
-                              '$nomRessource',
-                              style: TextStyle(
-                                fontSize: 17,
-                                //fontWeight: FontWeight.bold
-                              ),
-                            ),
-                          );
-                        }
-                      }),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 40),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height - 300,
-                    child: SfCartesianChart(
-                      primaryXAxis: CategoryAxis(),
-                      title: ChartTitle(text: 'Evolution de solde quotidienne'),
-                      legend: Legend(isVisible: true),
-                      tooltipBehavior: TooltipBehavior(enable: true),
-                      series: <ChartSeries<argent, int>>[
-                        LineSeries(
-                            dataSource: diagramdata,
-                            xValueMapper: (argent diag, _) =>
-                                DateTime.parse(diag.date!).day,
-                            yValueMapper: (argent diag, _) => diag.montant,
-                            name: 'Solde',
-                            dataLabelSettings:
-                                DataLabelSettings(isVisible: true))
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Column(
+            //   children: [
+            //     Padding(
+            //       padding: EdgeInsets.only(top: 30, left: 10),
+            //       child: FutureBuilder(
+            //           future: getComptesRessource(this.id_utilisateur!),
+            //           builder: (BuildContext context,
+            //               AsyncSnapshot<List<compteRessource>> snapshot) {
+            //             if (!snapshot.hasData) {
+            //               return CircularProgressIndicator();
+            //             } else {
+            //               return DropdownButton<String>(
+            //                 items: snapshot.data!
+            //                     .map((cmpRes) => DropdownMenuItem<String>(
+            //                           child: Text(cmpRes.nom_ress!),
+            //                           value: cmpRes.nom_ress,
+            //                         ))
+            //                     .toList(),
+            //                 onChanged: (String? value) {
+            //                   setState(() {
+            //                     nomRessource = value!;
+            //                   });
+            //                   getTousArgent(nomRessource);
+            //                 },
+            //                 isExpanded: true,
+            //                 //value: currentNomCat,
+            //                 hint: Text(
+            //                   '$nomRessource',
+            //                   style: TextStyle(
+            //                     fontSize: 17,
+            //                     //fontWeight: FontWeight.bold
+            //                   ),
+            //                 ),
+            //               );
+            //             }
+            //           }),
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.only(top: 40),
+            //       child: Container(
+            //         height: MediaQuery.of(context).size.height - 300,
+            //         child: SfCartesianChart(
+            //           primaryXAxis: CategoryAxis(),
+            //           title: ChartTitle(text: 'Evolution de solde quotidienne'),
+            //           legend: Legend(isVisible: true),
+            //           tooltipBehavior: TooltipBehavior(enable: true),
+            //           series: <ChartSeries<argent, int>>[
+            //             LineSeries(
+            //                 dataSource: diagramdata,
+            //                 xValueMapper: (argent diag, _) =>
+            //                     DateTime.parse(diag.date!).day,
+            //                 yValueMapper: (argent diag, _) => diag.montant,
+            //                 name: 'Solde',
+            //                 dataLabelSettings:
+            //                     DataLabelSettings(isVisible: true))
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             //end of first container
 
             //start second container

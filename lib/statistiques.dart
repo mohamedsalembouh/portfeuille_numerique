@@ -168,7 +168,8 @@ class _statistiqueState extends State<statistique> {
     return uniquerevenu;
   }
 
-  String nomRessource = "72".tr;
+  String nomRessource1 = "72".tr;
+  String nomRessource2 = "72".tr;
   updateCategories(String nomRess) async {
     if (nomRess != "72".tr) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
@@ -472,7 +473,7 @@ class _statistiqueState extends State<statistique> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    updateCategories(nomRessource);
+    updateCategories(nomRessource2);
     _seriedata = [];
     _mesdata = [];
     _allsalles = [];
@@ -495,16 +496,16 @@ class _statistiqueState extends State<statistique> {
   @override
   Widget build(BuildContext context) {
     if (allrevenus == null) {
-      getAllRevenusCats(nomRessource);
+      getAllRevenusCats(nomRessource1);
     }
     if (allDepensesCats == null) {
-      updateCategories(nomRessource);
+      updateCategories(nomRessource2);
     } else {
       _seriedata = [];
       generatedData();
     }
     if (this.allargentCompte == null) {
-      getTousArgent(nomRessource);
+      getTousArgent(nomRessource1);
     }
     diagramdata = this.allargentCompte;
     print(diagramdata);
@@ -552,14 +553,14 @@ class _statistiqueState extends State<statistique> {
                                 .toList(),
                             onChanged: (String? value) {
                               setState(() {
-                                nomRessource = value!;
+                                nomRessource1 = value!;
                               });
-                              getTousArgent(nomRessource);
+                              getTousArgent(nomRessource1);
                             },
                             isExpanded: true,
                             //value: currentNomCat,
                             hint: Text(
-                              '$nomRessource',
+                              '$nomRessource1',
                               style: TextStyle(
                                 fontSize: 17,
                                 //fontWeight: FontWeight.bold
@@ -575,7 +576,7 @@ class _statistiqueState extends State<statistique> {
                     height: MediaQuery.of(context).size.height - 300,
                     child: SfCartesianChart(
                       primaryXAxis: CategoryAxis(),
-                      title: ChartTitle(text: 'Evolution de solde quotidienne'),
+                      title: ChartTitle(text: '73'.tr),
                       legend: Legend(isVisible: true),
                       tooltipBehavior: TooltipBehavior(enable: true),
                       series: <ChartSeries<argent, int>>[
@@ -634,19 +635,22 @@ class _statistiqueState extends State<statistique> {
                                   .toList(),
                               onChanged: (String? value) {
                                 setState(() {
-                                  nomRessource = value!;
+                                  nomRessource2 = value!;
                                 });
-                                updateCategories(nomRessource);
+                                updateCategories(nomRessource2);
                               },
                               isExpanded: true,
                               //value: currentNomCat,
                               hint: Text(
-                                '$nomRessource',
+                                '$nomRessource2',
                                 style: TextStyle(
                                   fontSize: 17,
                                   //fontWeight: FontWeight.bold
                                 ),
                               ),
+                              // underline: Container(
+                              //   height: 10,
+                              // )
                             );
                           }
                         }),
@@ -780,7 +784,7 @@ class _statistiqueState extends State<statistique> {
                           SizedBox(
                             width: 20,
                           ),
-                          Text('Rechercher')
+                          Text('74'.tr)
                         ],
                       ),
                       style: ElevatedButton.styleFrom(shape: StadiumBorder()),
@@ -835,7 +839,7 @@ class _statistiqueState extends State<statistique> {
                       padding: EdgeInsets.only(top: 20),
                       child: Card(
                         child: Text(
-                          "Registre des revenus et depense ",
+                          "75".tr,
                           style: TextStyle(fontSize: 20),
                         ),
                       )),
@@ -843,7 +847,7 @@ class _statistiqueState extends State<statistique> {
                     padding: EdgeInsets.only(top: 10),
                     child: ListTile(
                       title: Text(
-                        "Revenus",
+                        "76".tr,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       trailing: Text(
@@ -907,7 +911,7 @@ class _statistiqueState extends State<statistique> {
                   ),
                   ListTile(
                     title: Text(
-                      "depenses",
+                      "77".tr,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     trailing: Text(

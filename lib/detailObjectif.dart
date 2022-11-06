@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -18,10 +19,10 @@ class _detailObjectifState extends State<detailObjectif> {
   _detailObjectifState(this.id_utilisateur);
   final List<Tab> mytabs = [
     Tab(
-      text: "En cours",
+      text: "30".tr,
     ),
     Tab(
-      text: "Complet",
+      text: "31".tr,
     )
   ];
   List<objective>? allobjectifs;
@@ -52,103 +53,105 @@ class _detailObjectifState extends State<detailObjectif> {
       getAllObjectif();
     }
     allobjective = this.allobjectifs;
-    return MaterialApp(
-      home: DefaultTabController(
-        length: mytabs.length,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            leading: IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: BackButtonIcon(),
-            ),
-            title: Text("Les objectifs"),
-            bottom: TabBar(
-              tabs: mytabs,
-            ),
+    return DefaultTabController(
+      length: mytabs.length,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: BackButtonIcon(),
           ),
-          body: TabBarView(
-            children: [
-              Column(
-                children: [
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count,
-                          itemBuilder: (context, pos) {
-                            if (allobjective[pos].montant_donnee !=
-                                allobjective[pos].montant_cible) {
-                              return Card(
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.white.withOpacity(1),
-                                  ),
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: ListTile(
-                                    title: Text(
-                                        "${allobjective[pos].nom_objective}"),
-                                    subtitle: Text(
-                                      "montant donnee : ${allobjective[pos].montant_donnee}",
-                                    ),
-                                    trailing: Text(
-                                      "montant cible : ${allobjective[pos].montant_cible}",
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          })),
-                ],
-              ),
-              //l'autre page
-              Column(
-                children: [
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count,
-                          itemBuilder: (context, pos) {
-                            if (allobjective[pos].montant_donnee ==
-                                allobjective[pos].montant_cible) {
-                              return Card(
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.white.withOpacity(1),
-                                  ),
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: ListTile(
-                                    leading: Icon(Icons.check),
-                                    title: Text(
-                                        "${allobjective[pos].nom_objective}"),
-                                    subtitle: Text(
-                                      "montant donnee : ${allobjective[pos].montant_donnee}",
-                                      // style: TextStyle(color: Colors.amberAccent),
-                                    ),
-                                    trailing: Text(
-                                      "montant cible : ${allobjective[pos].montant_cible}",
-                                      //style: TextStyle(color: Colors.green),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          }))
-                ],
-              )
-            ],
+          title: Text("c".tr),
+          bottom: TabBar(
+            tabs: mytabs,
           ),
+        ),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: count,
+                        itemBuilder: (context, pos) {
+                          if (allobjective[pos].montant_donnee !=
+                              allobjective[pos].montant_cible) {
+                            return Card(
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  title: Text(
+                                      "${allobjective[pos].nom_objective}"),
+                                  subtitle: Text(
+                                    "63".tr +
+                                        "${allobjective[pos].montant_donnee}",
+                                  ),
+                                  trailing: Text(
+                                    "62".tr +
+                                        "${allobjective[pos].montant_cible}",
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        })),
+              ],
+            ),
+            //l'autre page
+            Column(
+              children: [
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: count,
+                        itemBuilder: (context, pos) {
+                          if (allobjective[pos].montant_donnee ==
+                              allobjective[pos].montant_cible) {
+                            return Card(
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(1),
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ListTile(
+                                  leading: Icon(Icons.check),
+                                  title: Text(
+                                      "${allobjective[pos].nom_objective}"),
+                                  subtitle: Text(
+                                    "63".tr +
+                                        "${allobjective[pos].montant_donnee}",
+                                    // style: TextStyle(color: Colors.amberAccent),
+                                  ),
+                                  trailing: Text(
+                                    "62".tr +
+                                        "${allobjective[pos].montant_cible}",
+                                    //style: TextStyle(color: Colors.green),
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }))
+              ],
+            )
+          ],
         ),
       ),
     );

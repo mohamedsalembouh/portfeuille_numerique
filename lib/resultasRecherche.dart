@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
@@ -118,7 +119,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
     final Future<Database>? db = helper.initialiseDataBase();
     var ourDb = db;
 
-    if (nomRess != "Specifie un compte" && debut.isNotEmpty && fin.isNotEmpty) {
+    if (nomRess != "72".tr && debut.isNotEmpty && fin.isNotEmpty) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
       compte? cmp = await helper.getSpecifyCompte(idres);
@@ -139,9 +140,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isEmpty) {
+    } else if (nomRess != "72".tr && debut.isEmpty && fin.isEmpty) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
       compte? cmp = await helper.getSpecifyCompte(idres);
@@ -161,9 +160,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isNotEmpty) {
+    } else if (nomRess == "72".tr && debut.isNotEmpty && fin.isNotEmpty) {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> revenies =
@@ -179,9 +176,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isEmpty) {
+    } else if (nomRess == "72".tr && debut.isNotEmpty && fin.isEmpty) {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> revenies =
@@ -196,9 +191,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isNotEmpty) {
+    } else if (nomRess == "72".tr && debut.isEmpty && fin.isNotEmpty) {
       if (ourDb != null) {
         ourDb.then((database) {
           Future<List<depensesCats>> revenies =
@@ -214,9 +207,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isEmpty) {
+    } else if (nomRess != "72".tr && debut.isNotEmpty && fin.isEmpty) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
       compte? cmp = await helper.getSpecifyCompte(idres);
@@ -236,9 +227,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isNotEmpty) {
+    } else if (nomRess != "72".tr && debut.isEmpty && fin.isNotEmpty) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
       compte? cmp = await helper.getSpecifyCompte(idres);
@@ -265,7 +254,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
     final Future<Database>? db = helper.initialiseDataBase();
     var ourDb = db;
 
-    if (nomRess != "Specifie un compte" && debut.isNotEmpty && fin.isNotEmpty) {
+    if (nomRess != "72".tr && debut.isNotEmpty && fin.isNotEmpty) {
       String dt = DateFormat("dd-MM-yyyy").format(DateTime.parse(debut));
       String fn = DateFormat("dd-MM-yyyy").format(DateTime.parse(fin));
       ressource? res = await helper.getSpecifyRessource(nomRess);
@@ -288,9 +277,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isEmpty) {
+    } else if (nomRess != "72".tr && debut.isEmpty && fin.isEmpty) {
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
       compte? cmp = await helper.getSpecifyCompte(idres);
@@ -310,9 +297,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isNotEmpty) {
+    } else if (nomRess == "72".tr && debut.isNotEmpty && fin.isNotEmpty) {
       String dt = DateFormat("dd-MM-yyyy").format(DateTime.parse(debut));
       String fn = DateFormat("dd-MM-yyyy").format(DateTime.parse(fin));
       if (ourDb != null) {
@@ -330,9 +315,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isEmpty) {
+    } else if (nomRess == "72".tr && debut.isNotEmpty && fin.isEmpty) {
       String dt = DateFormat("dd-MM-yyyy").format(DateTime.parse(debut));
 
       if (ourDb != null) {
@@ -350,9 +333,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isNotEmpty) {
+    } else if (nomRess == "72".tr && debut.isEmpty && fin.isNotEmpty) {
       String fn = DateFormat("dd-MM-yyyy").format(DateTime.parse(fin));
       if (ourDb != null) {
         ourDb.then((database) {
@@ -369,9 +350,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isEmpty) {
+    } else if (nomRess != "72".tr && debut.isNotEmpty && fin.isEmpty) {
       String dt = DateFormat("dd-MM-yyyy").format(DateTime.parse(debut));
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
@@ -392,9 +371,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           });
         });
       }
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isNotEmpty) {
+    } else if (nomRess != "72".tr && debut.isEmpty && fin.isNotEmpty) {
       String fn = DateFormat("dd-MM-yyyy").format(DateTime.parse(fin));
       ressource? res = await helper.getSpecifyRessource(nomRess);
       int idres = res!.id_ress!;
@@ -419,40 +396,57 @@ class _resultasRechercheState extends State<resultasRecherche> {
   }
 
   AlimenteTxt(String nomRess, String debut, String fin) {
-    if (nomRess != "Specifie un compte" && debut.isNotEmpty && fin.isNotEmpty) {
+    if (nomRess != "72".tr && debut.isNotEmpty && fin.isNotEmpty) {
       String dt = DateFormat("dd-MM-yyyy").format(DateTime.parse(debut));
       String fn = DateFormat("dd-MM-yyyy").format(DateTime.parse(fin));
-      this.txt = "Rapport sur le solde dans '$nomRess' entre $dt et $fn";
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isEmpty) {
-      this.txt = "Rapport sur le solde dans '$nomRessource'";
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isNotEmpty) {
+      this.txt = '79'.tr +
+          ' ' +
+          '83'.tr +
+          ' ' +
+          '$nomRess' +
+          ' ' +
+          '81'.tr +
+          ' ' +
+          '$dt' +
+          ' ' +
+          '82'.tr +
+          ' ' +
+          '$fn';
+    } else if (nomRess != "72".tr && debut.isEmpty && fin.isEmpty) {
+      this.txt = '79'.tr + ' ' + '83'.tr + ' ' + '$nomRessource';
+    } else if (nomRess == "72".tr && debut.isNotEmpty && fin.isNotEmpty) {
       String dt = DateFormat("dd-MM-yyyy").format(DateTime.parse(debut));
       String fn = DateFormat("dd-MM-yyyy").format(DateTime.parse(fin));
-      this.txt = "Rapport sur le solde entre $dt et $fn";
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isEmpty) {
+      this.txt =
+          '79'.tr + ' ' + '81'.tr + ' ' + '$dt' + ' ' + '82'.tr + ' ' + '$fn';
+    } else if (nomRess == "72".tr && debut.isNotEmpty && fin.isEmpty) {
       String dt = DateFormat("dd-MM-yyyy").format(DateTime.parse(debut));
-      this.txt = "Rapport sur le solde superieur a $dt";
-    } else if (nomRess == "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isNotEmpty) {
+      this.txt = '79'.tr + ' ' + '84'.tr + ' ' + "$dt";
+    } else if (nomRess == "72".tr && debut.isEmpty && fin.isNotEmpty) {
       String fn = DateFormat("dd-MM-yyyy").format(DateTime.parse(fin));
-      this.txt = "Rapport sur le solde inferieur a $fn";
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isNotEmpty &&
-        fin.isEmpty) {
+      this.txt = "79".tr + ' ' + "85".tr + ' ' + "$fn";
+    } else if (nomRess != "72".tr && debut.isNotEmpty && fin.isEmpty) {
       String dt = DateFormat("dd-MM-yyyy").format(DateTime.parse(debut));
-      this.txt = "Rapport sur le solde superieur a $dt dans '$nomRessource'";
-    } else if (nomRess != "Specifie un compte" &&
-        debut.isEmpty &&
-        fin.isNotEmpty) {
+      this.txt = '79'.tr +
+          ' ' +
+          '84'.tr +
+          ' ' +
+          '$dt' +
+          ' ' +
+          '83'.tr +
+          ' ' +
+          '$nomRessource';
+    } else if (nomRess != "72".tr && debut.isEmpty && fin.isNotEmpty) {
       String fn = DateFormat("dd-MM-yyyy").format(DateTime.parse(fin));
-      this.txt = "Rapport sur le solde inferieur a $fn dans '$nomRessource'";
+      this.txt = '79'.tr +
+          ' ' +
+          '85'.tr +
+          ' ' +
+          '$fn' +
+          ' ' +
+          '83'.tr +
+          ' ' +
+          '$nomRessource';
     }
   }
 
@@ -477,7 +471,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Resultas"),
+        title: Text("80".tr),
       ),
       body: Column(
         children: [
@@ -493,7 +487,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
             padding: EdgeInsets.only(top: 10),
             child: ListTile(
               title: Text(
-                "Revenus",
+                "76".tr,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               trailing: Text(
@@ -525,7 +519,7 @@ class _resultasRechercheState extends State<resultasRecherche> {
           ),
           ListTile(
             title: Text(
-              "depenses",
+              "77".tr,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             trailing: Text(

@@ -18,10 +18,10 @@ class _detailBudgetState extends State<detailBudget> {
   _detailBudgetState(this.id_utilisateur);
   final List<Tab> mytabs = [
     Tab(
-      text: "En cours",
+      text: "30".tr,
     ),
     Tab(
-      text: "Complet",
+      text: "31".tr,
     ),
   ];
   SQL_Helper helper = SQL_Helper();
@@ -52,152 +52,148 @@ class _detailBudgetState extends State<detailBudget> {
       getAllBudgets();
     }
     budgeets = this.allbudgeets;
-    return MaterialApp(
-      home: DefaultTabController(
-        length: mytabs.length,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            leading: IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: BackButtonIcon(),
-            ),
-            title: Text("Les Budgets"),
-            bottom: TabBar(
-              tabs: mytabs,
-            ),
+    return DefaultTabController(
+      length: mytabs.length,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: BackButtonIcon(),
           ),
-          body: TabBarView(
-            children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                        itemCount: count,
-                        itemBuilder: (context, pos) {
-                          DateTime debut =
-                              DateTime.parse(budgeets[pos].date_debut!);
-                          String dateDebut =
-                              DateFormat("dd-MM-yyyy").format(debut);
-                          DateTime fin =
-                              DateTime.parse(budgeets[pos].date_fin!);
-                          String dateFin = DateFormat("dd-MM-yyyy").format(fin);
-
-                          if (budgeets[pos].status == 0) {
-                            return Card(
-                              elevation: 8,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  color: Colors.white.withOpacity(1),
-                                ),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: ListTile(
-                                  title: Column(
-                                    children: [
-                                      Text("${budgeets[pos].nombdg}"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("22".tr +
-                                          " : " +
-                                          "${budgeets[pos].montant}"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("64".tr +
-                                          " : " +
-                                          "${budgeets[pos].nomcat}"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("47".tr + " : " + "$dateDebut"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("57".tr + " : " + "$dateFin")
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        }),
-                  ),
-                ],
-              ),
-              //l'autre page
-              Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                        itemCount: count,
-                        itemBuilder: (context, pos) {
-                          DateTime debut =
-                              DateTime.parse(budgeets[pos].date_debut!);
-                          String dateDebut =
-                              DateFormat("dd-MM-yyyy").format(debut);
-                          DateTime fin =
-                              DateTime.parse(budgeets[pos].date_fin!);
-                          String dateFin = DateFormat("dd-MM-yyyy").format(fin);
-
-                          if (budgeets[pos].status == 1) {
-                            return Card(
-                              elevation: 8,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  color: Colors.white.withOpacity(1),
-                                ),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: ListTile(
-                                  isThreeLine: true,
-                                  //leading: Icon(Icons.check),
-                                  title: Column(
-                                    children: [
-                                      Text("${budgeets[pos].nombdg}"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("22".tr +
-                                          " : " +
-                                          "${budgeets[pos].montant}"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("64".tr +
-                                          " : " +
-                                          "${budgeets[pos].nomcat}"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("47".tr + " : " + "$dateDebut"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("57".tr + " : " + "$dateFin")
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        }),
-                  ),
-                ],
-              ),
-            ],
+          title: Text("b".tr),
+          bottom: TabBar(
+            tabs: mytabs,
           ),
+        ),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: count,
+                      itemBuilder: (context, pos) {
+                        DateTime debut =
+                            DateTime.parse(budgeets[pos].date_debut!);
+                        String dateDebut =
+                            DateFormat("dd-MM-yyyy").format(debut);
+                        DateTime fin = DateTime.parse(budgeets[pos].date_fin!);
+                        String dateFin = DateFormat("dd-MM-yyyy").format(fin);
+
+                        if (budgeets[pos].status == 0) {
+                          return Card(
+                            elevation: 8,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.white.withOpacity(1),
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: ListTile(
+                                title: Column(
+                                  children: [
+                                    Text("${budgeets[pos].nombdg}"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("22".tr +
+                                        " : " +
+                                        "${budgeets[pos].montant}"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("64".tr +
+                                        " : " +
+                                        "${budgeets[pos].nomcat}"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("47".tr + " : " + "$dateDebut"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("57".tr + " : " + "$dateFin")
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
+                ),
+              ],
+            ),
+            //l'autre page
+            Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: count,
+                      itemBuilder: (context, pos) {
+                        DateTime debut =
+                            DateTime.parse(budgeets[pos].date_debut!);
+                        String dateDebut =
+                            DateFormat("dd-MM-yyyy").format(debut);
+                        DateTime fin = DateTime.parse(budgeets[pos].date_fin!);
+                        String dateFin = DateFormat("dd-MM-yyyy").format(fin);
+
+                        if (budgeets[pos].status == 1) {
+                          return Card(
+                            elevation: 8,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.white.withOpacity(1),
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: ListTile(
+                                isThreeLine: true,
+                                //leading: Icon(Icons.check),
+                                title: Column(
+                                  children: [
+                                    Text("${budgeets[pos].nombdg}"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("22".tr +
+                                        " : " +
+                                        "${budgeets[pos].montant}"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("64".tr +
+                                        " : " +
+                                        "${budgeets[pos].nomcat}"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("47".tr + " : " + "$dateDebut"),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("57".tr + " : " + "$dateFin")
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

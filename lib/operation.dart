@@ -240,7 +240,7 @@ class _operationState extends State<operation> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0)),
                                     value: currentNomCat,
-                                    hint: Text("choissir une categorie"),
+                                    hint: Text("21".tr),
                                     items: snapshot.data!
                                         .map((cat) => DropdownMenuItem<String>(
                                               child: Text(cat.nomcat!),
@@ -254,7 +254,7 @@ class _operationState extends State<operation> {
                                     },
                                     validator: (value) {
                                       if (value == null) {
-                                        return "Le champ est obligatoire";
+                                        return "va".tr;
                                       }
                                       return null;
                                     },
@@ -273,7 +273,7 @@ class _operationState extends State<operation> {
                             keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "entree un montant";
+                                return "va".tr;
                               }
                               return null;
                             },
@@ -325,7 +325,7 @@ class _operationState extends State<operation> {
                             readOnly: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "entrer la date de debut";
+                                return "va".tr;
                               }
                               return null;
                             },
@@ -392,7 +392,7 @@ class _operationState extends State<operation> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0)),
                                     value: TypeCompte,
-                                    hint: Text("choissir un compte"),
+                                    hint: Text("25".tr),
                                     items: snapshot.data!
                                         .map((cmpRes) =>
                                             DropdownMenuItem<String>(
@@ -407,7 +407,7 @@ class _operationState extends State<operation> {
                                     },
                                     validator: (value) {
                                       if (value == null) {
-                                        return "Le champ est obligatoire";
+                                        return "va".tr;
                                       }
                                       return null;
                                     },
@@ -523,7 +523,7 @@ class _operationState extends State<operation> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0)),
                                     value: currentNomCat2,
-                                    hint: Text("choissir une categorie"),
+                                    hint: Text("21".tr),
                                     items: snapshot.data!
                                         .map((cat) => DropdownMenuItem<String>(
                                               child: Text(cat.nomcat!),
@@ -537,7 +537,7 @@ class _operationState extends State<operation> {
                                     },
                                     validator: (value) {
                                       if (value == null) {
-                                        return "Le champ est obligatoire";
+                                        return "va".tr;
                                       }
                                       return null;
                                     },
@@ -556,7 +556,7 @@ class _operationState extends State<operation> {
                             keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "entree une montant";
+                                return "va".tr;
                               }
                               return null;
                             },
@@ -675,7 +675,7 @@ class _operationState extends State<operation> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0)),
                                     value: TypeCompte2,
-                                    hint: Text("choissir un compte"),
+                                    hint: Text("25".tr),
                                     items: snapshot.data!
                                         .map((cmpRes) =>
                                             DropdownMenuItem<String>(
@@ -690,7 +690,7 @@ class _operationState extends State<operation> {
                                     },
                                     validator: (value) {
                                       if (value == null) {
-                                        return "Le champ est obligatoire";
+                                        return "va".tr;
                                       }
                                       return null;
                                     },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/resultasRecherche.dart';
 
@@ -20,7 +21,7 @@ class _rechercheRapportState extends State<rechercheRapport> {
   _rechercheRapportState(this.idUser);
   TextEditingController dateDebut = TextEditingController();
   TextEditingController dateFin = TextEditingController();
-  String nomRessource = "Specifie un compte";
+  String nomRessource = "72".tr;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +39,7 @@ class _rechercheRapportState extends State<rechercheRapport> {
                       height: 30,
                     ),
                     Center(
-                      child: Text(
-                          "Recherche par date ou par sepicific compte ou par les deux "),
+                      child: Text("78".tr),
                     ),
                     SizedBox(
                       height: 30,
@@ -51,7 +51,7 @@ class _rechercheRapportState extends State<rechercheRapport> {
                         controller: dateDebut,
                         readOnly: true,
                         decoration: InputDecoration(
-                            labelText: "Date debut",
+                            labelText: "47".tr,
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(20.0)),
@@ -86,7 +86,7 @@ class _rechercheRapportState extends State<rechercheRapport> {
                         controller: dateFin,
                         readOnly: true,
                         decoration: InputDecoration(
-                            labelText: "date fin",
+                            labelText: "48".tr,
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(20.0)),
@@ -175,7 +175,7 @@ class _rechercheRapportState extends State<rechercheRapport> {
                         onPressed: () {
                           if (dateDebut.text.isEmpty &&
                               dateFin.text.isEmpty &&
-                              nomRessource == "Specifie un compte") {
+                              nomRessource == "72".tr) {
                             showText(context, "SVP",
                                 "choissisez un date ou specifie un compte");
                           } else {
@@ -189,7 +189,7 @@ class _rechercheRapportState extends State<rechercheRapport> {
                                         nomRessource)));
                           }
                         },
-                        child: Text("Rechercher"),
+                        child: Text("74".tr),
                         style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                       ),
                     )

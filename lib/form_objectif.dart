@@ -129,7 +129,7 @@ class _form_objectifState extends State<form_objectif> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -157,7 +157,7 @@ class _form_objectifState extends State<form_objectif> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -185,7 +185,7 @@ class _form_objectifState extends State<form_objectif> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -237,7 +237,7 @@ class _form_objectifState extends State<form_objectif> {
                                 },
                                 validator: (value) {
                                   if (value == null) {
-                                    return "Le champ est obligatoire";
+                                    return "va".tr;
                                   }
                                   return null;
                                 },

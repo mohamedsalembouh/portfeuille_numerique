@@ -160,7 +160,7 @@ class _formemprunteState extends State<formemprunte> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -209,7 +209,7 @@ class _formemprunteState extends State<formemprunte> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -249,7 +249,7 @@ class _formemprunteState extends State<formemprunte> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                         },
                       ),
@@ -288,7 +288,7 @@ class _formemprunteState extends State<formemprunte> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                         },
                       ),
@@ -339,7 +339,7 @@ class _formemprunteState extends State<formemprunte> {
                                 },
                                 validator: (value) {
                                   if (value == null) {
-                                    return "Le champ est obligatoire";
+                                    return "va".tr;
                                   }
                                   return null;
                                 },

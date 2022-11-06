@@ -27,7 +27,7 @@ class _updateLangueState extends State<updateLangue> {
           },
           icon: BackButtonIcon(),
         ),
-        title: Text("Modifier la langue"),
+        title: Text("116".tr),
       ),
       body: Column(
         children: [
@@ -46,7 +46,7 @@ class _updateLangueState extends State<updateLangue> {
             padding: const EdgeInsets.only(top: 40, bottom: 10),
             child: Center(
               child: Text(
-                "Choisissez une Langue : ",
+                "113".tr,
                 style: TextStyle(fontSize: 20),
               ),
             ),
@@ -60,7 +60,7 @@ class _updateLangueState extends State<updateLangue> {
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: ListTile(
-              title: Text("Francais"),
+              title: Text("114".tr),
               //trailing: choosen == "fr" ? Icon(Icons.check) : null,
               onTap: () {
                 // widget.setLocale(Locale.fromSubtags(languageCode: 'fr'));
@@ -80,7 +80,7 @@ class _updateLangueState extends State<updateLangue> {
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: ListTile(
-              title: Text("Arabe"),
+              title: Text("115".tr),
               // trailing: choosen == "ar" ? Icon(Icons.check) : null,
               onTap: () {
                 // widget.setLocale(Locale.fromSubtags(languageCode: 'ar'));

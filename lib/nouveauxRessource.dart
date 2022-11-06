@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/ressource.dart';
@@ -58,7 +59,7 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
                     ),
                     Center(
                       child: Text(
-                        "Ajouter nouveaux Ressource",
+                        "111".tr,
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
@@ -70,7 +71,7 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
                       child: TextFormField(
                         controller: resnom,
                         decoration: InputDecoration(
-                            labelText: "Nom Ressource",
+                            labelText: "112".tr,
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(20.0)),
@@ -83,7 +84,7 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -104,7 +105,7 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text('Annuler'),
+                              child: Text('26'.tr),
                               style: ElevatedButton.styleFrom(
                                   shape: StadiumBorder()),
                             ),
@@ -117,7 +118,7 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
                                 insrtRessource(resnom.text, this.usr!.id!);
                                 resnom.clear();
                               },
-                              child: Text('enregistrer'),
+                              child: Text('27'.tr),
                               style: ElevatedButton.styleFrom(
                                   shape: StadiumBorder()),
                             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
@@ -20,9 +21,9 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
   TextEditingController cattype = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
 
-  insertCategorie(String name, String coleur) async {
+  insertCategorie(String name) async {
     String nom = name.toUpperCase();
-    categorie cat = new categorie(nom, coleur, this.usr!.id!);
+    categorie cat = new categorie(nom, colorValue, this.usr!.id!);
     SQL_Helper helper = new SQL_Helper();
     final form = _formKey.currentState!;
     if (form.validate()) {
@@ -35,7 +36,6 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
           print("inserted");
           showText(context, "", "La categorie est ajouté");
           catnom.clear();
-          colorValue = "Coleur";
         }
       } else {
         showText(context, "SVP", "cette nom existe deja ");
@@ -61,7 +61,7 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
                     ),
                     Center(
                       child: Text(
-                        "Nouveaux Categorie",
+                        "108".tr,
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
@@ -73,7 +73,7 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
                       child: TextFormField(
                         controller: catnom,
                         decoration: InputDecoration(
-                            labelText: "Nom categorie",
+                            labelText: "109".tr,
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(20.0)),
@@ -86,7 +86,7 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -114,7 +114,7 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
                         elevation: 16,
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         value: colorValue,
-                        hint: Text("choissir un couleur"),
+                        hint: Text("110".tr),
                         items: <String>['Vert', 'Rouge', 'Jaune', 'Rose']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
@@ -129,7 +129,7 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
                         },
                         validator: (value) {
                           if (value == null) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -150,7 +150,7 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text('Annuler'),
+                              child: Text('26'.tr),
                               style: ElevatedButton.styleFrom(
                                   shape: StadiumBorder()),
                             ),
@@ -160,9 +160,9 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
                             height: MediaQuery.of(context).size.height / 13,
                             child: ElevatedButton(
                               onPressed: () {
-                                insertCategorie(catnom.text, colorValue!);
+                                insertCategorie(catnom.text);
                               },
-                              child: Text('enregistrer'),
+                              child: Text('27'.tr),
                               style: ElevatedButton.styleFrom(
                                   shape: StadiumBorder()),
                             ),

@@ -89,11 +89,10 @@ class _form_pretteState extends State<form_prette> {
             insertPretteDette(nom.text, objet.text, montant.text,
                 dateDebut.text, dateEcheance.text);
           } else {
-            showText(context, "désolé",
-                "Le montant que vous entree est plus grand que votre solde dans $typeCmp");
+            showText(context, "m5".tr, "m9".tr + "$typeCmp");
           }
         } else {
-          showText(context, "désolé", "Vous n'avez pas de solde dans $typeCmp");
+          showText(context, "m5".tr, "m7".tr + "$typeCmp");
         }
       } else {
         Toast.show("t2".tr);

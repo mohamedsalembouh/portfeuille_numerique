@@ -51,7 +51,7 @@ class _portfeuilleState extends State<portfeuille> {
       locale: controller.initiallang,
       translations: MyLocale(),
       home: Scaffold(
-        body: splashScreen(),
+        body: signinPage(),
       ),
     );
   }

@@ -786,7 +786,7 @@ class _homepageState extends State<homepage> {
                             // textColor: Colors.white,
                             child: Text(
                               "15".tr,
-                              style: TextStyle(color: Colors.red),
+                              // style: TextStyle(color: Colors.red),
                             ),
                             style: ElevatedButton.styleFrom(
                                 shape: StadiumBorder()),
@@ -979,8 +979,8 @@ class _homepageState extends State<homepage> {
               now.compareTo(fin) < 0) {
             service.showNotificationWithPayload(
                 id: bdg.id!,
-                title: "Attension",
-                body: "vous avez depassé le budget ${bdg.nombdg}",
+                title: "128".tr,
+                body: "125".tr + "${bdg.nombdg}",
                 payload: 'payload budget');
           }
         }
@@ -1000,30 +1000,26 @@ class _homepageState extends State<homepage> {
         if (dateEcheance.difference(dateMaintenant).inDays == 3) {
           service.showNotificationWithPayload(
               id: emprunte.id!,
-              title: "Attension",
-              body:
-                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 3 jours",
+              title: "128".tr,
+              body: "124".tr + "${emprunte.nom} ${emprunte.montant}" + "122".tr,
               payload: "payload dette");
         } else if (dateEcheance.difference(dateMaintenant).inDays == 2) {
           service.showNotificationWithPayload(
               id: emprunte.id!,
-              title: "Attension",
-              body:
-                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 2 jours",
+              title: "128".tr,
+              body: "124".tr + "${emprunte.nom} ${emprunte.montant}" + "121".tr,
               payload: "payload dette");
         } else if (dateEcheance.difference(dateMaintenant).inDays == 1) {
           service.showNotificationWithPayload(
               id: emprunte.id!,
-              title: "Attension",
-              body:
-                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 1 jours",
+              title: "128".tr,
+              body: "124".tr + "${emprunte.nom} ${emprunte.montant}" + "120".tr,
               payload: "payload dette");
         } else if (dateEcheance.difference(dateMaintenant).inDays == 0) {
           service.showNotificationWithPayload(
               id: emprunte.id!,
-              title: "Attension",
-              body:
-                  "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} Aujordhui",
+              title: "128".tr,
+              body: "124".tr + "${emprunte.nom} ${emprunte.montant}" + "123".tr,
               payload: "payload dette");
         }
       }
@@ -1042,29 +1038,26 @@ class _homepageState extends State<homepage> {
         if (dateEcheance.difference(dateMaintenant).inDays == 3) {
           service.showNotificationWithPayload(
               id: prete.id!,
-              title: "Attension",
-              body:
-                  "${prete.nom} va donnez a vous ${prete.montant} apres 3 jours",
+              title: "128".tr,
+              body: "${prete.nom}" + "119".tr + "${prete.montant}" + "122".tr,
               payload: "payload dette");
         } else if (dateEcheance.difference(dateMaintenant).inDays == 2) {
           service.showNotificationWithPayload(
               id: prete.id!,
-              title: "Attension",
-              body:
-                  " ${prete.nom} va donnez a vous ${prete.montant} apres 2 jours",
+              title: "128".tr,
+              body: " ${prete.nom}" + "119".tr + "${prete.montant}" + "121".tr,
               payload: "payload dette");
         } else if (dateEcheance.difference(dateMaintenant).inDays == 1) {
           service.showNotificationWithPayload(
               id: prete.id!,
-              title: "Attension",
-              body:
-                  "${prete.nom} va donne a vous ${prete.montant} apres 1 jours",
+              title: "128".tr,
+              body: "${prete.nom}" + "119".tr + "${prete.montant}" + "120".tr,
               payload: "payload dette");
         } else if (dateEcheance.difference(dateMaintenant).inDays == 0) {
           service.showNotificationWithPayload(
               id: prete.id!,
-              title: "Attension",
-              body: " ${prete.nom} va donne a vous ${prete.montant} Aujordhui",
+              title: "128".tr,
+              body: " ${prete.nom}" + "119".tr + "${prete.montant}" + "123".tr,
               payload: "payload dette");
         }
       }

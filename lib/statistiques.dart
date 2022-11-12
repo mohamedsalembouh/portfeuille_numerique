@@ -63,7 +63,7 @@ class _statistiqueState extends State<statistique> {
           col = Colors.green;
         } else if (allDepensesCats![i].coleur == "Rouge") {
           col = Colors.red;
-        } else if (allDepensesCats![i].coleur == "Joune") {
+        } else if (allDepensesCats![i].coleur == "Jaune") {
           col = Colors.yellow;
         } else if (allDepensesCats![i].coleur == "Rose") {
           col = Colors.pink;

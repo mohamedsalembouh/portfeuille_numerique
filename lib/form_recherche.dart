@@ -176,8 +176,7 @@ class _rechercheRapportState extends State<rechercheRapport> {
                           if (dateDebut.text.isEmpty &&
                               dateFin.text.isEmpty &&
                               nomRessource == "72".tr) {
-                            showText(context, "SVP",
-                                "choissisez un date ou specifie un compte");
+                            showText(context, "m12".tr, "m19".tr);
                           } else {
                             Navigator.push(
                                 context,

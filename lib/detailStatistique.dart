@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/statistiques.dart';
@@ -414,11 +415,7 @@ class _detailStatistiqueState extends State<detailStatistique> {
     //depenses = this.alldepenses;
     total = getTotal();
     totalRevenus = getTotalRevenus();
-    return MaterialApp(
-        home: DefaultTabController(
-      length: mytabs.length,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
+    return Scaffold(
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
@@ -426,239 +423,328 @@ class _detailStatistiqueState extends State<detailStatistique> {
             },
             icon: BackButtonIcon(),
           ),
-          title: Text("Statistiques"),
-          bottom: TabBar(
-            tabs: mytabs,
-          ),
+          title: Text("d".tr),
         ),
-        body: TabBarView(
-          children: [
-            //first container
-            // Column(
-            //   children: [
-            //     Padding(
-            //       padding: EdgeInsets.only(top: 30, left: 10),
-            //       child: FutureBuilder(
-            //           future: getComptesRessource(this.id_utilisateur!),
-            //           builder: (BuildContext context,
-            //               AsyncSnapshot<List<compteRessource>> snapshot) {
-            //             if (!snapshot.hasData) {
-            //               return CircularProgressIndicator();
-            //             } else {
-            //               return DropdownButton<String>(
-            //                 items: snapshot.data!
-            //                     .map((cmpRes) => DropdownMenuItem<String>(
-            //                           child: Text(cmpRes.nom_ress!),
-            //                           value: cmpRes.nom_ress,
-            //                         ))
-            //                     .toList(),
-            //                 onChanged: (String? value) {
-            //                   setState(() {
-            //                     nomRessource = value!;
-            //                   });
-            //                   getTousArgent(nomRessource);
-            //                 },
-            //                 isExpanded: true,
-            //                 //value: currentNomCat,
-            //                 hint: Text(
-            //                   '$nomRessource',
-            //                   style: TextStyle(
-            //                     fontSize: 17,
-            //                     //fontWeight: FontWeight.bold
-            //                   ),
-            //                 ),
-            //               );
-            //             }
-            //           }),
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.only(top: 40),
-            //       child: Container(
-            //         height: MediaQuery.of(context).size.height - 300,
-            //         child: SfCartesianChart(
-            //           primaryXAxis: CategoryAxis(),
-            //           title: ChartTitle(text: 'Evolution de solde quotidienne'),
-            //           legend: Legend(isVisible: true),
-            //           tooltipBehavior: TooltipBehavior(enable: true),
-            //           series: <ChartSeries<argent, int>>[
-            //             LineSeries(
-            //                 dataSource: diagramdata,
-            //                 xValueMapper: (argent diag, _) =>
-            //                     DateTime.parse(diag.date!).day,
-            //                 yValueMapper: (argent diag, _) => diag.montant,
-            //                 name: 'Solde',
-            //                 dataLabelSettings:
-            //                     DataLabelSettings(isVisible: true))
-            //           ],
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            //end of first container
+        body: Container(
+          child: Column(
+            children: [
+              // Container(
+              //   decoration: BoxDecoration(
+              //       border: Border.all(width: 3, color: Colors.blueAccent),
+              //       borderRadius: BorderRadius.all(Radius.circular(3))),
+              //   child:
+              // Column(
+              //     children: [
 
-            //start second container
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 30, left: 10),
-                    child: FutureBuilder(
-                        future: getComptesRessource(this.id_utilisateur!),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<compteRessource>> snapshot) {
-                          if (!snapshot.hasData) {
-                            return CircularProgressIndicator();
-                          } else {
-                            return DropdownButton<String>(
-                              items: snapshot.data!
-                                  .map((cmpRes) => DropdownMenuItem<String>(
-                                        child: Text(cmpRes.nom_ress!),
-                                        value: cmpRes.nom_ress,
-                                      ))
-                                  .toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  nomRessource = value!;
-                                });
-                                updateCategories(nomRessource);
-                              },
-                              isExpanded: true,
-                              //value: currentNomCat,
-                              hint: Text(
-                                '$nomRessource',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  //fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            );
-                          }
-                        }),
-                  ),
-                  //ajouter ici le diagramme circulaire
-                  Padding(
-                    padding: EdgeInsets.only(top: 60),
-                    child: Container(
-                      width: 400,
-                      height: 400,
-                      child: charts.PieChart(
-                        List.from(_seriedata!),
-                        animate: true,
-                        animationDuration: Duration(seconds: 5),
-                        defaultRenderer: new charts.ArcRendererConfig(
-                            arcWidth: 70,
-                            arcRendererDecorators: [
-                              new charts.ArcLabelDecorator(
-                                  labelPosition: charts.ArcLabelPosition.inside)
-                            ]),
-                        behaviors: [
-                          new charts.DatumLegend(
-                            outsideJustification:
-                                charts.OutsideJustification.endDrawArea,
-                            horizontalFirst: false,
-                            desiredMaxRows: 2,
-                            cellPadding:
-                                new EdgeInsets.only(right: 4, bottom: 4),
-                            entryTextStyle: charts.TextStyleSpec(
-                              color: charts.MaterialPalette.purple.shadeDefault,
-                              fontSize: 11,
-                            ),
-                          )
-                        ],
-                      ),
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 5, left: 20, right: 20),
+              //   child: ElevatedButton(
+              //     onPressed: () {
+              //       Navigator.push(
+              //           context,
+              //           MaterialPageRoute(
+              //               builder: (context) =>
+              //                   rechercheRapport(this.id_utilisateur!)));
+              //     },
+              //     child: Row(
+              //       children: [
+              //         Icon(Icons.search),
+              //         SizedBox(
+              //           width: 20,
+              //         ),
+              //         Text('Rechercher')
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Card(
+                    child: Text(
+                      "75".tr,
+                      style: TextStyle(fontSize: 18),
                     ),
+                  )),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: ListTile(
+                  title: Text(
+                    "76".tr,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Container()
-                ],
+                  trailing: Text(
+                    "$totalRevenus",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
-            ),
-            //end second container
-            Container(
-              child: Column(
-                children: [
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //       border: Border.all(width: 3, color: Colors.blueAccent),
-                  //       borderRadius: BorderRadius.all(Radius.circular(3))),
-                  //   child:
-                  // Column(
-                  //     children: [
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5, left: 20, right: 20),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    rechercheRapport(this.id_utilisateur!)));
-                      },
-                      child: Row(
-                        children: [
-                          Icon(Icons.search),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text('Rechercher')
-                        ],
+              Expanded(
+                child: ListView.builder(
+                  //itemBuilder: ,
+                  itemCount: rvenusCount,
+                  itemBuilder: (context, pos) {
+                    return Card(
+                      color: Colors.white,
+                      //elevation: 2.0,
+                      child: ListTile(
+                        title: Text("${revenus[pos].nomcat}"),
+                        trailing: Text("${revenus[pos].montant}"),
                       ),
-                    ),
-                  ),
-                  Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Card(
-                        child: Text(
-                          "Registre des revenus et depense ",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      )),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: ListTile(
-                      title: Text("Revenus"),
-                      trailing: Text("$totalRevenus"),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      //itemBuilder: ,
-                      itemCount: rvenusCount,
+                    );
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  "77".tr,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                trailing: Text(
+                  "$total",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Expanded(
+                  child: ListView.builder(
+                      itemCount: depensesCount,
                       itemBuilder: (context, pos) {
                         return Card(
-                          color: Colors.white,
-                          //elevation: 2.0,
                           child: ListTile(
-                            title: Text("${revenus[pos].nomcat}"),
-                            trailing: Text("${revenus[pos].montant}"),
+                            title: Text("${depenses[pos].nomcat}"),
+                            trailing: Text("${depenses[pos].montant}"),
                           ),
                         );
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text("depenses"),
-                    trailing: Text("$total"),
-                  ),
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: depensesCount,
-                          itemBuilder: (context, pos) {
-                            return Card(
-                              child: ListTile(
-                                title: Text("${depenses[pos].nomcat}"),
-                                trailing: Text("${depenses[pos].montant}"),
-                              ),
-                            );
-                          })),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    ));
+                      })),
+            ],
+          ),
+        )
+        // TabBarView(
+        //   children: [
+        //     //first container
+        //     // Column(
+        //     //   children: [
+        //     //     Padding(
+        //     //       padding: EdgeInsets.only(top: 30, left: 10),
+        //     //       child: FutureBuilder(
+        //     //           future: getComptesRessource(this.id_utilisateur!),
+        //     //           builder: (BuildContext context,
+        //     //               AsyncSnapshot<List<compteRessource>> snapshot) {
+        //     //             if (!snapshot.hasData) {
+        //     //               return CircularProgressIndicator();
+        //     //             } else {
+        //     //               return DropdownButton<String>(
+        //     //                 items: snapshot.data!
+        //     //                     .map((cmpRes) => DropdownMenuItem<String>(
+        //     //                           child: Text(cmpRes.nom_ress!),
+        //     //                           value: cmpRes.nom_ress,
+        //     //                         ))
+        //     //                     .toList(),
+        //     //                 onChanged: (String? value) {
+        //     //                   setState(() {
+        //     //                     nomRessource = value!;
+        //     //                   });
+        //     //                   getTousArgent(nomRessource);
+        //     //                 },
+        //     //                 isExpanded: true,
+        //     //                 //value: currentNomCat,
+        //     //                 hint: Text(
+        //     //                   '$nomRessource',
+        //     //                   style: TextStyle(
+        //     //                     fontSize: 17,
+        //     //                     //fontWeight: FontWeight.bold
+        //     //                   ),
+        //     //                 ),
+        //     //               );
+        //     //             }
+        //     //           }),
+        //     //     ),
+        //     //     Padding(
+        //     //       padding: const EdgeInsets.only(top: 40),
+        //     //       child: Container(
+        //     //         height: MediaQuery.of(context).size.height - 300,
+        //     //         child: SfCartesianChart(
+        //     //           primaryXAxis: CategoryAxis(),
+        //     //           title: ChartTitle(text: 'Evolution de solde quotidienne'),
+        //     //           legend: Legend(isVisible: true),
+        //     //           tooltipBehavior: TooltipBehavior(enable: true),
+        //     //           series: <ChartSeries<argent, int>>[
+        //     //             LineSeries(
+        //     //                 dataSource: diagramdata,
+        //     //                 xValueMapper: (argent diag, _) =>
+        //     //                     DateTime.parse(diag.date!).day,
+        //     //                 yValueMapper: (argent diag, _) => diag.montant,
+        //     //                 name: 'Solde',
+        //     //                 dataLabelSettings:
+        //     //                     DataLabelSettings(isVisible: true))
+        //     //           ],
+        //     //         ),
+        //     //       ),
+        //     //     ),
+        //     //   ],
+        //     // ),
+        //     //end of first container
+
+        //     //start second container
+        //     Container(
+        //       child: Column(
+        //         crossAxisAlignment: CrossAxisAlignment.start,
+        //         children: [
+        //           Padding(
+        //             padding: EdgeInsets.only(top: 30, left: 10),
+        //             child: FutureBuilder(
+        //                 future: getComptesRessource(this.id_utilisateur!),
+        //                 builder: (BuildContext context,
+        //                     AsyncSnapshot<List<compteRessource>> snapshot) {
+        //                   if (!snapshot.hasData) {
+        //                     return CircularProgressIndicator();
+        //                   } else {
+        //                     return DropdownButton<String>(
+        //                       items: snapshot.data!
+        //                           .map((cmpRes) => DropdownMenuItem<String>(
+        //                                 child: Text(cmpRes.nom_ress!),
+        //                                 value: cmpRes.nom_ress,
+        //                               ))
+        //                           .toList(),
+        //                       onChanged: (String? value) {
+        //                         setState(() {
+        //                           nomRessource = value!;
+        //                         });
+        //                         updateCategories(nomRessource);
+        //                       },
+        //                       isExpanded: true,
+        //                       //value: currentNomCat,
+        //                       hint: Text(
+        //                         '$nomRessource',
+        //                         style: TextStyle(
+        //                           fontSize: 17,
+        //                           //fontWeight: FontWeight.bold
+        //                         ),
+        //                       ),
+        //                     );
+        //                   }
+        //                 }),
+        //           ),
+        //           //ajouter ici le diagramme circulaire
+        //           Padding(
+        //             padding: EdgeInsets.only(top: 60),
+        //             child: Container(
+        //               width: 400,
+        //               height: 400,
+        //               child: charts.PieChart(
+        //                 List.from(_seriedata!),
+        //                 animate: true,
+        //                 animationDuration: Duration(seconds: 5),
+        //                 defaultRenderer: new charts.ArcRendererConfig(
+        //                     arcWidth: 70,
+        //                     arcRendererDecorators: [
+        //                       new charts.ArcLabelDecorator(
+        //                           labelPosition: charts.ArcLabelPosition.inside)
+        //                     ]),
+        //                 behaviors: [
+        //                   new charts.DatumLegend(
+        //                     outsideJustification:
+        //                         charts.OutsideJustification.endDrawArea,
+        //                     horizontalFirst: false,
+        //                     desiredMaxRows: 2,
+        //                     cellPadding:
+        //                         new EdgeInsets.only(right: 4, bottom: 4),
+        //                     entryTextStyle: charts.TextStyleSpec(
+        //                       color: charts.MaterialPalette.purple.shadeDefault,
+        //                       fontSize: 11,
+        //                     ),
+        //                   )
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //           Container()
+        //         ],
+        //       ),
+        //     ),
+        //     //end second container
+        //     Container(
+        //       child: Column(
+        //         children: [
+        //           // Container(
+        //           //   decoration: BoxDecoration(
+        //           //       border: Border.all(width: 3, color: Colors.blueAccent),
+        //           //       borderRadius: BorderRadius.all(Radius.circular(3))),
+        //           //   child:
+        //           // Column(
+        //           //     children: [
+
+        //           Padding(
+        //             padding: const EdgeInsets.only(top: 5, left: 20, right: 20),
+        //             child: ElevatedButton(
+        //               onPressed: () {
+        //                 Navigator.push(
+        //                     context,
+        //                     MaterialPageRoute(
+        //                         builder: (context) =>
+        //                             rechercheRapport(this.id_utilisateur!)));
+        //               },
+        //               child: Row(
+        //                 children: [
+        //                   Icon(Icons.search),
+        //                   SizedBox(
+        //                     width: 20,
+        //                   ),
+        //                   Text('Rechercher')
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //           Padding(
+        //               padding: EdgeInsets.only(top: 20),
+        //               child: Card(
+        //                 child: Text(
+        //                   "Registre des revenus et depense ",
+        //                   style: TextStyle(fontSize: 18),
+        //                 ),
+        //               )),
+        //           Padding(
+        //             padding: EdgeInsets.only(top: 10),
+        //             child: ListTile(
+        //               title: Text("Revenus"),
+        //               trailing: Text("$totalRevenus"),
+        //             ),
+        //           ),
+        //           Expanded(
+        //             child: ListView.builder(
+        //               //itemBuilder: ,
+        //               itemCount: rvenusCount,
+        //               itemBuilder: (context, pos) {
+        //                 return Card(
+        //                   color: Colors.white,
+        //                   //elevation: 2.0,
+        //                   child: ListTile(
+        //                     title: Text("${revenus[pos].nomcat}"),
+        //                     trailing: Text("${revenus[pos].montant}"),
+        //                   ),
+        //                 );
+        //               },
+        //             ),
+        //           ),
+        //           ListTile(
+        //             title: Text("depenses"),
+        //             trailing: Text("$total"),
+        //           ),
+        //           Expanded(
+        //               child: ListView.builder(
+        //                   itemCount: depensesCount,
+        //                   itemBuilder: (context, pos) {
+        //                     return Card(
+        //                       child: ListTile(
+        //                         title: Text("${depenses[pos].nomcat}"),
+        //                         trailing: Text("${depenses[pos].montant}"),
+        //                       ),
+        //                     );
+        //                   })),
+        //         ],
+        //       ),
+        //     )
+        //   ],
+        // ),
+        );
   }
 }

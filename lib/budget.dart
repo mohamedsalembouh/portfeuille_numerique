@@ -139,15 +139,15 @@ class _budgetState extends State<budget> {
               },
               tabs: mytabs),
           title: Text("b".tr),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 20),
-              child: GestureDetector(
-                onTap: () {},
-                child: Icon(Icons.search),
-              ),
-            )
-          ],
+          // actions: [
+          //   Padding(
+          //     padding: EdgeInsets.only(right: 20),
+          //     child: GestureDetector(
+          //       onTap: () {},
+          //       child: Icon(Icons.search),
+          //     ),
+          //   )
+          // ],
         ),
         drawer: drowerfunction(context, this.usr),
         body: TabBarView(
@@ -363,8 +363,8 @@ class _budgetState extends State<budget> {
                               now.compareTo(debut) > 0 &&
                               now.compareTo(fin) < 0) {
                             return Card(
-                                child: Text(
-                                    "Vous avez depasez le budget : ${budgets[pos].nombdg} "));
+                                child:
+                                    Text("125".tr + "${budgets[pos].nombdg} "));
                           } else {
                             return Container();
                           }

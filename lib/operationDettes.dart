@@ -52,55 +52,62 @@ class _operdatteState extends State<operdatte> {
                 //   ),
                 //   color: Colors.red,
                 // ),
-                Row(
-                  children: [
-                    Container(
-                      // margin: EdgeInsets.all(30),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => form_prette(this.usr)));
-                        },
-                        child: Text(
-                          "42".tr,
-                          style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        // margin: EdgeInsets.all(30),
+                        width: MediaQuery.of(context).size.width - 20,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        form_prette(this.usr)));
+                          },
+                          child: Text(
+                            "42".tr,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
 
-                Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      formemprunte(this.usr)));
-                        },
-                        child: Text(
-                          "43".tr,
-                          style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 30),
+                        width: MediaQuery.of(context).size.width - 20,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        formemprunte(this.usr)));
+                          },
+                          child: Text(
+                            "43".tr,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

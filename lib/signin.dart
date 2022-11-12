@@ -33,8 +33,9 @@ class _signinPageState extends State<signinPage> {
       SQL_Helper helper = new SQL_Helper();
       utilisateur? user = await helper.getUser(email, pass);
       if (user == null) {
-        Toast.show("utilisateur n'existe pas ",
-            duration: Toast.lengthShort, gravity: Toast.center);
+        // Toast.show("utilisateur n'existe pas ",
+        //     duration: Toast.lengthShort, gravity: Toast.center);
+        showText(context, "", "m1".tr);
         print("user not existe");
       } else {
         Navigator.push(
@@ -84,10 +85,10 @@ class _signinPageState extends State<signinPage> {
                       controller: f_email,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Entrer votre email';
+                          return 'va'.tr;
                         }
                         if (!validateEmail(value)) {
-                          return 'SVP entrer valide email';
+                          return 'vm'.tr;
                         }
                         return null;
                       },
@@ -115,7 +116,7 @@ class _signinPageState extends State<signinPage> {
                       controller: f_pass,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Entrer votre mot de passe';
+                          return 'va'.tr;
                         }
                         return null;
                       },

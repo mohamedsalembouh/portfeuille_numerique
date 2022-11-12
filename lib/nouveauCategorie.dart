@@ -34,11 +34,11 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
           print("not inserted");
         } else {
           print("inserted");
-          showText(context, "", "La categorie est ajouté");
+          showText(context, "", "m13".tr);
           catnom.clear();
         }
       } else {
-        showText(context, "SVP", "cette nom existe deja ");
+        showText(context, "m12".tr, "m14".tr);
       }
     }
   }

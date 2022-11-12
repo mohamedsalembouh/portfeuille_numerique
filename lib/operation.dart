@@ -149,12 +149,10 @@ class _operationState extends State<operation> {
                 print("not inserted");
               }
             } else {
-              showText(context, "désolé",
-                  "vous n'avez pas de solde sufficant pour cette operation dans $TypeCompte2");
+              showText(context, "m5".tr, "m6".tr + "$TypeCompte2");
             }
           } else {
-            showText(context, "désolé",
-                "vous n'avez pas de solde dans $TypeCompte2");
+            showText(context, "désolé", "m7".tr + "$TypeCompte2");
           }
         } else {
           Toast.show("t2".tr);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
@@ -176,229 +177,246 @@ class _notificationState extends State<notification> {
     budgets = this.allbudgets;
     prettes = this.pretedetes;
     empruntes = this.empruntedetes;
-    return MaterialApp(
-      home: DefaultTabController(
-        length: mytabs.length,
-        initialIndex: selectedPage!,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            bottom: TabBar(
-              tabs: mytabs,
-            ),
-            title: Text("Notifications"),
+    return DefaultTabController(
+      length: mytabs.length,
+      initialIndex: selectedPage!,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: mytabs,
           ),
-          drawer: drowerfunction(context, this.usr),
-          body: TabBarView(
-            children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Card(
-                      child: Text(
-                        "Notifications Prettes Dettes ",
-                        // style: TextStyle(color: Colors.green),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count,
-                          itemBuilder: (context, pos) {
-                            DateTime dateEcheance =
-                                DateTime.parse(prettes[pos].date_echeance!);
-                            String maintenant =
-                                DateFormat("yyyy-MM-dd").format(DateTime.now());
-                            DateTime dateMaintenant =
-                                DateTime.parse(maintenant);
-
-                            if (prettes[pos].status == 0) {
-                              if (dateEcheance
-                                      .difference(dateMaintenant)
-                                      .inDays ==
-                                  3) {
-                                return Card(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 3 jours",
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                ));
-                              } else if (dateEcheance
-                                      .difference(dateMaintenant)
-                                      .inDays ==
-                                  2) {
-                                return Card(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 2 jours ",
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                ));
-                              } else if (dateEcheance
-                                      .difference(dateMaintenant)
-                                      .inDays ==
-                                  1) {
-                                return Card(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 1 jours ",
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                ));
-                              } else if (dateEcheance
-                                      .difference(dateMaintenant)
-                                      .inDays ==
-                                  0) {
-                                return Card(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    " ${prettes[pos].nom} va vous donne ${prettes[pos].montant}  Ajourdhui ",
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                ));
-                              } else {
-                                return Container();
-                              }
-                            } else {
-                              return Container();
-                            }
-                          })),
-                  Card(
+          title: Text("32".tr),
+        ),
+        drawer: drowerfunction(context, this.usr),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Card(
                     child: Text(
-                      "Notifications Empruntes Dettes ",
-                      //  style: TextStyle(color: Colors.red),
+                      "39".tr,
+                      // style: TextStyle(color: Colors.green),
                     ),
                   ),
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count2,
-                          itemBuilder: (context, pos) {
-                            DateTime dateEcheance =
-                                DateTime.parse(empruntes[pos].date_echeance!);
-                            String maintenant =
-                                DateFormat("yyyy-MM-dd").format(DateTime.now());
-                            DateTime dateMaintenant =
-                                DateTime.parse(maintenant);
-
-                            if (empruntes[pos].status == 0) {
-                              if (dateEcheance
-                                      .difference(dateMaintenant)
-                                      .inDays ==
-                                  3) {
-                                return Card(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 3 jours ",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ));
-                              } else if (dateEcheance
-                                      .difference(dateMaintenant)
-                                      .inDays ==
-                                  2) {
-                                return Card(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 2 jours ",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ));
-                              } else if (dateEcheance
-                                      .difference(dateMaintenant)
-                                      .inDays ==
-                                  1) {
-                                return Card(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 1 jours ",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ));
-                              } else if (dateEcheance
-                                      .difference(dateMaintenant)
-                                      .inDays ==
-                                  0) {
-                                return Card(
-                                    child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant}  Ajourdhui ",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ));
-                              } else {
-                                return Container();
-                              }
-                            } else {
-                              return Container();
-                            }
-                          })),
-                ],
-              ),
-              //l'autre page
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Card(
-                      child: Text(
-                        "Notifications sur Budgets",
-                        // style: TextStyle(color: Colors.green),
-                      ),
-                    ),
-                  ),
-                  Expanded(
+                ),
+                Expanded(
                     child: ListView.builder(
-                        itemCount: count3,
+                        itemCount: count,
                         itemBuilder: (context, pos) {
-                          // DateTime debut =
-                          //     DateTime.parse(budgets[pos].date_debut!);
-                          // DateTime fin = DateTime.parse(budgets[pos].date_fin!);
-                          // DateTime now = DateTime.parse(
-                          //     DateFormat("yyyy-MM-dd").format(DateTime.now()));
-                          if (budgets[pos].status == 0) {
-                            //int allmnt = someMontant(budgets[pos].nomcat);
-                            if (budgets[pos].montant <
-                                someMontant(budgets[pos].nomcat)) {
+                          DateTime dateEcheance =
+                              DateTime.parse(prettes[pos].date_echeance!);
+                          String maintenant =
+                              DateFormat("yyyy-MM-dd").format(DateTime.now());
+                          DateTime dateMaintenant = DateTime.parse(maintenant);
+
+                          if (prettes[pos].status == 0) {
+                            if (dateEcheance
+                                    .difference(dateMaintenant)
+                                    .inDays ==
+                                3) {
                               return Card(
-                                  child: Text(
-                                      "Vous avez depasez le budget : ${budgets[pos].nombdg} "));
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  " ${prettes[pos].nom}" +
+                                      "119".tr +
+                                      "${prettes[pos].montant}" +
+                                      "122".tr,
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                              ));
+                            } else if (dateEcheance
+                                    .difference(dateMaintenant)
+                                    .inDays ==
+                                2) {
+                              return Card(
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  " ${prettes[pos].nom}" +
+                                      "119".tr +
+                                      "${prettes[pos].montant}" +
+                                      "121".tr,
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                              ));
+                            } else if (dateEcheance
+                                    .difference(dateMaintenant)
+                                    .inDays ==
+                                1) {
+                              return Card(
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  " ${prettes[pos].nom}" +
+                                      "119".tr +
+                                      "${prettes[pos].montant}" +
+                                      "120".tr,
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                              ));
+                            } else if (dateEcheance
+                                    .difference(dateMaintenant)
+                                    .inDays ==
+                                0) {
+                              return Card(
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  " ${prettes[pos].nom}" +
+                                      "119".tr +
+                                      "${prettes[pos].montant}" +
+                                      "123".tr,
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                              ));
                             } else {
                               return Container();
                             }
                           } else {
                             return Container();
                           }
-                        }),
+                        })),
+                Card(
+                  child: Text(
+                    "40".tr,
+                    //  style: TextStyle(color: Colors.red),
                   ),
-                  Card(
+                ),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: count2,
+                        itemBuilder: (context, pos) {
+                          DateTime dateEcheance =
+                              DateTime.parse(empruntes[pos].date_echeance!);
+                          String maintenant =
+                              DateFormat("yyyy-MM-dd").format(DateTime.now());
+                          DateTime dateMaintenant = DateTime.parse(maintenant);
+
+                          if (empruntes[pos].status == 0) {
+                            if (dateEcheance
+                                    .difference(dateMaintenant)
+                                    .inDays ==
+                                3) {
+                              return Card(
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  "124".tr +
+                                      "${empruntes[pos].nom} ${empruntes[pos].montant}" +
+                                      "122".tr,
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ));
+                            } else if (dateEcheance
+                                    .difference(dateMaintenant)
+                                    .inDays ==
+                                2) {
+                              return Card(
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  "124".tr +
+                                      "${empruntes[pos].nom} ${empruntes[pos].montant}" +
+                                      "121".tr,
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ));
+                            } else if (dateEcheance
+                                    .difference(dateMaintenant)
+                                    .inDays ==
+                                1) {
+                              return Card(
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  "124".tr +
+                                      "${empruntes[pos].nom} ${empruntes[pos].montant}" +
+                                      "120".tr,
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ));
+                            } else if (dateEcheance
+                                    .difference(dateMaintenant)
+                                    .inDays ==
+                                0) {
+                              return Card(
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  "124".tr +
+                                      "${empruntes[pos].nom} ${empruntes[pos].montant}" +
+                                      "123".tr,
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ));
+                            } else {
+                              return Container();
+                            }
+                          } else {
+                            return Container();
+                          }
+                        })),
+              ],
+            ),
+            //l'autre page
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Card(
                     child: Text(
-                      "Notifications sur Objectifs ",
-                      //  style: TextStyle(color: Colors.red),
+                      "117".tr,
+                      // style: TextStyle(color: Colors.green),
                     ),
                   ),
-                  Expanded(
-                      child: ListView.builder(
-                          itemCount: count4,
-                          itemBuilder: (context, pos) {
+                ),
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: count3,
+                      itemBuilder: (context, pos) {
+                        // DateTime debut =
+                        //     DateTime.parse(budgets[pos].date_debut!);
+                        // DateTime fin = DateTime.parse(budgets[pos].date_fin!);
+                        // DateTime now = DateTime.parse(
+                        //     DateFormat("yyyy-MM-dd").format(DateTime.now()));
+                        if (budgets[pos].status == 0) {
+                          //int allmnt = someMontant(budgets[pos].nomcat);
+                          if (budgets[pos].montant <
+                              someMontant(budgets[pos].nomcat)) {
                             return Card(
-                              child: Text(
-                                  "L'objectif ${someobjectives[pos].nom_objective} est realise "),
-                            );
-                          }))
-                ],
-              )
-            ],
-          ),
+                                child:
+                                    Text("125".tr + "${budgets[pos].nombdg} "));
+                          } else {
+                            return Container();
+                          }
+                        } else {
+                          return Container();
+                        }
+                      }),
+                ),
+                Card(
+                  child: Text(
+                    "118".tr,
+                    //  style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: count4,
+                        itemBuilder: (context, pos) {
+                          return Card(
+                            child: Text("126".tr +
+                                "${someobjectives[pos].nom_objective}" +
+                                "127".tr),
+                          );
+                        }))
+              ],
+            )
+          ],
         ),
       ),
     );

@@ -34,10 +34,10 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
           print("not inserted");
         } else {
           print("inserted");
-          showText(context, "", "La ressource est ajouté");
+          showText(context, "", "m15".tr);
         }
       } else {
-        showText(context, "SVP", "cette ressource existe deja");
+        showText(context, "m12".tr, "m16".tr);
       }
     }
   }

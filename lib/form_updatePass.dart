@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 
 import 'db/sql_helper.dart';
@@ -21,11 +22,10 @@ class form_updatePass extends StatelessWidget {
         if (y != 0) {
           print("updated");
           Navigator.pop(context);
-          showText(context, "", "votre mot de pass est change");
+          showText(context, "", "m17".tr);
         }
       } else {
-        showText(context, "SVP",
-            "Les deux mots de passes ne sont pas correspondant");
+        showText(context, "m12".tr, "m4".tr);
       }
     }
   }
@@ -47,7 +47,7 @@ class form_updatePass extends StatelessWidget {
                     ),
                     Center(
                       child: Text(
-                        "Changer votre Mot de passe",
+                        "130".tr,
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
@@ -60,7 +60,7 @@ class form_updatePass extends StatelessWidget {
                         controller: newpass,
                         obscureText: true,
                         decoration: InputDecoration(
-                            labelText: "Nouveaux mot de passe",
+                            labelText: "131".tr,
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(20.0)),
@@ -73,7 +73,7 @@ class form_updatePass extends StatelessWidget {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -88,7 +88,7 @@ class form_updatePass extends StatelessWidget {
                         controller: conf_pass,
                         obscureText: true,
                         decoration: InputDecoration(
-                            labelText: " confirmer Nouveaux mot de passe",
+                            labelText: "132".tr,
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(20.0)),
@@ -101,7 +101,7 @@ class form_updatePass extends StatelessWidget {
                             )),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },
@@ -122,7 +122,7 @@ class form_updatePass extends StatelessWidget {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text('Annuler'),
+                              child: Text('26'.tr),
                               style: ElevatedButton.styleFrom(
                                   shape: StadiumBorder()),
                             ),
@@ -135,7 +135,7 @@ class form_updatePass extends StatelessWidget {
                                 updatePassword(
                                     context, newpass.text, conf_pass.text);
                               },
-                              child: Text('enregistrer'),
+                              child: Text('27'.tr),
                               style: ElevatedButton.styleFrom(
                                   shape: StadiumBorder()),
                             ),

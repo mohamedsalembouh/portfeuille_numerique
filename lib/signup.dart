@@ -34,13 +34,13 @@ class _SignUpPageState extends State<SignUpPage> {
           if (result > 0) {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => signinPage()));
-            showText(context, "Félicitation", "Vous avez enregistre");
+            showText(context, "129".tr, "m2".tr);
           }
         } else {
-          Toast.show("cette email existe deja");
+          showText(context, "m12", "m3".tr);
         }
       } else {
-        Toast.show("Les deux mot de pass ne sont pas les meme");
+        showText(context, "m12", "m4".tr);
       }
     }
   }
@@ -92,7 +92,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: f_username,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Entrer votre nom';
+                          return 'va'.tr;
                         }
                         return null;
                       },
@@ -118,10 +118,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: TextFormField(
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Entrer votre email';
+                          return 'va'.tr;
                         }
                         if (!validateEmail(value)) {
-                          return 'SVP entrer valide email';
+                          return 'vm'.tr;
                         }
                         return null;
                       },
@@ -150,7 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: f_pass,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Entrer votre mot de passe';
+                          return 'va'.tr;
                         }
                         return null;
                       },
@@ -178,7 +178,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: f_pass2,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Confirmee votre mot de passe';
+                          return 'va'.tr;
                         }
                         return null;
                       },

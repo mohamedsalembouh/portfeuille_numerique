@@ -103,7 +103,7 @@ class _alldettesState extends State<alldettes> {
           getAllEmprunteDette();
         }
       } else {
-        showText(context, "Desole", "vous n'avez pas de solde sufficant");
+        showText(context, "m5".tr, "m8".tr);
       }
     }
   }
@@ -223,15 +223,15 @@ class _alldettesState extends State<alldettes> {
               },
               tabs: mytabs),
           title: Text("a".tr),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 20),
-              child: GestureDetector(
-                onTap: () {},
-                child: Icon(Icons.search),
-              ),
-            )
-          ],
+          // actions: [
+          //   Padding(
+          //     padding: EdgeInsets.only(right: 20),
+          //     child: GestureDetector(
+          //       onTap: () {},
+          //       child: Icon(Icons.search),
+          //     ),
+          //   )
+          // ],
         ),
         drawer: drowerfunction(context, usr),
         body: TabBarView(
@@ -599,7 +599,10 @@ class _alldettesState extends State<alldettes> {
                                   child: Padding(
                                 padding: EdgeInsets.only(top: 20),
                                 child: Text(
-                                  " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 3 jours",
+                                  " ${prettes[pos].nom}" +
+                                      "119".tr +
+                                      "${prettes[pos].montant}" +
+                                      "122".tr,
                                   style: TextStyle(color: Colors.green),
                                 ),
                               ));
@@ -611,7 +614,10 @@ class _alldettesState extends State<alldettes> {
                                   child: Padding(
                                 padding: EdgeInsets.only(top: 20),
                                 child: Text(
-                                  " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 2 jours ",
+                                  " ${prettes[pos].nom}" +
+                                      "119".tr +
+                                      "${prettes[pos].montant}" +
+                                      "121".tr,
                                   style: TextStyle(color: Colors.green),
                                 ),
                               ));
@@ -623,7 +629,10 @@ class _alldettesState extends State<alldettes> {
                                   child: Padding(
                                 padding: EdgeInsets.only(top: 20),
                                 child: Text(
-                                  " ${prettes[pos].nom} va vous donne ${prettes[pos].montant} apres 1 jours ",
+                                  " ${prettes[pos].nom}" +
+                                      "119".tr +
+                                      "${prettes[pos].montant}" +
+                                      "120".tr,
                                   style: TextStyle(color: Colors.green),
                                 ),
                               ));
@@ -635,7 +644,10 @@ class _alldettesState extends State<alldettes> {
                                   child: Padding(
                                 padding: EdgeInsets.only(top: 20),
                                 child: Text(
-                                  " ${prettes[pos].nom} va vous donne ${prettes[pos].montant}  Ajourdhui ",
+                                  " ${prettes[pos].nom}" +
+                                      "119".tr +
+                                      "${prettes[pos].montant}" +
+                                      "123".tr,
                                   style: TextStyle(color: Colors.green),
                                 ),
                               ));
@@ -671,7 +683,9 @@ class _alldettesState extends State<alldettes> {
                                   child: Padding(
                                 padding: EdgeInsets.only(top: 20),
                                 child: Text(
-                                  "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 3 jours ",
+                                  "124".tr +
+                                      "${empruntes[pos].nom} ${empruntes[pos].montant}" +
+                                      "122".tr,
                                   style: TextStyle(color: Colors.red),
                                 ),
                               ));
@@ -683,7 +697,9 @@ class _alldettesState extends State<alldettes> {
                                   child: Padding(
                                 padding: EdgeInsets.only(top: 20),
                                 child: Text(
-                                  "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 2 jours ",
+                                  "124".tr +
+                                      "${empruntes[pos].nom} ${empruntes[pos].montant}" +
+                                      "121".tr,
                                   style: TextStyle(color: Colors.red),
                                 ),
                               ));
@@ -695,7 +711,9 @@ class _alldettesState extends State<alldettes> {
                                   child: Padding(
                                 padding: EdgeInsets.only(top: 20),
                                 child: Text(
-                                  "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant} apres 1 jours ",
+                                  "124".tr +
+                                      "${empruntes[pos].nom} ${empruntes[pos].montant}" +
+                                      "120".tr,
                                   style: TextStyle(color: Colors.red),
                                 ),
                               ));
@@ -707,7 +725,9 @@ class _alldettesState extends State<alldettes> {
                                   child: Padding(
                                 padding: EdgeInsets.only(top: 20),
                                 child: Text(
-                                  "Vous allez donnez a ${empruntes[pos].nom} ${empruntes[pos].montant}  Ajourdhui ",
+                                  "124".tr +
+                                      "${empruntes[pos].nom} ${empruntes[pos].montant}" +
+                                      "123".tr,
                                   style: TextStyle(color: Colors.red),
                                 ),
                               ));

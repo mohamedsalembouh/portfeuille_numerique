@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 
 import 'db/sql_helper.dart';
@@ -19,7 +20,7 @@ class form_updateNom extends StatelessWidget {
       if (x != 0) {
         print("updated");
         Navigator.of(context).pop();
-        showText(context, "", "votre nom est change");
+        showText(context, "", "m18".tr);
       } else {
         print("not updated");
       }
@@ -41,7 +42,7 @@ class form_updateNom extends StatelessWidget {
                 ),
                 Center(
                   child: Text(
-                    "Changer votre nom",
+                    "134".tr,
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
@@ -55,12 +56,12 @@ class form_updateNom extends StatelessWidget {
                     controller: newnom,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Le champ est obligatoire";
+                        return "va".tr;
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                        labelText: "Nouveaux nom",
+                        labelText: "133".tr,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(20.0)),
                           borderSide: BorderSide(color: Colors.white),
@@ -86,7 +87,7 @@ class form_updateNom extends StatelessWidget {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('Annuler'),
+                          child: Text('26'.tr),
                           style:
                               ElevatedButton.styleFrom(shape: StadiumBorder()),
                         ),
@@ -98,7 +99,7 @@ class form_updateNom extends StatelessWidget {
                           onPressed: () {
                             updateNom(context, newnom.text);
                           },
-                          child: Text('enregistrer'),
+                          child: Text('27'.tr),
                           style:
                               ElevatedButton.styleFrom(shape: StadiumBorder()),
                         ),

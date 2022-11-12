@@ -76,8 +76,7 @@ class _form_objectifState extends State<form_objectif> {
                   MaterialPageRoute(builder: (context) => objectif(usr, 0)));
             }
           } else {
-            showText(context, "Desole",
-                "Le montant que vous voulez enregistree est plus grand que votre solde ");
+            showText(context, "m5".tr, "m10".tr + "$TypeCompte");
           }
         }
       } else {

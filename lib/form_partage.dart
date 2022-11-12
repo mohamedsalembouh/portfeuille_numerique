@@ -32,11 +32,11 @@ class _formPartageState extends State<formPartage> {
           print("ok partage");
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => partage(this.usr)));
-          showText(context, "OK", "vous avez partage votre compte");
+          showText(context, "", "m20".tr);
           email.clear();
         }
       } else {
-        showText(context, "Sorry", "cette utilisateur n'existe pas");
+        showText(context, "m12".tr, "m21".tr);
       }
     }
   }
@@ -72,7 +72,7 @@ class _formPartageState extends State<formPartage> {
                         controller: email,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Le champ est obligatoire";
+                            return "va".tr;
                           }
                           return null;
                         },

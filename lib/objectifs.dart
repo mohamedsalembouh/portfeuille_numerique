@@ -114,13 +114,11 @@ class _objectifState extends State<objectif> {
                 print("not updated");
               }
             } else {
-              showText(context, "SVP",
-                  "cette valeur est plus grand que le montant cible");
+              showText(context, "m12".tr, "m11".tr);
             }
           }
         } else {
-          showText(context, "Desole",
-              "Le montant que vous voulez entre est plus grand que votre solde dans $TypeCompte");
+          showText(context, "m5".tr, "m10".tr + "$TypeCompte");
         }
       }
     } else {
@@ -141,8 +139,7 @@ class _objectifState extends State<objectif> {
 
   shownot(objective obj) {
     if (obj.montant_cible == obj.montant_donnee) {
-      showText(context, "Félicitation",
-          "L'objectif ${obj.nom_objective} est realise");
+      showText(context, "129".tr, "126".tr + "${obj.nom_objective}" + "127".tr);
     }
   }
 
@@ -151,8 +148,8 @@ class _objectifState extends State<objectif> {
       if (obj.montant_donnee == obj.montant_cible) {
         service.showNotificationWithPayload(
             id: obj.id!,
-            title: "Félicitation",
-            body: "L'objectif ${obj.nom_objective} est realise",
+            title: "129".tr,
+            body: "126".tr + "${obj.nom_objective}" + "127".tr,
             payload: "payload objectif");
       }
     }
@@ -190,15 +187,15 @@ class _objectifState extends State<objectif> {
               },
               tabs: mytabs),
           title: Text("c".tr),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 20),
-              child: GestureDetector(
-                onTap: () {},
-                child: Icon(Icons.search),
-              ),
-            )
-          ],
+          // actions: [
+          //   Padding(
+          //     padding: EdgeInsets.only(right: 20),
+          //     child: GestureDetector(
+          //       onTap: () {},
+          //       child: Icon(Icons.search),
+          //     ),
+          //   )
+          // ],
         ),
         drawer: drowerfunction(context, this.usr),
         body: TabBarView(

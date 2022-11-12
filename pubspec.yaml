@@ -40,7 +40,7 @@ dependencies:
      git:
        url: https://github.com/google/charts.git
        path: charts_flutter
- 
+  
 
   
 
@@ -57,11 +57,23 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^2.2.14
+  flutter_launcher_icons: ^0.10.0
 
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/imageApp.png  
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/imageApp.png"
+  # adaptive_icon_foreground: "assets/icon_forground.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
+
 flutter:
   uses-material-design: true 
   generate: true 

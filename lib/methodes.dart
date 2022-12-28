@@ -6,92 +6,12 @@ import 'package:portfeuille_numerique/homePage.dart';
 import 'package:portfeuille_numerique/models/argent.dart';
 import 'package:portfeuille_numerique/models/compteRessource.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/notification.dart';
 import 'package:portfeuille_numerique/objectifs.dart';
-import 'package:portfeuille_numerique/operation.dart';
 import 'package:portfeuille_numerique/parametres.dart';
 import 'package:portfeuille_numerique/partageGroupe.dart';
-import 'package:portfeuille_numerique/signin.dart';
 import 'package:portfeuille_numerique/statistiques.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:toast/toast.dart';
-
-import 'models/compte.dart';
 import 'models/ressource.dart';
 import 'package:get/get.dart';
-
-PreferredSize appbarfunction(BuildContext context, List<Tab> tabs, String title,
-    utilisateur usr, TabController _tabController) {
-  return PreferredSize(
-    preferredSize: Size.fromHeight(100),
-    child: AppBar(
-      bottom: TabBar(controller: _tabController, tabs: tabs),
-      title: Text(title),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => notification(usr, 0)));
-            },
-            child: Icon(Icons.notifications),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => parametrage(usr)));
-            },
-            child: Icon(Icons.settings),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-PreferredSize appbar2function(List<Tab> tabs, String title) {
-  return PreferredSize(
-    preferredSize: Size.fromHeight(100),
-    child: AppBar(
-      toolbarHeight: 100,
-      bottom: TabBar(tabs: tabs),
-      title: Text(title),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: GestureDetector(
-            onTap: () {},
-            child: Icon(Icons.search),
-          ),
-        )
-      ],
-    ),
-  );
-}
-
-PreferredSize appbar3function(String title) {
-  return PreferredSize(
-    preferredSize: Size.fromHeight(100),
-    child: AppBar(
-      title: Text(title),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: GestureDetector(
-            onTap: () {},
-            child: Icon(Icons.search),
-          ),
-        )
-      ],
-    ),
-  );
-}
 
 Widget drowerfunction(
   BuildContext context,
@@ -102,7 +22,7 @@ Widget drowerfunction(
       padding: EdgeInsets.only(top: 50),
       children: [
         Container(
-          color: Colors.green[500],
+          color: Colors.blue[500],
           width: double.infinity,
           //height: 250,
           padding: EdgeInsets.only(top: 20),
@@ -219,53 +139,28 @@ Widget drowerfunction(
               Icons.logout,
               size: 20,
             ),
-            title: Text("h".tr,
-                style: TextStyle(
-                    fontSize: 20,
-                    backgroundColor: Colors.black,
-                    color: Colors.white)),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => signinPage()));
-            },
+            title: ElevatedButton(
+              child: Text(
+                "h".tr,
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: () {
+                // Navigator.push(context,
+                //     MaterialPageRoute(builder: (context) => signinPage()));
+                Navigator.pushReplacementNamed(context, "/logout");
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+            ),
+            // onTap: () {
+            //   // Navigator.push(context,
+            //   //     MaterialPageRoute(builder: (context) => signinPage()));
+            //   Navigator.pushReplacementNamed(context, "/logout");
+            // },
           ),
         ),
       ],
     ),
   );
-}
-
-void onclick(BuildContext context) {
-  AlertDialog alertDialog = AlertDialog(
-    title: Text("Ajouter un niveaux solde"),
-    content: SizedBox(
-      width: 200,
-      child: TextField(
-        keyboardType: TextInputType.number,
-        decoration:
-            InputDecoration(hintText: '0', border: OutlineInputBorder()),
-        style: TextStyle(fontSize: 20),
-      ),
-    ),
-    actions: [
-      TextButton(
-        child: Text(
-          "Annuler",
-          style: TextStyle(color: Colors.red),
-        ),
-        onPressed: () {},
-      ),
-      TextButton(
-        child: Text("Enregistrer"),
-        onPressed: () {},
-      ),
-    ],
-  );
-  showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alertDialog;
-      });
 }
 
 validateEmail(String email) {
@@ -275,16 +170,6 @@ validateEmail(String email) {
 }
 
 SQL_Helper helper = SQL_Helper();
-// Future<int?> getsoldeUser(int id_utilisateur) async {
-//   int? solde;
-//   compte? comp = await helper.getCompteUser(id_utilisateur);
-//   if (comp == null) {
-//     solde = 0;
-//   } else {
-//     solde = comp.solde;
-//   }
-//   return solde;
-// }
 
 void showText(BuildContext context, String title, String msg) {
   AlertDialog alterdialogue = AlertDialog(
@@ -293,19 +178,6 @@ void showText(BuildContext context, String title, String msg) {
   );
   showDialog(context: context, builder: (_) => alterdialogue);
 }
-
-// Widget myBottomNavBar() {
-//   return BottomNavigationBar(
-//     items: [
-//       BottomNavigationBarItem(
-//         icon: Icon(Icons.home),
-//         title: Text("Acceuil"),
-//       ),
-//       BottomNavigationBarItem(icon: Icon(Icons.help), title: Text("Aide")),
-//     ],
-//     //backgroundColor: Colors.purpleAccent,
-//   );
-// }
 
 getRessources(int idUser) {
   Future<List<ressource>> allRessources = helper.getAllRessource(idUser);
@@ -327,33 +199,6 @@ insertArgent(
   }
 }
 
-
-// getListSoldes(List<diagrameSolde> y, String typeSolde, int idUser) async {
-//   compte? comp = await helper.getCompteUser(idUser, typeSolde);
-//   y.add(diagrameSolde(DateTime.parse(comp!.date!), comp.solde, comp.type));
-//   return y;
-// }
-
-
-  // void updateSolde( String email,String pass,int? a,int? k) async {
-  //  // updateCategories();
-  //  // allcat = await getNomCategorie();
-  //   utilisateur? user = await helper.getUser(email, pass);
-  //   a = user!.id;
-  //   //h = user.nom;
-  //   final Future<Database>? db = helper.initialiseDataBase();
-  //   var our_db = db;
-  //   if (our_db != null) {
-  //     our_db.then((database) {
-  //       Future<int?> solde = getsoldeUser(a!);
-  //       solde.then((reloadsolde) {
-  //         setState(() {
-  //           k = reloadsolde;
-  //         });
-  //       });
-  //     });
-  //   }
-  // }
 
 
 

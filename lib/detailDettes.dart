@@ -76,9 +76,6 @@ class _detailDettesState extends State<detailDettes> {
     if (this.empruntesdettes == null) {
       getAllEmprunteDette();
     }
-    // if (this.so == null) {
-    //   updateSolde();
-    // }
 
     prettees = this.pretesdettes;
     empruntees = this.empruntesdettes;
@@ -96,15 +93,6 @@ class _detailDettesState extends State<detailDettes> {
           //toolbarHeight: 100,
           bottom: TabBar(tabs: mytabs),
           title: Text("a".tr),
-          // actions: [
-          //   Padding(
-          //     padding: EdgeInsets.only(),
-          //     child: GestureDetector(
-          //       onTap: () {},
-          //       child: Icon(Icons.backup),
-          //     ),
-          //   )
-          // ],
         ),
         body: TabBarView(
           children: [
@@ -292,7 +280,6 @@ class _detailDettesState extends State<detailDettes> {
                         })),
               ],
             ),
-            //Notifications
           ],
         ),
       ),

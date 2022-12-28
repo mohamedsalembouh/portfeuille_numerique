@@ -5,14 +5,11 @@ import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/main.dart';
 import 'package:portfeuille_numerique/models/budgete.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:toast/toast.dart';
 import 'models/categorie.dart';
 import 'package:get/get.dart';
 
 class formbudget extends StatefulWidget {
-  //const formbudget({Key? key}) : super(key: key);
   utilisateur? usr;
-
   formbudget(this.usr);
   @override
   State<formbudget> createState() => _formbudgetState(this.usr);

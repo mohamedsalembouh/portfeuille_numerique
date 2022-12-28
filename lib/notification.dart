@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:sqflite/sqflite.dart';
-
 import 'methodes.dart';
 import 'models/catBudget.dart';
 import 'models/depensesCats.dart';
@@ -136,12 +135,6 @@ class _notificationState extends State<notification> {
     }
     return allMontant;
   }
-
-  // someMontant2(String nomcat) async {
-  //   List<depensesCats> depen =
-  //       await helper.getAllSpecifyDepense(nomcat, this.usr!.id!);
-  //   int h = depen.length;
-  // }
 
   getObjectifs() async {
     final Future<Database>? db = helper.initialiseDataBase();
@@ -378,13 +371,7 @@ class _notificationState extends State<notification> {
                   child: ListView.builder(
                       itemCount: count3,
                       itemBuilder: (context, pos) {
-                        // DateTime debut =
-                        //     DateTime.parse(budgets[pos].date_debut!);
-                        // DateTime fin = DateTime.parse(budgets[pos].date_fin!);
-                        // DateTime now = DateTime.parse(
-                        //     DateFormat("yyyy-MM-dd").format(DateTime.now()));
                         if (budgets[pos].status == 0) {
-                          //int allmnt = someMontant(budgets[pos].nomcat);
                           if (budgets[pos].montant <
                               someMontant(budgets[pos].nomcat)) {
                             return Card(
@@ -401,7 +388,6 @@ class _notificationState extends State<notification> {
                 Card(
                   child: Text(
                     "118".tr,
-                    //  style: TextStyle(color: Colors.red),
                   ),
                 ),
                 Expanded(
@@ -410,6 +396,7 @@ class _notificationState extends State<notification> {
                         itemBuilder: (context, pos) {
                           return Card(
                             child: Text("126".tr +
+                                " " +
                                 "${someobjectives[pos].nom_objective}" +
                                 "127".tr),
                           );

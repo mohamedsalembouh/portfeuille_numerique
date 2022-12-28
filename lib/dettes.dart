@@ -4,7 +4,6 @@ import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/emprunte_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/operationDettes.dart';
-import 'package:portfeuille_numerique/services/local_notification_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'models/compte.dart';
 import 'models/prette_dette.dart';
@@ -45,49 +44,12 @@ class _alldettesState extends State<alldettes> {
   static var solde;
   static var empruntes;
 
-  // void updateSolde() async {
-  //   utilisateur? user =
-  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
-  //   int a = user!.id!;
-  //   final Future<Database>? db = helper.initialiseDataBase();
-  //   var our_db = db;
-  //   if (our_db != null) {
-  //     our_db.then((database) {
-  //       Future<int?> reloadsolde = getsoldeUser(a);
-  //       reloadsolde.then((sol) {
-  //         setState(() {
-  //           this.so = sol;
-  //         });
-  //       });
-  //     });
-  //   }
-  // }
-
-  // Future<bool> oldSolde(int mnt) async {
-  //   utilisateur? user =
-  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
-  //   int a = user!.id!;
-  //   compte? cmp = await helper.getCompteUser(a);
-  //   if (cmp != null) {
-  //     int solde = cmp.solde!;
-  //     if (solde > mnt) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } else {
-  //     return false;
-  //   }
-  // }
-
   minsSolde(int mnt, int idEmprunte, int idCmp) async {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    // ressource? res = await helper.getSpecifyRessource(typeCmp);
-    // int id_res = res!.id_ress!;
     compte? cmp = await helper.getCompteUserById(idCmp, a);
     if (cmp != null) {
       int solde = cmp.solde!;
@@ -114,8 +76,6 @@ class _alldettesState extends State<alldettes> {
     utilisateur? user =
         await helper.getUser(this.usr!.email!, this.usr!.password!);
     int a = user!.id!;
-    // ressource? res = await helper.getSpecifyRessource(typeCmp);
-    // int id_res = res!.id_ress!;
     compte? cmp = await helper.getCompteUserById(idCmp, a);
     if (cmp != null) {
       int solde = cmp.solde!;
@@ -180,16 +140,6 @@ class _alldettesState extends State<alldettes> {
     }
   }
 
-  // faireOperation(List<prette_dette> x) {
-  //   String maintenant = DateFormat("yyyy-MM-dd").format(DateTime.now());
-  //   DateTime dateMaintenant = DateTime.parse(maintenant);
-  //   x.forEach((element) {
-  //     DateTime fine = DateTime.parse(element.date_echeance!);
-  //     if (dateMaintenant.compareTo(fine) >= 0) {
-  //       PlusSolde(element.montant!);
-  //     }
-  //   });
-  // }
   int indexTab = 0;
   @override
   Widget build(BuildContext context) {
@@ -199,16 +149,11 @@ class _alldettesState extends State<alldettes> {
     if (this.empruntedetes == null) {
       getAllEmprunteDette();
     }
-    // if (this.so == null) {
-    //   updateSolde();
-    // }
 
     prettes = this.pretedetes;
     empruntes = this.empruntedetes;
     solde = this.so;
-    //faireNotificationDettes();
 
-    //print(prettes);
     return DefaultTabController(
       length: mytabs.length,
       initialIndex: selectedPage!,
@@ -223,15 +168,6 @@ class _alldettesState extends State<alldettes> {
               },
               tabs: mytabs),
           title: Text("a".tr),
-          // actions: [
-          //   Padding(
-          //     padding: EdgeInsets.only(right: 20),
-          //     child: GestureDetector(
-          //       onTap: () {},
-          //       child: Icon(Icons.search),
-          //     ),
-          //   )
-          // ],
         ),
         drawer: drowerfunction(context, usr),
         body: TabBarView(
@@ -272,7 +208,14 @@ class _alldettesState extends State<alldettes> {
                                 padding: const EdgeInsets.only(top: 10),
                                 child: ListTile(
                                   title: Text("${prettes[pos].nom}"),
-                                  subtitle: Text("${prettes[pos].montant}"),
+                                  subtitle: Column(
+                                    children: [
+                                      Text("${prettes[pos].montant}"),
+                                      prettes[pos].objectif != ''
+                                          ? Text("${prettes[pos].objectif}")
+                                          : Container()
+                                    ],
+                                  ),
                                   trailing: Text("48".tr + " : " + "$dateFin"),
                                   onTap: () {
                                     AlertDialog alertDialog = AlertDialog(
@@ -354,7 +297,12 @@ class _alldettesState extends State<alldettes> {
                                 padding: const EdgeInsets.only(top: 10),
                                 child: ListTile(
                                   title: Text("${empruntes[pos].nom}"),
-                                  subtitle: Text("${empruntes[pos].montant}"),
+                                  subtitle: Column(children: [
+                                    Text("${empruntes[pos].montant}"),
+                                    empruntes[pos].objectif != ''
+                                        ? Text("${empruntes[pos].objectif}")
+                                        : Container()
+                                  ]),
                                   trailing: Text("48".tr + " : " + "$dateFin"),
                                   onTap: () {
                                     AlertDialog alertDialog = AlertDialog(
@@ -759,73 +707,4 @@ class _alldettesState extends State<alldettes> {
       ),
     );
   }
-
-  // faireNotificationDettes() async {
-  //   List<emprunte_dette> empruntes =
-  //       await helper.getAllEmprunteDettes(this.usr!.id!);
-  //   empruntes.forEach((emprunte) {
-  //     if (emprunte.status == 0) {
-  //       DateTime dateEcheance = DateTime.parse(emprunte.date_echeance!);
-
-  //       DateTime dateMaintenant =
-  //           DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-  //       if (dateEcheance.difference(dateMaintenant).inDays == 3) {
-  //         service.showNotificationWithPayload(
-  //             id: emprunte.id!,
-  //             title: "Attension",
-  //             body:
-  //                 "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 3 jours",
-  //             payload: "payload navigation");
-  //       } else if (dateEcheance.difference(dateMaintenant).inDays == 2) {
-  //         service.showNotificationWithPayload(
-  //             id: emprunte.id!,
-  //             title: "Attension",
-  //             body:
-  //                 "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 2 jours",
-  //             payload: "payload navigation");
-  //       } else if (dateEcheance.difference(dateMaintenant).inDays == 1) {
-  //         service.showNotificationWithPayload(
-  //             id: emprunte.id!,
-  //             title: "Attension",
-  //             body:
-  //                 "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} apres 1 jours",
-  //             payload: "payload navigation");
-  //       } else if (dateEcheance.difference(dateMaintenant).inDays == 0) {
-  //         service.showNotificationWithPayload(
-  //             id: emprunte.id!,
-  //             title: "Attension",
-  //             body:
-  //                 "Vous avez donnee a ${emprunte.nom} ${emprunte.montant} Aujordhui",
-  //             payload: "payload navigation");
-  //       }
-  //     }
-  //   });
-  // }
-
-  // // allprettes(List<prette_dette> allPretes) {
-  // //   int k = allPretes.length;
-  // //   List<prette_dette> y = [];
-  // //   for (int i = 0; i < k; i++) {
-  // //     DateTime debut = DateTime.parse(allPretes[i].date_debut!);
-  // //     String dateDebut = DateFormat("dd-MM-yyyy").format(debut);
-  // //     DateTime fin = DateTime.parse(allPretes[i].date_echeance!);
-  // //     String dateFin = DateFormat("dd-MM-yyyy").format(fin);
-  // //     prette_dette pr = prette_dette(allPretes[i].nom, allPretes[i].objectif,
-  // //         allPretes[i].montant, dateDebut, dateFin, allPretes[i].id_compte);
-  // //   }
-  // // }
-  // void listenToNotification2() =>
-  //     service.onNotificationClick.stream.listen((onNotificationListener2));
-  // void onNotificationListener2(String? payload) {
-  //   if (payload != null && payload.isNotEmpty) {
-  //     print("payload $payload");
-  //     Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (context) => alldettes(
-  //                   usr,
-  //                   2,
-  //                 )));
-  //   }
-  // }
 }

@@ -4,10 +4,8 @@ import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:toast/toast.dart';
 
 class nouveauCategorie extends StatefulWidget {
-  //const nouveauCategorie({Key? key}) : super(key: key);
   utilisateur? usr;
   nouveauCategorie(this.usr);
   @override
@@ -115,8 +113,17 @@ class _nouveauCategorieState extends State<nouveauCategorie> {
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         value: colorValue,
                         hint: Text("110".tr),
-                        items: <String>['Vert', 'Rouge', 'Jaune', 'Rose']
-                            .map<DropdownMenuItem<String>>((String value) {
+                        items: <String>[
+                          'vert',
+                          'rouge',
+                          'jaune',
+                          'rose',
+                          'blue',
+                          'orange',
+                          'gris',
+                          'marron',
+                          'violet'
+                        ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),

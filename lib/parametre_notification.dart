@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/main.dart';
-import 'package:portfeuille_numerique/models/budgete.dart';
 import 'package:portfeuille_numerique/models/catBudget.dart';
 import 'package:portfeuille_numerique/models/emprunte_dette.dart';
 import 'package:portfeuille_numerique/models/objective.dart';
@@ -11,7 +10,6 @@ import 'package:portfeuille_numerique/models/prette_dette.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 
 class parametre_notification extends StatefulWidget {
-  //const parametre_notification({Key? key}) : super(key: key);
   utilisateur? usr;
   parametre_notification(this.usr);
 
@@ -39,7 +37,6 @@ class _parametre_notificationState extends State<parametre_notification> {
   }
 
   updateStatusBudget(int y) async {
-    // helper.updateStatusNotificationBudget(y, this.widget.usr!.id!);
     List<catBudget> budgetes = await helper.getAllBudgets(this.usr!.id!);
     budgetes.forEach((element) {
       helper.updateStatusNotificationBudget(y, element.id!);
@@ -53,11 +50,6 @@ class _parametre_notificationState extends State<parametre_notification> {
     });
   }
 
-  // bool? stst;
-  // bool stst = false;
-  // bool status_dette;
-  //static var status_budget;
-  //static var status_objectif;
   bool? status_dette = sharedpref!.getBool("statusDette") == null
       ? true
       : sharedpref!.getBool("statusDette");
@@ -69,13 +61,6 @@ class _parametre_notificationState extends State<parametre_notification> {
       : sharedpref!.getBool("statusObjectif");
   @override
   Widget build(BuildContext context) {
-    // if (status_dette == null) {
-    //   status_dette = true;
-    // }
-
-    // if (status_objectif == null) {
-    //   status_objectif = true;
-    // }
     return Scaffold(
       appBar: AppBar(),
       body: Column(

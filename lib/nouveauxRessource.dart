@@ -3,11 +3,9 @@ import 'package:get/get.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/ressource.dart';
-
 import 'models/utilisateur.dart';
 
 class nouveauxRessource extends StatefulWidget {
-  //const nouveauxRessource({ Key? key }) : super(key: key);
   utilisateur? usr;
   nouveauxRessource(this.usr);
 
@@ -26,7 +24,7 @@ class _nouveauxRessourceState extends State<nouveauxRessource> {
     SQL_Helper helper = SQL_Helper();
     final form = _formKey.currentState!;
     if (form.validate()) {
-      ressource? rese = await helper.getRessourceByNom(nom);
+      ressource? rese = await helper.getRessourceByNom(nom, idUser);
       if (rese == null) {
         ressource res = ressource(nom, idUser);
         int result = await helper.insertRessource(res);

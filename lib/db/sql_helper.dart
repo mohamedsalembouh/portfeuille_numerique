@@ -918,7 +918,7 @@ class SQL_Helper {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND categorie.nomcat='$nomCat' AND id_utilisateur = '$idUser'");
+        "SELECT * FROM operation_sortir,categorie WHERE operation_sortir.id_categorie = categorie.id AND categorie.nomcat='$nomCat' AND operation_sortir.id_utilisateur = '$idUser'");
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -1019,10 +1019,10 @@ class SQL_Helper {
     });
   }
 
-  Future<ressource?> getRessourceByNom(String nom) async {
+  Future<ressource?> getRessourceByNom(String nom, int idUser) async {
     Database db = await this.database;
-    var result =
-        await db.rawQuery("SELECT * FROM ressource WHERE nom_ress = '$nom'");
+    var result = await db.rawQuery(
+        "SELECT * FROM ressource WHERE nom_ress = '$nom' AND id_utilisateur = '$idUser'");
     if (result.length > 0) {
       return new ressource.getmap(result.first);
     }
@@ -1106,6 +1106,12 @@ class SQL_Helper {
     Database db = await this.database;
     var result = await db.rawUpdate(
         "UPDATE objectif SET status_notification = ? WHERE id = ?", [x, id]);
+    return result;
+  }
+
+  Future<int> deletepartag(int id) async {
+    Database db = await this.database;
+    var result = await db.rawDelete("DELETE FROM partage WHERE id ='$id'");
     return result;
   }
 }

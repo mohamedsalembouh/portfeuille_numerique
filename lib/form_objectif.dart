@@ -14,9 +14,7 @@ import 'models/ressource.dart';
 import 'package:get/get.dart';
 
 class form_objectif extends StatefulWidget {
-  //const form_objectif({Key? key}) : super(key: key);
   utilisateur? usr;
-
   form_objectif(this.usr);
 
   @override
@@ -25,7 +23,6 @@ class form_objectif extends StatefulWidget {
 
 class _form_objectifState extends State<form_objectif> {
   utilisateur? usr;
-  //List<diagrameSolde> allUpdateSolde = [];
   _form_objectifState(this.usr);
   final _formKey = GlobalKey<FormState>();
   TextEditingController nomObj = TextEditingController();
@@ -83,8 +80,6 @@ class _form_objectifState extends State<form_objectif> {
         Toast.show("t2".tr);
       }
     }
-    // this.allUpdateSolde =
-    //     getListSoldes(this.allUpdateSolde!, TypeCompte, this.usr!.id!);
   }
 
   @override

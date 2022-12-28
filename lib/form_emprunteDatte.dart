@@ -14,8 +14,6 @@ import 'package:get/get.dart';
 
 class formemprunte extends StatefulWidget {
   utilisateur? usr;
-
-  //const formemprunte({Key? key}) : super(key: key);
   formemprunte(this.usr);
 
   @override
@@ -24,7 +22,6 @@ class formemprunte extends StatefulWidget {
 
 class _formemprunteState extends State<formemprunte> {
   utilisateur? usr;
-  // List<diagrameSolde> allUpdateSolde = [];
   _formemprunteState(this.usr);
   final _formKey = GlobalKey<FormState>();
   TextEditingController nom = TextEditingController();
@@ -33,7 +30,6 @@ class _formemprunteState extends State<formemprunte> {
   TextEditingController dateDebut = TextEditingController();
   TextEditingController dateEcheance = TextEditingController();
   SQL_Helper helper = SQL_Helper();
-  //String defaultDateDebut = DateFormat("yyy-MM-dd").format(DateTime.now());
   String? TypeCompte;
 
   insertEmprunteDette(String nom, String objectif, String montant,
@@ -41,9 +37,6 @@ class _formemprunteState extends State<formemprunte> {
     DateTime maintenant = DateTime.now();
     String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
     final form = _formKey.currentState;
-
-    // DateTime now = DateTime.now();
-    // String dateDebut = now.toString();
 
     if (form!.validate()) {
       if (TypeCompte != "25".tr) {
@@ -114,8 +107,6 @@ class _formemprunteState extends State<formemprunte> {
       insertArgent(newCompte.solde!, newCompte.date!, newCompte.id_ressource!,
           newCompte.id_utilisateur!);
     }
-    // this.allUpdateSolde =
-    //     getListSoldes(this.allUpdateSolde!, typeCmp, this.usr!.id!);
   }
 
   @override
@@ -174,7 +165,7 @@ class _formemprunteState extends State<formemprunte> {
                       child: TextFormField(
                         controller: objet,
                         decoration: InputDecoration(
-                            labelText: "46".tr,
+                            labelText: "46e".tr,
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(20.0)),
@@ -396,96 +387,4 @@ class _formemprunteState extends State<formemprunte> {
       ),
     );
   }
-
-  // utilisateur? usr;
-  // _formemprunteState(this.usr);
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text("Emprunte dettes"),
-  //     ),
-  //     body: Column(
-  //       children: [
-  //         Container(
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: <Widget>[
-  //               const Padding(
-  //                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-  //                 child: TextField(
-  //                   decoration: InputDecoration(
-  //                     border: UnderlineInputBorder(),
-  //                     hintText: 'A qui avez vous emprunte',
-  //                   ),
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding:
-  //                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-  //                 child: TextFormField(
-  //                   decoration: const InputDecoration(
-  //                     border: UnderlineInputBorder(),
-  //                     labelText: "L'objet de cette dette",
-  //                   ),
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding:
-  //                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-  //                 child: TextFormField(
-  //                   decoration: const InputDecoration(
-  //                     border: UnderlineInputBorder(),
-  //                     labelText: "Montant",
-  //                   ),
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding:
-  //                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-  //                 child: TextFormField(
-  //                   decoration: const InputDecoration(
-  //                     border: UnderlineInputBorder(),
-  //                     labelText: "Date ",
-  //                   ),
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding:
-  //                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-  //                 child: TextFormField(
-  //                   decoration: const InputDecoration(
-  //                     border: UnderlineInputBorder(),
-  //                     labelText: "Date d'echeance ",
-  //                   ),
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding: EdgeInsets.only(top: 20, left: 200),
-  //                 child: Row(
-  //                   children: [
-  //                     Padding(
-  //                       padding: EdgeInsets.only(right: 30),
-  //                       child: ElevatedButton(
-  //                         onPressed: () {},
-  //                         child: Text('Cancel'),
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: EdgeInsets.only(),
-  //                       child: ElevatedButton(
-  //                         onPressed: () {},
-  //                         child: Text('Submit'),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 
 class operdatte extends StatefulWidget {
   utilisateur? usr;
-
-  //const operdatte({Key? key}) : super(key: key);
   operdatte(this.usr);
   @override
   State<operdatte> createState() => _operdatteState(this.usr);
@@ -15,7 +13,6 @@ class operdatte extends StatefulWidget {
 
 class _operdatteState extends State<operdatte> {
   utilisateur? usr;
-  //List<diagrameSolde>? allUpdateSolde;
   _operdatteState(this.usr);
   @override
   Widget build(BuildContext context) {
@@ -37,27 +34,12 @@ class _operdatteState extends State<operdatte> {
           Padding(
             padding: EdgeInsets.only(),
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.,
               children: [
-                // RaisedButton(
-                //   onPressed: () {
-                //     Navigator.push(
-                //         context,
-                //         MaterialPageRoute(
-                //             builder: (context) => form_prette(this.usr)));
-                //   },
-                //   child: Text(
-                //     "Prette dettes",
-                //     style: TextStyle(),
-                //   ),
-                //   color: Colors.red,
-                // ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Row(
                     children: [
                       Container(
-                        // margin: EdgeInsets.all(30),
                         width: MediaQuery.of(context).size.width - 20,
                         child: ElevatedButton(
                           onPressed: () {
@@ -80,7 +62,6 @@ class _operdatteState extends State<operdatte> {
                     ],
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Row(

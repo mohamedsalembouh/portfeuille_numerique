@@ -1,28 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/form_recherche.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:portfeuille_numerique/models/argent.dart';
 import 'package:portfeuille_numerique/models/compte.dart';
 import 'package:portfeuille_numerique/models/depensesCats.dart';
-import 'package:portfeuille_numerique/models/emprunte_dette.dart';
-import 'package:portfeuille_numerique/models/objective.dart';
-import 'package:portfeuille_numerique/models/operation_entree.dart';
-import 'package:portfeuille_numerique/models/operation_sortir.dart';
-import 'package:portfeuille_numerique/models/prette_dette.dart';
 import 'package:portfeuille_numerique/models/ressource.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/objectifs.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-
 import 'models/compteRessource.dart';
 import 'package:get/get.dart';
 
 class statistique extends StatefulWidget {
-  //const statistique({Key? key}) : super(key: key);
-
   utilisateur? usr;
 
   statistique(this.usr);
@@ -32,7 +22,6 @@ class statistique extends StatefulWidget {
 
 class _statistiqueState extends State<statistique> {
   utilisateur? usr;
-  //List<diagrameSolde> allUpdateSolde = [];
   _statistiqueState(this.usr);
   int? total;
   int? totalRevenus;
@@ -45,7 +34,6 @@ class _statistiqueState extends State<statistique> {
   List<depensesCats>? allrevenus;
   int? rvenusCount;
   int? depensesCount;
-  //List<operation_sortir>? alldepenses;
   static var revenus;
   static var depenses;
   List<depensesCats>? depens;
@@ -59,14 +47,24 @@ class _statistiqueState extends State<statistique> {
 
     if (allDepensesCats != null) {
       for (int i = 0; i < count!; i++) {
-        if (allDepensesCats![i].coleur == "Vert") {
+        if (allDepensesCats![i].coleur == "vert") {
           col = Colors.green;
-        } else if (allDepensesCats![i].coleur == "Rouge") {
+        } else if (allDepensesCats![i].coleur == "rouge") {
           col = Colors.red;
-        } else if (allDepensesCats![i].coleur == "Jaune") {
+        } else if (allDepensesCats![i].coleur == "jaune") {
           col = Colors.yellow;
-        } else if (allDepensesCats![i].coleur == "Rose") {
+        } else if (allDepensesCats![i].coleur == "rose") {
           col = Colors.pink;
+        } else if (allDepensesCats![i].coleur == 'blue') {
+          col = Colors.blue;
+        } else if (allDepensesCats![i].coleur == 'orange') {
+          col = Colors.orange;
+        } else if (allDepensesCats![i].coleur == 'gris') {
+          col = Colors.grey;
+        } else if (allDepensesCats![i].coleur == 'marron') {
+          col = Colors.brown;
+        } else if (allDepensesCats![i].coleur == 'violet') {
+          col = Colors.purple;
         } else {
           col = Colors.black;
         }
@@ -346,89 +344,10 @@ class _statistiqueState extends State<statistique> {
     }
   }
 
-  // getAllDepenses() async {
-  //   utilisateur? user =
-  //       await helper.getUser(this.usr!.email!, this.usr!.password!);
-  //   int a = user!.id!;
-  //   final Future<Database>? db = helper.initialiseDataBase();
-  //   var ourDb = db;
-  //   if (ourDb != null) {
-  //     ourDb.then((database) {
-  //       Future<List<operation_sortir>> revenies = helper.getAllDepenses(a);
-
-  //       revenies.then((theList) {
-  //         setState(() {
-  //           this.alldepenses = theList;
-  //           if (alldepenses != null) {
-  //             this.depensesCount = theList.length;
-  //           }
-  //         });
-  //       });
-  //     });
-  //   }
-  // }
-  // List<diagrameSolde> diagramData =
-  // [
-  //   diagrameSolde(DateTime.parse("2000-10-02"), 35, "bb"),
-  //   diagrameSolde(DateTime.parse("2000-10-03"), 28, "bb"),
-  //   diagrameSolde(DateTime.parse("2000-10-05"), 34, "bb"),
-  //   diagrameSolde(DateTime.parse("2000-10-07"), 32, "bb"),
-  //   diagrameSolde(DateTime.parse("2000-10-09"), 40, "bb"),
-  // ];
-
   List<argent>? allargentCompte;
   List<argent>? allargentBankily;
   List<argent>? allargentBank;
   static var diagramdata;
-  static var diagramDataBank;
-  static var diagramDataBankily;
-  static var diagramDataCompte;
-  // fullListes() {
-  //   allUpdateSolde.forEach((element) {
-  //     diagramData.add(element);
-  //     // if (element.type == "Bankily") {
-  //     //   diagramDataBankily.add(element);
-  //     // } else if (element.type == "Bank") {
-  //     //   diagramDataBank.add(element);
-  //     // } else {
-  //     //   diagramDataCompte.add(element);
-  //     // }
-  //   });
-  // }
-
-  // getAllMontant(int id) async {
-  //   List<compte> Soldes = await helper.getAllComptesUser(id);
-  //   List<operation_entree> revenus = await helper.getAllRevenus(id);
-  //   List<operation_sortir> depenses = await helper.getAllDepenses(id);
-  //   List<prette_dette> prettes = await helper.getAllPrettesDettes(id);
-  //   List<emprunte_dette> empruntes = await helper.getAllEmprunteDettes(id);
-  //   List<objective> objectifs = await helper.getAllObjectivfs(id);
-  //   Soldes.forEach((element) {
-  //     allUpdateSolde
-  //         .add(diagrameSolde.aaa(DateTime.parse(element.date!), element.solde));
-  //   });
-  //   revenus.forEach((element) {
-  //     allUpdateSolde.add(
-  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
-  //   });
-  //   depenses.forEach((element) {
-  //     allUpdateSolde.add(
-  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
-  //   });
-  //   prettes.forEach((element) {
-  //     allUpdateSolde.add(
-  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
-  //   });
-  //   empruntes.forEach((element) {
-  //     allUpdateSolde.add(
-  //         diagrameSolde.aaa(DateTime.parse(element.date!), element.montant));
-  //   });
-  //   objectifs.forEach((element) {
-  //     allUpdateSolde.add(diagrameSolde.aaa(
-  //         DateTime.parse(element.date!), element.montant_donnee));
-  //   });
-  //   diagramData = allUpdateSolde;
-  // }
 
   getTousArgent(String nomRess) async {
     if (nomRess != "72".tr) {
@@ -509,13 +428,10 @@ class _statistiqueState extends State<statistique> {
     }
     diagramdata = this.allargentCompte;
     print(diagramdata);
-    // print(allDepensesCats!.length);
-    // print(allrevenus!.length);
     revenus = getUniqueRevenus();
     rvenusCount = revenus.length;
     depenses = getUniqueDepenses();
     depensesCount = depenses.length;
-    //depenses = this.alldepenses;
     total = getTotal();
     totalRevenus = getTotalRevenus();
 
@@ -536,7 +452,7 @@ class _statistiqueState extends State<statistique> {
             Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 30, left: 10),
+                  padding: EdgeInsets.only(top: 30, left: 20, right: 20),
                   child: FutureBuilder(
                       future: getComptesRessource(this.usr!.id!),
                       builder: (BuildContext context,
@@ -565,6 +481,10 @@ class _statistiqueState extends State<statistique> {
                                 fontSize: 17,
                                 //fontWeight: FontWeight.bold
                               ),
+                            ),
+                            underline: Container(
+                              height: 2,
+                              color: Colors.black,
                             ),
                           );
                         }
@@ -601,24 +521,8 @@ class _statistiqueState extends State<statistique> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Padding(
-                  //   padding: EdgeInsets.only(top: 40, bottom: 20),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //     children: [
-                  //       Text(
-                  //         "Le total de depenses  :",
-                  //         style: TextStyle(fontSize: 20),
-                  //       ),
-                  //       Text(
-                  //         "$total",
-                  //         style: TextStyle(fontSize: 20, color: Colors.green),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   Padding(
-                    padding: EdgeInsets.only(top: 30, left: 10),
+                    padding: EdgeInsets.only(top: 30, left: 20, right: 20),
                     child: FutureBuilder(
                         future: getComptesRessource(this.usr!.id!),
                         builder: (BuildContext context,
@@ -648,9 +552,10 @@ class _statistiqueState extends State<statistique> {
                                   //fontWeight: FontWeight.bold
                                 ),
                               ),
-                              // underline: Container(
-                              //   height: 10,
-                              // )
+                              underline: Container(
+                                height: 2,
+                                color: Colors.black,
+                              ),
                             );
                           }
                         }),
@@ -680,7 +585,7 @@ class _statistiqueState extends State<statistique> {
                             cellPadding:
                                 new EdgeInsets.only(right: 4, bottom: 4),
                             entryTextStyle: charts.TextStyleSpec(
-                              color: charts.MaterialPalette.purple.shadeDefault,
+                              color: charts.MaterialPalette.black,
                               fontSize: 11,
                             ),
                           )
@@ -696,78 +601,6 @@ class _statistiqueState extends State<statistique> {
             Container(
               child: Column(
                 children: [
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //       border: Border.all(width: 3, color: Colors.blueAccent),
-                  //       borderRadius: BorderRadius.all(Radius.circular(3))),
-                  //   child:
-                  // Column(
-                  //     children: [
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     Container(
-                  //       width: 200,
-                  //       child: Padding(
-                  //         padding: EdgeInsets.only(),
-                  //         //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                  //         child: TextFormField(
-                  //           // initialValue:
-                  //           //     DateFormat("yyyy-MM-dd").format(DateTime.now()),
-                  //           controller: dateDebut,
-                  //           decoration: InputDecoration(
-                  //             border: UnderlineInputBorder(),
-                  //             labelText: "Date debut ",
-                  //             icon: Icon(Icons.calendar_today_outlined),
-                  //           ),
-                  //           onTap: () async {
-                  //             DateTime? pickeddate = await showDatePicker(
-                  //                 context: context,
-                  //                 initialDate: DateTime.now(),
-                  //                 firstDate: DateTime(2000),
-                  //                 lastDate: DateTime(2050));
-
-                  //             setState(() {
-                  //               dateDebut.text = DateFormat("yyyy-MM-dd")
-                  //                   .format(pickeddate!);
-                  //             });
-                  //           },
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     Container(
-                  //       width: 200,
-                  //       child: Padding(
-                  //         padding: EdgeInsets.only(),
-                  //         //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                  //         child: TextFormField(
-                  //           // initialValue:
-                  //           //     DateFormat("yyyy-MM-dd").format(DateTime.now()),
-                  //           controller: dateFin,
-                  //           //keyboardType: TextInputType.datetime,
-                  //           decoration: InputDecoration(
-                  //             border: UnderlineInputBorder(),
-                  //             labelText: "Date Fin ",
-                  //             icon: Icon(Icons.calendar_today_outlined),
-                  //           ),
-                  //           onTap: () async {
-                  //             DateTime? pickeddate = await showDatePicker(
-                  //                 context: context,
-                  //                 initialDate: DateTime.now(),
-                  //                 firstDate: DateTime(2000),
-                  //                 lastDate: DateTime(2050));
-
-                  //             setState(() {
-                  //               dateFin.text = DateFormat("yyyy-MM-dd")
-                  //                   .format(pickeddate!);
-                  //             });
-                  //           },
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-
                   Padding(
                     padding: const EdgeInsets.only(top: 5, left: 20, right: 20),
                     child: ElevatedButton(
@@ -790,51 +623,6 @@ class _statistiqueState extends State<statistique> {
                       style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                     ),
                   ),
-                  // Padding(
-                  //   padding: EdgeInsets.only(top: 10, left: 10),
-                  //   child: FutureBuilder(
-                  //       future: getComptesRessource(this.usr!.id!),
-                  //       builder: (BuildContext context,
-                  //           AsyncSnapshot<List<compteRessource>> snapshot) {
-                  //         if (!snapshot.hasData) {
-                  //           return CircularProgressIndicator();
-                  //         } else {
-                  //           return DropdownButton<String>(
-                  //             items: snapshot.data!
-                  //                 .map((cmpRes) => DropdownMenuItem<String>(
-                  //                       child: Text(cmpRes.nom_ress!),
-                  //                       value: cmpRes.nom_ress,
-                  //                     ))
-                  //                 .toList(),
-                  //             onChanged: (String? value) {
-                  //               setState(() {
-                  //                 nomRessource = value!;
-                  //                 // dateDebut.clear();
-                  //                 // dateFin.clear();
-                  //               });
-                  //               updateCategories(nomRessource);
-                  //               getAllRevenusCats(nomRessource);
-                  //               dateDebut.clear();
-                  //               dateFin.clear();
-                  //             },
-
-                  //             isExpanded: true,
-                  //             //value: currentNomCat,
-                  //             hint: Text(
-                  //               '$nomRessource',
-                  //               style: TextStyle(
-                  //                 fontSize: 17,
-                  //                 //fontWeight: FontWeight.bold
-                  //               ),
-                  //             ),
-                  //           );
-                  //         }
-                  //       }),
-                  // ),
-
-                  // ],
-                  //   ),
-                  // ),
                   Padding(
                       padding: EdgeInsets.only(top: 20),
                       child: Card(
@@ -874,38 +662,6 @@ class _statistiqueState extends State<statistique> {
                             trailing: Text("${revenus[pos].montant}"),
                           ),
                         );
-                        // if (dateDebut.text == "choisisez un date" ||
-                        //     dateFin.text == "choisisez un date") {
-
-                        //   return Card(
-                        //     color: Colors.white,
-                        //     //elevation: 2.0,
-                        //     child: ListTile(
-                        //       title: Text("${revenus[pos].nomcat}"),
-                        //       trailing: Text("${revenus[pos].montant}"),
-                        //     ),
-                        //   );
-                        // } else {
-                        //   DateTime datebetween =
-                        //       DateTime.parse(revenus[pos].date!);
-                        //   DateTime debut = DateTime.parse(dateDebut.text);
-                        //   DateTime fin = DateTime.parse(dateFin.text);
-                        //   if (datebetween.compareTo(debut) > 0 &&
-                        //       datebetween.compareTo(fin) < 0) {
-                        //    // totl = (totl + revenus[pos].montant) as int;
-
-                        //     return Card(
-                        //       color: Colors.white,
-                        //       //elevation: 2.0,
-                        //       child: ListTile(
-                        //         title: Text("${revenus[pos].nomcat}"),
-                        //         trailing: Text("${revenus[pos].montant}"),
-                        //       ),
-                        //     );
-                        //   } else {
-                        //     return Container();
-                        //   }
-                        // }
                       },
                     ),
                   ),
@@ -936,52 +692,6 @@ class _statistiqueState extends State<statistique> {
                                 trailing: Text("${depenses[pos].montant}"),
                               ),
                             );
-                            // DateTime datebetween =
-                            //     DateTime.parse(depenses[pos].date!);
-                            // String date1 = DateFormat("yyyy-MM-dd")
-                            //     .format(DateTime.parse(dateDebut.text));
-                            // DateTime debut = DateTime.parse(dateDebut.text);
-                            // String date2 = DateFormat("yyyy-MM-dd")
-                            //     .format(DateTime.parse(dateFin.text));
-                            // DateTime fin = DateTime.parse(dateFin.text);
-                            // if ((datebetween.compareTo(debut) > 0 &&
-                            //         datebetween.compareTo(fin) < 0) ||
-                            //     (debut.compareTo(fin) == 0)) {
-                            // if (dateDebut.text == "choisisez un date" ||
-                            //     dateFin.text == "choisisez un date") {
-                            //   return Card(
-                            //     child: ListTile(
-                            //       title: Text("${depenses[pos].nomcat}"),
-                            //       trailing: Text("${depenses[pos].montant}"),
-                            //     ),
-                            //   );
-                            // } else {
-                            //   DateTime datebetween =
-                            //       DateTime.parse(revenus[pos].date!);
-                            //   DateTime debut = DateTime.parse(dateDebut.text);
-                            //   DateTime fin = DateTime.parse(dateFin.text);
-                            //   if (datebetween.compareTo(debut) > 0 &&
-                            //       datebetween.compareTo(fin) < 0) {
-                            //     return Card(
-                            //       child: ListTile(
-                            //         title: Text("${depenses[pos].nomcat}"),
-                            //         trailing: Text("${depenses[pos].montant}"),
-                            //       ),
-                            //     );
-                            //   } else {
-                            //     return Container();
-                            //   }
-                            // }
-
-                            // } else {
-                            //   return Container();
-                            // }
-                            // return Card(
-                            //   child: ListTile(
-                            //     title: Text("${depenses[pos].nomcat}"),
-                            //     trailing: Text("${depenses[pos].montant}"),
-                            //   ),
-                            // );
                           })),
                 ],
               ),
@@ -1030,94 +740,3 @@ class diagrameSolde {
   diagrameSolde(this.date, this.montant, this.type);
   diagrameSolde.aaa(this.date, this.montant);
 }
-
-// _generatedData() {
-//   var listsalles1 = [
-//     salles(1, 10),
-//     salles(2, 20),
-//     salles(3, 30),
-//     salles(4, 60),
-//   ];
-//   var listsalles2 = [
-//     salles(1, 25),
-//     salles(2, 45),
-//     salles(3, 70),
-//     salles(4, 90),
-//   ];
-//   var listsalles3 = [
-//     salles(1, 65),
-//     salles(2, 28),
-//     salles(3, 35),
-//     salles(4, 55),
-//   ];
-//   var data1 = [
-//     pollution("NKTT", 2018, 2345),
-//     pollution("NDB", 2010, 20000),
-//     pollution("Kiffa", 2020, 40000),
-//   ];
-//   var data2 = [
-//     pollution("Rosso", 2019, 234500),
-//     pollution("Nema", 2010, 50000),
-//     pollution("Aioun", 2022, 400000)
-//   ];
-//   var data3 = [
-//     pollution("aaa", 2001, 100000),
-//     pollution("bbb", 2002, 200000),
-//     pollution("ccc", 2003, 300000)
-//   ];
-//   var piedata = [
-//     Task("work", 40000, Colors.red),
-//     Task("work", 5000, Colors.red),
-//     Task("achats", 2000, Colors.green),
-//     // Task("ventes", 40000, Colors.orange),
-//     // Task("hhhh", 40000, Colors.yellow),
-//   ];
-//   _allsalles!.add(
-//     charts.Series(
-//       domainFn: (salles sale, _) => sale.year,
-//       measureFn: (salles sale, _) => sale.salle,
-//       id: '2025',
-//       data: listsalles1,
-//       // fillPatternFn: (_, __) => charts.FillPatternType.solid,
-//     ),
-//   );
-//   _allsalles!.add(
-//     charts.Series(
-//       domainFn: (salles sale, _) => sale.year,
-//       measureFn: (salles sale, _) => sale.salle,
-//       id: '2025',
-//       data: listsalles2,
-//       // fillPatternFn: (_, __) => charts.FillPatternType.solid,
-//     ),
-//   );
-//   _mesdata!.add(
-//     charts.Series(
-//         domainFn: (pollution poll, _) => poll.place,
-//         measureFn: (pollution poll, _) => poll.quantite,
-//         id: '2025',
-//         data: data1,
-//         fillPatternFn: (_, __) => charts.FillPatternType.solid,
-//         fillColorFn: (pollution poll, _) =>
-//             charts.ColorUtil.fromDartColor(Colors.green)),
-//   );
-//   _mesdata!.add(
-//     charts.Series(
-//         domainFn: (pollution poll, _) => poll.place,
-//         measureFn: (pollution poll, _) => poll.quantite,
-//         id: '2025',
-//         data: data2,
-//         fillPatternFn: (_, __) => charts.FillPatternType.solid,
-//         fillColorFn: (pollution poll, _) =>
-//             charts.ColorUtil.fromDartColor(Colors.green)),
-//   );
-//   // _seriedata!.add(
-//   //   charts.Series(
-//   //       data: piedata,
-//   //       domainFn: (Task task, _) => task.task,
-//   //       measureFn: (Task task, _) => task.taskvalue,
-//   //       colorFn: (Task task, _) =>
-//   //           charts.ColorUtil.fromDartColor(task.colorval),
-//   //       id: 'Daily task',
-//   //       labelAccessorFn: (Task row, _) => '${row.taskvalue}'),
-//   // );
-// }

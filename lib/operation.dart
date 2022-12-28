@@ -1,44 +1,31 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:portfeuille_numerique/categories.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
-import 'package:portfeuille_numerique/dettes.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/categorie.dart';
 import 'package:portfeuille_numerique/models/compteRessource.dart';
 import 'package:portfeuille_numerique/models/operation_entree.dart';
 import 'package:portfeuille_numerique/models/operation_sortir.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/services/local_notification_service.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:toast/toast.dart';
 import 'package:get/get.dart';
-
-import 'budget.dart';
-import 'models/catBudget.dart';
 import 'models/compte.dart';
-import 'models/depensesCats.dart';
 import 'models/ressource.dart';
 
 class operation extends StatefulWidget {
-  //operation({Key? key}) : super(key: key);
-  //String? nomCategorie;
   int? numero;
   utilisateur? usr;
-
   operation(this.usr, this.numero);
   @override
   State<operation> createState() => _operationState(this.usr, this.numero);
 }
 
 class _operationState extends State<operation> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  // }
 
   final _formKey1 = new GlobalKey<FormState>();
   final _formKey2 = new GlobalKey<FormState>();
@@ -50,11 +37,8 @@ class _operationState extends State<operation> {
       text: DateFormat("yyyy-MM-dd").format(DateTime.now()));
   TextEditingController date2 = TextEditingController(
       text: DateFormat("yyyy-MM-dd").format(DateTime.now()));
-  // String? nomcategorie;
-  // int? selectedPage;
   int? numero;
   utilisateur? usr;
-  // List<diagrameSolde>? allUpdateSolde;
   _operationState(this.usr, this.numero);
   List<operation_sortir>? alldepenses;
   int? count;
@@ -75,19 +59,12 @@ class _operationState extends State<operation> {
 
   insertRevenus(String value, String description, String date) async {
     final form = _formKey1.currentState!;
-    // final form = _formKey.currentState;
-    // if (form!.validate()) {
-    // if (montant == 0) {
-    //   Toast.show("entrer montant");
-    // }
     if (currentNomCat != "21".tr) {
       if (form.validate()) {
         if (TypeCompte != "25".tr) {
           int montant = int.parse(value);
           categorie? cat = await helper.getSpecifyCategorie(currentNomCat!);
           int idCat = cat!.id!;
-          // DateTime maintenant = DateTime.now();
-          // String date_maintenant = DateFormat("yyyy-MM-dd").format(maintenant);
           ressource? res = await helper.getSpecifyRessource(TypeCompte!);
           int id_res = res!.id_ress!;
           compte? cmp = await helper.getSpecifyCompte(id_res);
@@ -132,9 +109,6 @@ class _operationState extends State<operation> {
               categorie? cat =
                   await helper.getSpecifyCategorie(currentNomCat2!);
               int idCat = cat!.id!;
-              // DateTime maintenant = DateTime.now();
-              // String date_maintenant =
-              //     DateFormat("yyyy-MM-dd").format(maintenant);
               operation_sortir sortir = new operation_sortir(
                   montant, description, date, idCat, id_compte, this.numero);
               int a = await helper.insertOperationSortir(sortir);
@@ -161,9 +135,6 @@ class _operationState extends State<operation> {
     } else {
       Toast.show("t1".tr);
     }
-
-    // updatedepenses();
-    // print(this.count);
   }
 
   Future<List<categorie>> achatsCategorie() async {
@@ -175,26 +146,16 @@ class _operationState extends State<operation> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      // initialIndex: selectedPage!,
       length: mytabs.length,
       child: Scaffold(
-        // resizeToAvoidBottomInset: false,
-
         drawer: drowerfunction(context, usr),
         appBar: AppBar(bottom: TabBar(tabs: mytabs), title: Text("17".tr)),
-        // drawer: drowerfunction(context),
         body: TabBarView(
           children: [
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
-                  // Card(
-                  //   margin: EdgeInsets.only(top: 40),
-                  //   child: Container(
-                  //     width: MediaQuery.of(context).size.width - 50,
-                  //     color: Colors.white70,
-                  //     child:
                   Form(
                     key: _formKey1,
                     child: Column(
@@ -265,7 +226,6 @@ class _operationState extends State<operation> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 10, right: 10),
-                          // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
                             controller: entreeMontant,
                             keyboardType: TextInputType.number,
@@ -294,8 +254,6 @@ class _operationState extends State<operation> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(right: 10, left: 10),
-
-                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
                             controller: entreeDesc,
                             decoration: InputDecoration(
@@ -317,7 +275,6 @@ class _operationState extends State<operation> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 10, right: 10),
-                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
                             controller: date1,
                             readOnly: true,
@@ -327,7 +284,6 @@ class _operationState extends State<operation> {
                               }
                               return null;
                             },
-                            //keyboardType: TextInputType.datetime,
                             decoration: InputDecoration(
                                 labelText: "24".tr,
                                 border: OutlineInputBorder(
@@ -372,7 +328,6 @@ class _operationState extends State<operation> {
                                 } else {
                                   return DropdownButtonFormField(
                                     decoration: InputDecoration(
-                                        // labelText: "Destination",
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(20.0)),
@@ -447,8 +402,6 @@ class _operationState extends State<operation> {
                                         entreeDesc.text,
                                         date1.text,
                                       );
-
-                                      // Navigator.pop(context, myData);
                                     },
                                     child: Text("27".tr),
                                     style: ElevatedButton.styleFrom(
@@ -462,8 +415,6 @@ class _operationState extends State<operation> {
                       ],
                     ),
                   ),
-                  // ),
-                  //),
                 ],
               ),
             ),
@@ -472,12 +423,6 @@ class _operationState extends State<operation> {
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
-                  // Card(
-                  //   margin: EdgeInsets.only(top: 40),
-                  //   child: Container(
-                  //     width: MediaQuery.of(context).size.width - 50,
-                  //     color: Colors.white70,
-                  //     child:
                   Form(
                     key: _formKey2,
                     child: Column(
@@ -503,7 +448,6 @@ class _operationState extends State<operation> {
                                 } else {
                                   return DropdownButtonFormField(
                                     decoration: InputDecoration(
-                                        // labelText: "Destination",
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(20.0)),
@@ -548,7 +492,6 @@ class _operationState extends State<operation> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(right: 10, left: 10),
-                          // const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
                             controller: sortirMontant,
                             keyboardType: TextInputType.number,
@@ -577,8 +520,6 @@ class _operationState extends State<operation> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(right: 10, left: 10),
-
-                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
                             controller: sortirDesc,
                             decoration: InputDecoration(
@@ -600,17 +541,9 @@ class _operationState extends State<operation> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 10, right: 10),
-                          //const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                           child: TextFormField(
                             controller: date2,
                             readOnly: true,
-                            // validator: (value) {
-                            //   if (value == null || value.isEmpty) {
-                            //     return "entrer la date de debut";
-                            //   }
-                            //   return null;
-                            // },
-                            //keyboardType: TextInputType.datetime,
                             decoration: InputDecoration(
                                 labelText: "24".tr,
                                 border: OutlineInputBorder(
@@ -655,7 +588,6 @@ class _operationState extends State<operation> {
                                 } else {
                                   return DropdownButtonFormField(
                                     decoration: InputDecoration(
-                                        // labelText: "Destination",
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(20.0)),
@@ -731,8 +663,6 @@ class _operationState extends State<operation> {
                                         sortirDesc.text,
                                         date2.text,
                                       );
-
-                                      // Navigator.pop(context, myData);
                                     },
                                     child: Text("27".tr),
                                     style: ElevatedButton.styleFrom(
@@ -746,8 +676,6 @@ class _operationState extends State<operation> {
                       ],
                     ),
                   ),
-                  //   ),
-                  // ),
                 ],
               ),
             )

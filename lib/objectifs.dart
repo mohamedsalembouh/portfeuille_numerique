@@ -13,7 +13,6 @@ import 'models/utilisateur.dart';
 import 'package:get/get.dart';
 
 class objectif extends StatefulWidget {
-  // const objectif({Key? key}) : super(key: key);
   utilisateur? usr;
   int? selectedpage;
   objectif(this.usr, this.selectedpage);
@@ -24,7 +23,6 @@ class objectif extends StatefulWidget {
 class _objectifState extends State<objectif> {
   utilisateur? usr;
   int? selectedpage;
-  // List<diagrameSolde> allUpdateSolde = [];
   _objectifState(this.usr, this.selectedpage);
   TextEditingController mnt_donnee = TextEditingController();
   final List<Tab> mytabs = [
@@ -139,7 +137,8 @@ class _objectifState extends State<objectif> {
 
   shownot(objective obj) {
     if (obj.montant_cible == obj.montant_donnee) {
-      showText(context, "129".tr, "126".tr + "${obj.nom_objective}" + "127".tr);
+      showText(context, "129".tr,
+          "126".tr + " " + "${obj.nom_objective}" + " " + "127".tr);
     }
   }
 
@@ -149,7 +148,7 @@ class _objectifState extends State<objectif> {
         service.showNotificationWithPayload(
             id: obj.id!,
             title: "129".tr,
-            body: "126".tr + "${obj.nom_objective}" + "127".tr,
+            body: "126".tr + " " + "${obj.nom_objective}" + "127".tr,
             payload: "payload objectif");
       }
     }
@@ -187,15 +186,6 @@ class _objectifState extends State<objectif> {
               },
               tabs: mytabs),
           title: Text("c".tr),
-          // actions: [
-          //   Padding(
-          //     padding: EdgeInsets.only(right: 20),
-          //     child: GestureDetector(
-          //       onTap: () {},
-          //       child: Icon(Icons.search),
-          //     ),
-          //   )
-          // ],
         ),
         drawer: drowerfunction(context, this.usr),
         body: TabBarView(
@@ -206,18 +196,6 @@ class _objectifState extends State<objectif> {
                     child: ListView.builder(
                         itemCount: count,
                         itemBuilder: (context, pos) {
-                          // if (allobjectives[pos].montant_donnee ==
-                          //     allobjectives[pos].montant_cible) {
-                          //   monIcon = Icon(Icons.check);
-                          // }
-                          // status(x) {
-                          //   if (x == allobjectives[pos].montant_cible) {
-                          //     return Icon(
-                          //       Icons.check,
-                          //     );
-                          //   }
-                          // }
-
                           if (allobjectives[pos].montant_donnee !=
                               allobjectives[pos].montant_cible) {
                             return Card(
@@ -231,21 +209,17 @@ class _objectifState extends State<objectif> {
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 10),
                                 child: ListTile(
-                                  // leading:
-                                  //     status(allobjectives[pos].montant_donnee),
                                   title: Text(
                                       "${allobjectives[pos].nom_objective}"),
                                   subtitle: Text(
                                     "63".tr +
                                         " : " +
                                         "${allobjectives[pos].montant_donnee}",
-                                    // style: TextStyle(color: Colors.amberAccent),
                                   ),
                                   trailing: Text(
                                     "62".tr +
                                         " : " +
                                         "${allobjectives[pos].montant_cible}",
-                                    //style: TextStyle(color: Colors.green),
                                   ),
                                   onTap: () {
                                     print(
@@ -397,30 +371,6 @@ class _objectifState extends State<objectif> {
                                                             MainAxisAlignment
                                                                 .spaceAround,
                                                         children: [
-                                                          // SizedBox(
-                                                          //   width: MediaQuery.of(
-                                                          //               context)
-                                                          //           .size
-                                                          //           .width /
-                                                          //       3,
-                                                          //   height: MediaQuery.of(
-                                                          //               context)
-                                                          //           .size
-                                                          //           .height /
-                                                          //       13,
-                                                          //   child: ElevatedButton(
-                                                          //     onPressed: () {
-                                                          //       Navigator.pop(
-                                                          //           context);
-                                                          //     },
-                                                          //     child:
-                                                          //         Text('26'.tr),
-                                                          //     style: ElevatedButton
-                                                          //         .styleFrom(
-                                                          //             shape:
-                                                          //                 StadiumBorder()),
-                                                          //   ),
-                                                          // ),
                                                           SizedBox(
                                                             width: MediaQuery.of(
                                                                         context)

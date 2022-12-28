@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:portfeuille_numerique/db/sql_helper.dart';
-import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:sqflite/sqflite.dart';
-
 import 'homePage.dart';
 import 'models/compte.dart';
 import 'models/depensesCats.dart';
 import 'models/ressource.dart';
 
 class resultasRecherche extends StatefulWidget {
-  // const resultasRecherche({Key? key}) : super(key: key);
   int idUser;
   String? dateDebut;
   String? dateFin;
@@ -39,7 +36,6 @@ class _resultasRechercheState extends State<resultasRecherche> {
   int? depensesCount;
   int? total;
   int? totalRevenus;
-  //List<operation_sortir>? alldepenses;
   static var revenus;
   static var depenses;
   SQL_Helper helper = SQL_Helper();

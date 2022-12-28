@@ -3,7 +3,6 @@ import 'package:portfeuille_numerique/db/sql_helper.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
 import 'package:portfeuille_numerique/signin.dart';
-import 'package:toast/toast.dart';
 import 'package:get/get.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -34,13 +33,13 @@ class _SignUpPageState extends State<SignUpPage> {
           if (result > 0) {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => signinPage()));
-            showText(context, "129".tr, "m2".tr);
+            showText(context, "", "m2".tr);
           }
         } else {
-          showText(context, "m12", "m3".tr);
+          showText(context, "m12".tr, "m3".tr);
         }
       } else {
-        showText(context, "m12", "m4".tr);
+        showText(context, "m12".tr, "m4".tr);
       }
     }
   }
@@ -63,21 +62,10 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  // Text(
-                  //   "Sign up",
-                  //   style: TextStyle(
-                  //       fontWeight: FontWeight.bold,
-                  //       color: Colors.black,
-                  //       fontSize: 30),
-                  // ),
                   SizedBox(
                     height: 20,
                   ),
                   Image.asset(
-                    // "assets/images/img_tesyir.jpg",
                     "assets/images/imageApp.jpg",
                     height: 100,
                     width: 150,

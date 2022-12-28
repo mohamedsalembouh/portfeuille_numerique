@@ -11,7 +11,7 @@ class _profileuserState extends State<profileuser> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green[700],
+      //color: Colors.blue[700],
       width: double.infinity,
       height: 200,
       padding: EdgeInsets.only(top: 20),

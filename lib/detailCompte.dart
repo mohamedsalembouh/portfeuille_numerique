@@ -88,12 +88,16 @@ class _detailCompteState extends State<detailCompte> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 // Title(color: Colors.red, child: Text("hi")),
-                Text(
-                  "86".tr,
-                  style: TextStyle(fontSize: 25),
-                ),
+                // Text(
+                //   "86".tr,
+                //   style: TextStyle(fontSize: 25),
+                // ),
+                // SizedBox(
+                //   width: (3 * MediaQuery.of(context).size.width) / 4,
+                //   height: 50,
+                //   child:
                 Container(
-                  width: 200,
+                  width: 300,
                   height: 50,
                   child: TextField(
                     enabled: false,
@@ -105,6 +109,18 @@ class _detailCompteState extends State<detailCompte> {
                     ),
                   ),
                 ),
+                // ),
+                // SizedBox(
+                //   width: 20,
+                // ),
+                // SizedBox(
+                //     width: MediaQuery.of(context).size.width / 4 - 20,
+                //     child:
+                Text(
+                  "144".tr,
+                  style: TextStyle(fontSize: 20),
+                )
+                //),
               ],
             ),
           ),
@@ -122,7 +138,7 @@ class _detailCompteState extends State<detailCompte> {
                         title: Text(""),
                         content: Container(
                           width: 100,
-                          height: 200,
+                          height: 400,
                           child: Column(
                             children: [
                               Expanded(
@@ -170,18 +186,6 @@ class _detailCompteState extends State<detailCompte> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: ElevatedButton(
-                //       onPressed: () {
-                //         Navigator.push(
-                //             context,
-                //             MaterialPageRoute(
-                //                 builder: (context) =>
-                //                     detailDettes(this.id_utilisateur)));
-                //       },
-                //       child: Text("Voir les dettes")),
-                // ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Row(

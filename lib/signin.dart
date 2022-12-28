@@ -19,10 +19,8 @@ class _signinPageState extends State<signinPage> {
   final f_pass = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
   final toast = ToastContext();
-  // List<diagrameSolde> allUpdateSolde = [];
 
   void initState() {
-    // TODO: implement initState
     super.initState();
     toast.init(context);
   }
@@ -33,15 +31,11 @@ class _signinPageState extends State<signinPage> {
       SQL_Helper helper = new SQL_Helper();
       utilisateur? user = await helper.getUser(email, pass);
       if (user == null) {
-        // Toast.show("utilisateur n'existe pas ",
-        //     duration: Toast.lengthShort, gravity: Toast.center);
         showText(context, "", "m1".tr);
         print("user not existe");
       } else {
         Navigator.push(
-            context,
-            // MaterialPageRoute(builder: (context) => homepage(email, pass))
-            MaterialPageRoute(builder: (context) => homepage(user)));
+            context, MaterialPageRoute(builder: (context) => homepage(user)));
       }
     }
   }
@@ -50,6 +44,7 @@ class _signinPageState extends State<signinPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           "1".tr,
           style: TextStyle(fontSize: 25),

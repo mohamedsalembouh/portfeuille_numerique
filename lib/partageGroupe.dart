@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:portfeuille_numerique/budget.dart';
 import 'package:portfeuille_numerique/detailCompte.dart';
 import 'package:portfeuille_numerique/form_partage.dart';
 import 'package:portfeuille_numerique/methodes.dart';
 import 'package:portfeuille_numerique/models/utilisateur.dart';
-import 'package:portfeuille_numerique/services/local_notification_service.dart';
-import 'package:portfeuille_numerique/statistiques.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'models/partag.dart';
 import 'package:get/get.dart';
 
 class partage extends StatefulWidget {
-  // const partage({Key? key}) : super(key: key);
   utilisateur? usr;
   partage(this.usr);
   @override
@@ -21,7 +17,6 @@ class partage extends StatefulWidget {
 
 class _partageState extends State<partage> {
   utilisateur? usr;
-  //List<diagrameSolde>? allUpdateSolde;
   _partageState(this.usr);
   List<partag>? allJepartageavec;
   List<partag>? allOntPartagemoi;
@@ -68,10 +63,12 @@ class _partageState extends State<partage> {
     }
   }
 
-  // getUser(int id) async {
-  //   utilisateur? usere = await helper.getUserByID(id);
-  //   String mail = usere!.email!;
-  // }
+  deletePartage(int id) async {
+    int? result = await helper.deletepartag(id);
+    if (result != 0) {
+      getAllPersonnesPartages();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,6 +108,39 @@ class _partageState extends State<partage> {
                         padding: const EdgeInsets.only(top: 10),
                         child: ListTile(
                           title: Text("${partages1[pos].email_personne}"),
+                          onTap: () {
+                            AlertDialog alertDialog = AlertDialog(
+                              title: Icon(Icons.delete),
+                              content: Text("145".tr),
+                              actions: [
+                                TextButton(
+                                  child: Text(
+                                    "26".tr,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text(
+                                    "38".tr,
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  onPressed: () {
+                                    deletePartage(partages1[pos].id);
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                  },
+                                ),
+                              ],
+                            );
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return alertDialog;
+                                });
+                          },
                         ),
                       ),
                     );
@@ -160,16 +190,4 @@ class _partageState extends State<partage> {
           },
         ));
   }
-
-  // void listenToNotification() =>
-  //     service.onNotificationClick.stream.listen((onNotificationListener));
-  // void onNotificationListener(String? payload) {
-  //   if (payload != null && payload.isNotEmpty) {
-  //     print("payload $payload");
-  //     Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (context) => budget(usr, 2, this.allUpdateSolde)));
-  //   }
-  // }
 }

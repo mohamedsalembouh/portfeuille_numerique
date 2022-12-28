@@ -11,8 +11,6 @@ import 'package:get/get.dart';
 class budget extends StatefulWidget {
   utilisateur? usr;
   int? selectedPage;
-  // List<diagrameSolde>? allUpdateSolde;
-  // budget({Key? key}) : super(key: key);
   budget(this.usr, this.selectedPage);
   @override
   State<budget> createState() => _budgetState(this.usr, this.selectedPage);
@@ -32,7 +30,6 @@ class _budgetState extends State<budget> {
   ];
   utilisateur? usr;
   int? selectedPage;
-  // List<diagrameSolde>? allUpdateSolde;
   _budgetState(this.usr, this.selectedPage);
   List<catBudget>? allbudgets;
   int count = 0;
@@ -40,16 +37,6 @@ class _budgetState extends State<budget> {
   List<depensesCats>? mesDepenses;
   int long = 0;
   static var depenses;
-
-  // late final LocalNotificationService service;
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   service = LocalNotificationService();
-  //   service.initialize();
-  //   listenToNotification();
-  //   super.initState();
-  // }
 
   getAllBudgets() async {
     utilisateur? user =
@@ -139,15 +126,6 @@ class _budgetState extends State<budget> {
               },
               tabs: mytabs),
           title: Text("b".tr),
-          // actions: [
-          //   Padding(
-          //     padding: EdgeInsets.only(right: 20),
-          //     child: GestureDetector(
-          //       onTap: () {},
-          //       child: Icon(Icons.search),
-          //     ),
-          //   )
-          // ],
         ),
         drawer: drowerfunction(context, this.usr),
         body: TabBarView(
@@ -177,8 +155,6 @@ class _budgetState extends State<budget> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: ListTile(
-                                // isThreeLine: true,
-                                // leading: Icon(Icons.category),
                                 title: Column(
                                   children: [
                                     Text("${budgets[pos].nombdg}"),
@@ -362,9 +338,12 @@ class _budgetState extends State<budget> {
                           if (budgets[pos].montant < allmnt &&
                               now.compareTo(debut) > 0 &&
                               now.compareTo(fin) < 0) {
-                            return Card(
-                                child:
-                                    Text("125".tr + "${budgets[pos].nombdg} "));
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Card(
+                                  child: Text(
+                                      "125".tr + "${budgets[pos].nombdg} ")),
+                            );
                           } else {
                             return Container();
                           }
@@ -394,46 +373,4 @@ class _budgetState extends State<budget> {
       ),
     );
   }
-
-  // faireNotifications() async {
-  //   int idUsere = this.usr!.id!;
-  //   List<categorie> allcategories = await helper.getAllcategories(idUsere);
-  //   allcategories.forEach((cat) async {
-  //     List<depensesCats> depenses =
-  //         await helper.getSpecifiedDepenses(idUsere, cat.nomcat!);
-  //     List<catBudget> budgets =
-  //         await helper.getAllSpecifiedBudgets(idUsere, cat.nomcat!);
-  //     int allmnt = 0;
-  //     for (depensesCats a in depenses) {
-  //       allmnt = allmnt + a.montant!;
-  //     }
-  //     for (catBudget bdg in budgets) {
-  //       if (bdg.status == 0) {
-  //         DateTime debut = DateTime.parse(bdg.date_debut!);
-  //         DateTime fin = DateTime.parse(bdg.date_fin!);
-  //         DateTime now =
-  //             DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.now()));
-  //         if (bdg.montant! < allmnt &&
-  //             now.compareTo(debut) > 0 &&
-  //             now.compareTo(fin) < 0) {
-  //           service.showNotificationWithPayload(
-  //               id: bdg.id!,
-  //               title: "Hiiii",
-  //               body: "vous etes depasez le budget ${bdg.nombdg}",
-  //               payload: 'payload navigation');
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
-
-  // void listenToNotification() =>
-  //     service.onNotificationClick.stream.listen((onNotificationListener));
-  // void onNotificationListener(String? payload) {
-  //   if (payload != null && payload.isNotEmpty) {
-  //     print("payload $payload");
-  //     Navigator.push(
-  //         context, MaterialPageRoute(builder: (context) => budget(usr, 2)));
-  //   }
-  // }
 }
